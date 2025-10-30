@@ -1,0 +1,5 @@
+name: jensseiler/jssitepackage
+label: 'JSsitepackage'
+dependencies:
+  - typo3/fluid-styled-content
+  - typo3/fluid-styled-content-css

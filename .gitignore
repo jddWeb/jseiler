@@ -1,0 +1,70 @@
+# ======================================
+# TYPO3 + SCSS Projekt: jens-der-denker.de
+# ======================================
+
+# --- Systemverzeichnisse & temporäre Daten ---
+.DS_Store
+Thumbs.db
+*.log
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# --- IDE / Editor ---
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# --- Node / Buildtools ---
+node_modules/
+package-lock.json
+npm-debug.log
+yarn-error.log
+
+# --- Composer ---
+/vendor/
+/composer.lock
+
+# --- TYPO3 ---
+# Lokale Caches und generierte Dateien
+/var/
+/typo3temp/
+/public/typo3temp/
+/public/_processed_/
+/public/fileadmin/_processed_/
+/public/typo3conf/ext/*/Resources/Public/Fonts/
+.env
+.env.local
+*.yaml~
+
+# --- SCSS / CSS Build ---
+Resources/Public/Css/*.css
+Resources/Public/Css/*.map
+Resources/Public/Css/*.min.css
+Resources/Public/Fonts/
+Resources/Public/Temp/
+Resources/Public/Build/
+
+# --- Mac & System ---
+Icon?
+ehthumbs.db
+Desktop.ini
+
+# --- Backups ---
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.bak
+*.old
+
+# --- TYPO3 Sitepackage-specific ---
+# Nur SCSS-Quellcode wird versioniert, kein kompiliertes CSS
+Resources/Public/Css/main.css
+Resources/Public/Css/main.css.map
+
+# --- DDEV, MAMP & lokale Konfiguration ---
+.ddev/
+docker-compose*.yml
