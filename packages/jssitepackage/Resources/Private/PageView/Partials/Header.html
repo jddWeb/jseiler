@@ -1,0 +1,26 @@
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+
+<div class="c-header__main">
+    <div class="c-header__container">
+
+        <!-- ======================================= -->
+        <!--   LOGO                                  -->
+        <!-- ======================================= -->
+        <div class="c-logo">
+            <a href="{f:uri.page(pageUid: 1)}" class="c-logo__link" title="Zur Startseite">
+                <f:image
+                    src="EXT:jssitepackage/Resources/Public/Images/logo.svg"
+                    alt="Logo Jens Seiler"
+                    class="c-logo__img"
+                    loading="lazy" />
+            </a>
+        </div>
+
+        <!-- ======================================= -->
+        <!--   NAVIGATION                            -->
+        <!-- ======================================= -->
+        <nav class="c-menu js-menu" role="navigation" aria-label="Hauptmenü">
+            <f:render partial="Menu/Main" arguments="{menuMain: menuMain}" />
+        </nav>
+    </div>
+</div>
