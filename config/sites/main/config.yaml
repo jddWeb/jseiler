@@ -3,12 +3,12 @@ dependencies:
   - jensseiler/jssitepackage
 languages:
   -
-    title: English
+    title: Deutsch
     enabled: true
     languageId: 0
     base: /
-    locale: en_US.UTF-8
+    locale: de_DE.UTF-8
     navigationTitle: English
-    flag: us
+    flag: de
 rootPageId: 1
 websiteTitle: ''
