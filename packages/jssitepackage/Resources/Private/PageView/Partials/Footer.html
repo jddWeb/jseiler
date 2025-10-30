@@ -1,0 +1,22 @@
+<footer class="c-footer">
+    <div class="c-footer__inner">
+        <nav class="c-footer__nav">
+            <f:if condition="{footerMenu}">
+                <f:for each="{footerMenu}" as="item">
+                    <ul class="c-footer__list">
+                        <li class="c-footer__item">
+                            <a href="{item.link}" title="{item.title}">
+                                {item.title}
+                            </a>
+                        </li>
+                    </ul>
+                </f:for>
+            </f:if>
+        </nav>
+
+        <p class="c-footer__copy">
+            &copy; {f:format.date(date: '{f:format.date(date: "now", format: "U")}', format: 'Y')}
+            Jens Seiler. Alle Rechte vorbehalten.
+        </p>
+    </div>
+</footer>
