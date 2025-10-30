@@ -42,11 +42,21 @@ page {
                 table = tt_content
                 pidInList.field = uid
                 orderBy = sorting
-                as = content
+                where = colPos = 0
+                as = contentMain
             }
 
-            30 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
+            30 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
             30 {
+              table = tt_content
+              pidInList.field = uid
+              orderBy = sorting
+              where = colPos = 1
+              as = contentAside
+            }
+
+            40 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
+            40 {
                 references.fieldName = media
             }
         }
