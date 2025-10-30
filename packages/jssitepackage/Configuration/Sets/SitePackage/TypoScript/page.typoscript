@@ -1,66 +1,76 @@
-##############
-#### PAGE ####
-##############
+########################################################
+# page.typoscript – TYPO3 13.4 LTS
+# Deaktiviert das Core-Rendering und definiert das eigene PAGE-Objekt
+########################################################
+
+# 1️⃣ Vorhandene PAGE-Definition (vom Core oder anderen Sets) löschen
+page >
+
+# 2️⃣ Eigenes PAGE-Objekt definieren
 page = PAGE
 page {
     typeNum = 0
     shortcutIcon = EXT:jssitepackage/Resources/Public/Icons/favicon.ico
 
-    10 = PAGEVIEW
+    10 = FLUIDTEMPLATE
     10 {
-        paths {
-            0 = EXT:jssitepackage/Resources/Private/PageView/
-            1 = {$page.pageview.paths}
+        # Template-Pfade
+        templateRootPaths {
+            10 = EXT:jssitepackage/Resources/Private/PageView/Templates/
         }
+        layoutRootPaths {
+            10 = EXT:jssitepackage/Resources/Private/PageView/Layouts/
+        }
+        partialRootPaths {
+            10 = EXT:jssitepackage/Resources/Private/PageView/Partials/
+        }
+
+        # Template-Datei (Main.html)
+        templateName = Main
+
+        # DataProcessing – Menü und Inhalte
         dataProcessing {
-            10 = files
+            10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
             10 {
-                references.fieldName = media
-            }
-            20 = menu
-            20 {
                 levels = 2
                 includeSpacer = 1
                 as = menuMain
             }
-            30 = page-content
+
+            20 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
+            20 {
+                table = tt_content
+                pidInList.field = uid
+                orderBy = sorting
+                as = content
+            }
+
+            30 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
+            30 {
+                references.fieldName = media
+            }
         }
     }
 
+    # Meta-Tags
     meta {
-        viewport = {$page.meta.viewport}
-        robots = {$page.meta.robots}
-        apple-mobile-web-app-capable = {$page.meta.apple-mobile-web-app-capable}
-
-        X-UA-Compatible = {$page.meta.compatible}
-        X-UA-Compatible {
-            attribute = http-equiv
-        }
+        viewport = width=device-width, initial-scale=1.0
+        robots = index,follow
+        X-UA-Compatible = IE=edge
+        X-UA-Compatible.attribute = http-equiv
+        author = Jens Seiler
     }
 
-    includeCSSLibs {
-
-    }
-
+    # Stylesheets
     includeCSS {
         jssitepackage_layout = EXT:jssitepackage/Resources/Public/Css/layout.css
     }
 
-    includeJSLibs {
-
-    }
-
-    includeJS {
-
-    }
-
-    includeJSFooterlibs {
-
-    }
-
+    # JavaScript
     includeJSFooter {
         jssitepackage_scripts = EXT:jssitepackage/Resources/Public/JavaScript/main.js
     }
 
-    shortcutIcon = {$JSsitepackage.favicon}
+    # Favicon (optional)
+    shortcutIcon = EXT:jssitepackage/Resources/Public/Icons/favicon.ico
 }

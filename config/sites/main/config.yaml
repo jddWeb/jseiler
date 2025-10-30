@@ -1,6 +1,7 @@
 base: 'https://jseiler.ddev.site/'
 dependencies:
   - jensseiler/jssitepackage
+disableBaseVariants: true
 languages:
   -
     title: Deutsch
