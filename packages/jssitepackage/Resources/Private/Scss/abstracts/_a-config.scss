@@ -1,0 +1,7 @@
+// ======================================================
+// abstracts/_config.scss
+// Globale Build-Konfiguration
+// ======================================================
+
+// Fallback: falls nicht via CLI gesetzt
+$debug: false !default;

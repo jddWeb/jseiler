@@ -1,0 +1,93 @@
+// ======================================================
+// components/_c-headline.scss
+// Wiederverwendbare Headline-Komponenten
+// ======================================================
+
+@use '../base/b-variables' as v;
+@use './c-typography' as typo;
+
+// ------------------------------------------------------
+// 1. Basis-Klasse
+// ------------------------------------------------------
+
+.c-headline {
+  font-family: v.$font-heading;
+  font-weight: v.$font-weight-bold;
+  color: v.$color-secondary;
+  line-height: v.$line-height-heading;
+  margin-bottom: 0.75em;
+  text-wrap: balance;
+
+  &--center {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &--light {
+    color: v.$color-primary-light;
+  }
+
+  &--white {
+    color: #fff;
+  }
+}
+
+// ------------------------------------------------------
+// 2. Varianten
+// ------------------------------------------------------
+
+// Hero-Headline – Startseite oder Teaser
+.c-headline--hero {
+  font-size: typo.fluid-size(2.5rem, 5rem);
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+// Section-Headline – große Bereichsüberschriften
+.c-headline--section {
+  font-size: typo.fluid-size(2rem, 3rem);
+  border-bottom: 2px solid v.$color-primary;
+  padding-bottom: 0.25em;
+  display: inline-block;
+}
+
+// Small Headline – z. B. für Sidebars oder Metaelemente
+.c-headline--small {
+  font-size: typo.fluid-size(1.25rem, 1.5rem);
+  font-weight: v.$font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: v.$color-text-light;
+}
+
+// ------------------------------------------------------
+// 3. Subline
+// ------------------------------------------------------
+
+.c-subline {
+  font-family: v.$font-body;
+  font-size: typo.fluid-size(1rem, 1.25rem);
+  color: v.$color-text-light;
+  margin-top: -0.25em;
+  margin-bottom: 1.5em;
+  text-align: inherit;
+}
+
+// ------------------------------------------------------
+// 4. Kombinationen (Hero + Subline, Section + Small etc.)
+// ------------------------------------------------------
+
+.c-headline--hero + .c-subline {
+  font-size: typo.fluid-size(1.25rem, 1.5rem);
+  color: v.$color-primary-light;
+}
+
+.c-headline--section + .c-subline {
+  font-size: typo.fluid-size(0.95rem, 1.1rem);
+  color: v.$color-text-light;
+}
+
+// ------------------------------------------------------
+// Ende der Headline-Komponenten
+// ======================================================

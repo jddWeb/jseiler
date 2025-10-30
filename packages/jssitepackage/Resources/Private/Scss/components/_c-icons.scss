@@ -1,0 +1,104 @@
+// ======================================================
+// components/_c-icons.scss
+// SVG-Icons – skalierbar, zugänglich, minimalistisch
+// ======================================================
+
+@use "sass:color";
+@use "../base/b-variables" as v;
+
+// ------------------------------------------------------
+// 1. Grundstruktur
+// ------------------------------------------------------
+
+.c-icon {
+  display: inline-block;
+  width: 1.25em;
+  height: 1.25em;
+  line-height: 1;
+  vertical-align: middle;
+  fill: currentColor;
+  transition: fill 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &--large   { width: 2em;   height: 2em; }
+  &--small   { width: 0.9em; height: 0.9em; }
+
+  &--primary   { color: v.$color-primary; }
+  &--secondary { color: v.$color-secondary; }
+  &--light     { color: v.$color-text-light; }
+  &--white     { color: #fff; }
+}
+
+// ------------------------------------------------------
+// 2. Inline-Nutzung (<svg><use></use></svg>)
+// ------------------------------------------------------
+
+.c-icon use {
+  pointer-events: none;
+}
+
+// ------------------------------------------------------
+// 3. Kombinierte Inline-Elemente (Text + Icon)
+// ------------------------------------------------------
+
+.c-icon-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  svg {
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+}
+
+// ------------------------------------------------------
+// 4. Anwendungsbeispiele / Utilities
+// ------------------------------------------------------
+
+// Topbar (Telefon & Mail)
+.c-icon--phone,
+.c-icon--mail {
+  margin-right: 0.35rem;
+  color: v.$color-primary;
+}
+
+// Social Media (runde Buttons)
+.c-icon--social {
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0.4rem;
+  border-radius: 50%;
+  border: 1px solid rgba(v.$color-text-light, 0.25);
+  color: v.$color-secondary;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background-color: v.$color-primary;
+    border-color: v.$color-primary;
+    color: #fff;
+  }
+}
+
+// ------------------------------------------------------
+// 5. Dark Mode Anpassungen
+// ------------------------------------------------------
+
+@media (prefers-color-scheme: dark) {
+  .c-icon {
+    color: lighten(v.$color-text-light, 20%);
+  }
+
+  .c-icon--social {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+// ======================================================
+// Ende
+// ======================================================

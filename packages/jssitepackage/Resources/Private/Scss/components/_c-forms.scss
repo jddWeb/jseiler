@@ -1,0 +1,194 @@
+// ======================================================
+// components/_c-forms.scss
+// Formulare – minimalistisch, klar, an artburg.com angelehnt
+// ======================================================
+
+@use '../base/b-variables' as v;
+@use './c-typography' as typo;
+
+// ------------------------------------------------------
+// 1. Grundlayout
+// ------------------------------------------------------
+
+.c-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 640px;
+  margin: 0 auto;
+  font-family: v.$font-body;
+  color: v.$color-text;
+
+  label {
+    display: block;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    color: v.$color-secondary;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: v.$font-size-base;
+    font-family: inherit;
+    color: v.$color-text;
+    border: 1px solid lighten(v.$color-text-light, 20%);
+    border-radius: 6px;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-primary;
+      box-shadow: 0 0 0 3px rgba(v.$color-primary, 0.15);
+    }
+
+    &::placeholder {
+      color: lighten(v.$color-text-light, 15%);
+    }
+
+    &:disabled {
+      background: v.$color-bg-light;
+      color: v.$color-text-light;
+      cursor: not-allowed;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 6rem;
+  }
+
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='10'><path fill='%236C757D' d='M7 10L0 0h14z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 10px auto;
+  }
+
+  .c-form__group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .c-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: v.$gutter;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .c-form__note {
+    font-size: v.$font-size-small;
+    color: v.$color-text-light;
+  }
+
+  .c-form__checkbox,
+  .c-form__radio {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    input {
+      width: auto;
+      accent-color: v.$color-primary;
+    }
+
+    label {
+      margin: 0;
+      font-weight: 400;
+      color: v.$color-text;
+    }
+  }
+
+  .c-form__button {
+    align-self: flex-start;
+    background-color: v.$color-primary;
+    color: #fff;
+    border: none;
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      background-color: v.$color-primary-light;
+      transform: translateY(-2px);
+    }
+
+    &:disabled {
+      background-color: lighten(v.$color-primary, 30%);
+      cursor: not-allowed;
+    }
+  }
+
+  // Fehlermeldungen
+  .c-form__error {
+    color: #d33;
+    font-size: v.$font-size-small;
+    margin-top: 0.3rem;
+  }
+
+  // Erfolgsnachricht
+  .c-form__success {
+    background: rgba(v.$color-primary, 0.1);
+    color: v.$color-primary;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: v.$font-size-small;
+    text-align: center;
+  }
+}
+
+// ------------------------------------------------------
+// 2. Dunkles Layout (z. B. für Footer-Formulare)
+// ------------------------------------------------------
+
+.c-form--dark {
+  color: #fff;
+
+  label {
+    color: #fff;
+  }
+
+  input,
+  textarea,
+  select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:focus {
+      border-color: v.$color-primary-light;
+      box-shadow: 0 0 0 3px rgba(v.$color-primary-light, 0.25);
+    }
+  }
+
+  .c-form__button {
+    background-color: #fff;
+    color: v.$color-secondary;
+
+    &:hover {
+      background-color: v.$color-primary-light;
+      color: #fff;
+    }
+  }
+}
+
+// ------------------------------------------------------
+// Ende des Formular-Moduls
+// ======================================================

@@ -1,0 +1,27 @@
+// abstracts/_debug.scss
+@use 'sass:meta';
+@use 'sass:color';
+@use 'abstracts/config' as cfg;
+
+/// universelles Debug-Mixin
+@mixin debug-var($label, $value) {
+  @if cfg.$debug == true {
+    @debug "[DEBUG] #{$label}: #{meta.inspect($value)}";
+
+    body::after {
+      content: "[DEBUG] #{$label}: #{meta.inspect($value)}";
+      display: block;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.85);
+      color: #0f0;
+      font-family: monospace;
+      font-size: 0.75rem;
+      padding: 0.3rem 0.6rem;
+      white-space: pre;
+      z-index: 99999;
+    }
+  }
+}

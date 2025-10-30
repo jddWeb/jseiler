@@ -1,0 +1,45 @@
+// ======================================================
+// abstracts/_mixins.scss
+// Globale Mixins: responsive, utility, struktur
+// ======================================================
+
+@use 'sass:map';
+
+// ---------------------------------------------
+// Breakpoints (semantisch benannt)
+// ---------------------------------------------
+$breakpoints: (
+        'xs': 480px,
+        'sm': 640px,
+        'md': 768px,
+        'lg': 1024px,
+        'xl': 1280px,
+        'xxl': 1600px
+);
+
+// ---------------------------------------------
+// Mixin: respond()
+// Nutzung: @include respond('md') { ... }
+// ---------------------------------------------
+@mixin respond($bp, $type: 'min') {
+  $value: map.get($breakpoints, $bp);
+
+  @if $value == null {
+    @warn 'Breakpoint "#{$bp}" ist nicht definiert.';
+  } @else if $type == 'max' {
+    @media (max-width: $value) { @content; }
+  } @else {
+    @media (min-width: $value) { @content; }
+  }
+}
+
+// ---------------------------------------------
+// Clearfix
+// ---------------------------------------------
+@mixin clearfix {
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}

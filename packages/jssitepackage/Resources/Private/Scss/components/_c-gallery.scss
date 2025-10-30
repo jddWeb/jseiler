@@ -1,0 +1,138 @@
+// ======================================================
+// components/_c-gallery.scss
+// Mehrbild-Layouts (Galerien, Moodboards, Bildgruppen)
+// ======================================================
+
+@use '../base/b-variables' as v;
+
+// ------------------------------------------------------
+// 1. Grundstruktur
+// ------------------------------------------------------
+
+.c-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: v.$gutter;
+  margin: 3rem auto;
+  max-width: v.$max-content-width;
+
+  figure {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: v.$shadow-soft;
+    background: v.$color-bg-light;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease, filter 0.3s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+      filter: brightness(1.1);
+    }
+
+    figcaption {
+      font-size: v.$font-size-small;
+      color: v.$color-text-light;
+      text-align: center;
+      padding: 0.75rem;
+    }
+  }
+}
+
+// ------------------------------------------------------
+// 2. Varianten
+// ------------------------------------------------------
+
+// Große Galerie mit betonten Bildverhältnissen
+.c-gallery--large {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: v.$gutter * 1.5;
+}
+
+// Quadratische Galerie für Moodboards oder Logos
+.c-gallery--square {
+  figure {
+    aspect-ratio: 1 / 1;
+  }
+}
+
+// Galerie mit unterschiedlichen Spaltenbreiten (Masonry-Style)
+// Rein visuell, kein echtes JS-Masonry nötig
+.c-gallery--masonry {
+  grid-auto-rows: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+
+  figure {
+    grid-row: span 30; // Basishöhe
+    img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &:nth-child(3n) {
+      grid-row: span 40;
+    }
+    &:nth-child(5n) {
+      grid-row: span 20;
+    }
+  }
+}
+
+// ------------------------------------------------------
+// 3. Lightbox-Unterstützung
+// ------------------------------------------------------
+//
+// Du kannst jede Galerie optional mit einer Lightbox-Lösung verbinden
+// (z. B. GLightbox, Photoswipe oder Fancybox). Dafür:
+//
+.c-gallery__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover,
+  &:focus {
+    outline: none;
+
+    img {
+      transform: scale(1.05);
+      filter: brightness(1.15);
+    }
+  }
+}
+
+// ------------------------------------------------------
+// 4. Kombination mit Headlines und Texten
+// ------------------------------------------------------
+
+.c-headline + .c-gallery {
+  margin-top: 2rem;
+}
+
+.c-gallery + .c-textblock {
+  margin-top: 2rem;
+}
+
+// ------------------------------------------------------
+// Ende des Galerie-Moduls
+// ======================================================
+
+
+// Verwendung im Fluid-Template
+//
+// <section class="c-gallery c-gallery--large">
+// <f:for each="{images}" as="file">
+// <figure>
+// <a href="{file.publicUrl}" class="c-gallery__link" data-lightbox="gallery">
+// <img src="{file.publicUrl}" alt="{file.alternative}">
+// </a>
+// <figcaption>{file.description}</figcaption>
+// </figure>
+// </f:for>
+// </section>

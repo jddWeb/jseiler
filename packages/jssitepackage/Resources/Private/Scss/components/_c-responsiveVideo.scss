@@ -1,0 +1,87 @@
+// ======================================================
+// components/_c-responsiveVideo.scss
+// Responsive Video Wrapper mit Caption & Poster
+// ======================================================
+
+// ---------------------------------------------
+// 1. Imports
+// ---------------------------------------------
+@use '../abstracts/a-mixins' as m;   // für respond(), clearfix etc.
+@use '../abstracts/a-helpers' as h;  // für hyphens(), flex-center etc.
+@use '../base/b-variables' as v;     // für Farben, Fonts, Breakpoints usw.
+
+// ---------------------------------------------
+// 2. Grundstruktur
+// ---------------------------------------------
+figure.video {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 0 2rem;
+  text-align: center;
+
+  @include m.respond('md') {
+    margin-bottom: 2.5rem;
+  }
+}
+
+// ---------------------------------------------
+// 3. Video-Wrapper
+// ---------------------------------------------
+.video-embed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  width: 100%;
+  background: #000;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+
+  iframe,
+  video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.4s ease;
+  }
+
+  &.has-poster::before {
+    opacity: 1;
+  }
+
+  &.is-playing::before {
+    opacity: 0;
+  }
+}
+
+// ---------------------------------------------
+// 4. Figcaption
+// ---------------------------------------------
+figcaption {
+  font-family: v.$font-body;
+  font-size: v.$font-size-small;
+  color: v.$color-text-light;
+  max-width: 80%;
+  line-height: 1.4;
+
+  @include h.hyphens; // dein Silbentrennungs-Mixin
+}
+
+// ---------------------------------------------
+// 5. TYPO3-Kompatibilität
+// ---------------------------------------------
+.frame-layout-5 .ce-gallery figure.video {
+  display: flex;
+}

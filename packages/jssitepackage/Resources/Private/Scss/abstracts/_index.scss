@@ -1,0 +1,27 @@
+// ======================================================
+// abstracts/_index.scss
+// Zentrale Sammelstelle für alle Abstraktionsebenen
+// (Variablen, Mixins, Hilfsfunktionen, Debug)
+// ======================================================
+
+// ------------------------------
+// 1. Sass-Builtins
+// ------------------------------
+@use 'sass:meta';
+@use 'sass:map';
+@use 'sass:color';
+
+// ------------------------------
+// 2. Eigene Abstracts-Module
+// ------------------------------
+@forward 'a-helpers';
+@forward 'a-mixins';
+@forward 'a-config';
+
+// ------------------------------
+// 3. Optionale: Utilities prüfen
+// ------------------------------
+// Du kannst hier globale Debug-Ausgaben aktivieren:
+@if meta.global-variable-exists(debug) {
+  @debug "Debug-Mode aktiv in abstracts!";
+}

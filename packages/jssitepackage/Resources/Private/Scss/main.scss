@@ -1,0 +1,17 @@
+// ======================================================
+// main.scss
+// Haupt-Entry für das gesamte TYPO3-Sitepackage
+//
+// Starten aus sitepackage heraus mit:  ./sass-watch.sh
+// ======================================================
+
+// 1. Systemische Ebenen
+@use 'abstracts/index' as *;
+@use 'base/index' as base;
+
+// 2. Layout- und Struktur-Ebene
+@use 'layout/index' as layout;
+
+// 3. Komponenten und Content
+@use 'components/index' as comp;
+@use 'content-elements/index' as ce;

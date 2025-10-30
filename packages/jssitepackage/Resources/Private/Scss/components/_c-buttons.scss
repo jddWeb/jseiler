@@ -1,0 +1,47 @@
+// ======================================================
+// _c-buttons.scss – saubere, funktionierende Variante
+// ======================================================
+
+@use '../base/b-variables' as v;
+
+// ---------- Mixins ----------
+@mixin button-base($bg, $color) {
+  display: inline-block;
+  padding: 0.6em 1.4em;
+  border-radius: 8px;
+  border: none;
+  background-color: $bg;
+  color: $color;
+  font-family: v.$font-heading;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+// ---------- Varianten ----------
+@mixin button-primary {
+  @include button-base(v.$color-primary, #fff);
+
+  &:hover {
+    background-color: v.$color-primary-light;
+  }
+}
+
+@mixin button-secondary {
+  @include button-base(transparent, v.$color-primary);
+  border: 2px solid v.$color-primary;
+
+  &:hover {
+    background-color: v.$color-primary;
+    color: #fff;
+  }
+}
+
+// ---------- Klassen ----------
+.btn {
+  @include button-primary;
+}
+
+.btn--secondary {
+  @include button-secondary;
+}

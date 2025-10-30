@@ -1,0 +1,29 @@
+// ======================================================
+// base/_b-reset.scss
+// ======================================================
+
+@use 'b-variables' as v;
+@use 'b-fonts' as f;
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: v.$font-body;
+  color: v.$color-text;
+  background-color: v.$color-bg-light;
+  line-height: v.$line-height-base;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}

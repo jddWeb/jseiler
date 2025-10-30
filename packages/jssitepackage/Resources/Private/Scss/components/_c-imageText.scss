@@ -1,0 +1,196 @@
+// ======================================================
+// components/_c-imageText.scss
+// Kombiniertes Layout für Bild + Text (z. B. CE Text/Bild)
+// ======================================================
+
+@use '../base/b-variables' as v;
+@use './c-textblock' as text;
+@use './c-typography' as typo;
+
+// ------------------------------------------------------
+// 1. Grundstruktur
+// ------------------------------------------------------
+
+.c-imageText {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: v.$gutter * 1.5;
+  align-items: center;
+  margin-bottom: 4rem;
+  max-width: v.$max-content-width;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: v.$gutter;
+  }
+
+  &__image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: v.$shadow-soft;
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+
+    figcaption {
+      font-size: v.$font-size-small;
+      color: v.$color-text-light;
+      text-align: center;
+      margin-top: 0.5rem;
+      line-height: 1.3;
+    }
+  }
+
+  &__text {
+    @extend .c-textblock;
+  }
+}
+
+// ------------------------------------------------------
+// 2. Varianten (Layout-Ausrichtungen)
+// ------------------------------------------------------
+
+// Bild rechts
+.c-imageText--imageRight {
+  grid-template-areas: "text image";
+
+  @media (max-width: 900px) {
+    grid-template-areas:
+      "image"
+      "text";
+  }
+
+  & > .c-imageText__text {
+    grid-area: text;
+  }
+
+  & > .c-imageText__image {
+    grid-area: image;
+  }
+}
+
+// Bild links
+.c-imageText--imageLeft {
+  grid-template-areas: "image text";
+
+  @media (max-width: 900px) {
+    grid-template-areas:
+      "image"
+      "text";
+  }
+
+  & > .c-imageText__image {
+    grid-area: image;
+  }
+
+  & > .c-imageText__text {
+    grid-area: text;
+  }
+}
+
+// Bild oben
+.c-imageText--imageTop {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "image"
+    "text";
+
+  & > .c-imageText__image {
+    grid-area: image;
+  }
+
+  & > .c-imageText__text {
+    grid-area: text;
+  }
+}
+
+// Bild unten
+.c-imageText--imageBottom {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "text"
+    "image";
+
+  & > .c-imageText__text {
+    grid-area: text;
+  }
+
+  & > .c-imageText__image {
+    grid-area: image;
+  }
+}
+
+// ------------------------------------------------------
+// 3. Erweiterte Gestaltung
+// ------------------------------------------------------
+
+// Bild mit Overlay-Titel
+.c-imageText__image--overlay {
+  position: relative;
+  color: #fff;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    transition: opacity 0.4s ease;
+  }
+
+  .c-imageText__caption {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    font-family: v.$font-heading;
+    font-size: typo.fluid-size(1.25rem, 1.75rem);
+    z-index: 2;
+  }
+
+  &:hover::after {
+    opacity: 0.6;
+  }
+}
+
+// ------------------------------------------------------
+// 4. Kombination mit Headlines
+// ------------------------------------------------------
+
+.c-headline + .c-imageText {
+  margin-top: 2rem;
+}
+
+.c-imageText + .c-headline {
+  margin-top: 3rem;
+}
+
+// ------------------------------------------------------
+// Ende des Bild-Text-Moduls
+// ======================================================
+
+
+// Beispiel im Fluid:
+//
+// <section class="c-imageText c-imageText--imageLeft">
+//  <figure class="c-imageText__image">
+//    <img src="{file.publicUrl}" alt="{file.alternative}">
+//    <figcaption>{file.description}</figcaption>
+// </figure>
+//
+// <div class="c-imageText__text">
+//  <f:format.html>{data.bodytext}</f:format.html>
+// </div>
+// </section>
+//

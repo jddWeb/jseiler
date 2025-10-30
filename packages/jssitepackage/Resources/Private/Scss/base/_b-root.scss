@@ -1,0 +1,21 @@
+// ======================================================
+// base/_b-root.scss
+// ======================================================
+
+@use 'b-variables' as v;
+
+.container {
+  max-width: v.$max-content-width;
+  margin: 0 auto;
+  padding: 0 v.$gutter;
+}
+
+section {
+  padding: v.$section-padding;
+}
+
+header,
+footer {
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}

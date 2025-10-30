@@ -1,0 +1,151 @@
+// ======================================================
+// components/_c-quote.scss
+// Zitate, Testimonials, Statements
+// ======================================================
+
+@use '../base/b-variables' as v;
+@use './c-typography' as typo;
+
+// ------------------------------------------------------
+// 1. Grundstruktur
+// ------------------------------------------------------
+
+.c-quote {
+  max-width: 70ch;
+  margin: 3rem auto;
+  text-align: center;
+  font-family: v.$font-heading;
+  color: v.$color-secondary;
+  line-height: 1.4;
+  position: relative;
+
+  &__text {
+    font-size: typo.fluid-size(1.4rem, 2rem);
+    font-weight: v.$font-weight-medium;
+    position: relative;
+    z-index: 2;
+
+    &::before,
+    &::after {
+      font-family: v.$font-heading;
+      font-size: 4rem;
+      color: v.$color-primary-light;
+      opacity: 0.3;
+      position: absolute;
+      line-height: 0;
+    }
+
+    &::before {
+      content: "“";
+      left: -1rem;
+      top: -1rem;
+    }
+
+    &::after {
+      content: "”";
+      right: -1rem;
+      bottom: -1rem;
+    }
+  }
+
+  &__author {
+    font-family: v.$font-body;
+    font-size: v.$font-size-small;
+    color: v.$color-text-light;
+    margin-top: 1rem;
+    display: block;
+  }
+}
+
+// ------------------------------------------------------
+// 2. Varianten
+// ------------------------------------------------------
+
+// Variante mit Porträtbild (z. B. Testimonials)
+.c-quote--portrait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .c-quote__image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    box-shadow: v.$shadow-soft;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .c-quote__text {
+    font-size: typo.fluid-size(1.2rem, 1.6rem);
+    margin-bottom: 0.5rem;
+  }
+}
+
+// Variante für Pressestimmen (mit Logo statt Porträt)
+.c-quote--press {
+  .c-quote__logo {
+    max-width: 100px;
+    margin: 1rem auto;
+    opacity: 0.7;
+  }
+
+  .c-quote__author {
+    font-weight: 500;
+    color: v.$color-primary;
+  }
+}
+
+// ------------------------------------------------------
+// 3. Kombinationen
+// ------------------------------------------------------
+
+.c-textblock + .c-quote {
+  margin-top: 2.5rem;
+}
+
+.c-quote + .c-gallery {
+  margin-top: 3rem;
+}
+
+// ------------------------------------------------------
+// Ende des Zitat-Moduls
+// ======================================================
+
+
+// 📘 Verwendung im Template
+//
+// Variante 1 – klassisches Zitat
+//
+// <blockquote class="c-quote">
+// <p class="c-quote__text">„Wissen ist die einzige Ressource, die sich vermehrt, wenn man sie teilt.“</p>
+// <cite class="c-quote__author">– Jens Seiler</cite>
+// </blockquote>
+//
+//
+//   Variante 2 – Testimonial mit Porträt
+//
+// <blockquote class="c-quote c-quote--portrait">
+// <div class="c-quote__image">
+// <img src="portrait.jpg" alt="Teilnehmerportrait">
+// </div>
+// <p class="c-quote__text">„Das Gedächtnistraining hat meine Lernweise komplett verändert!“</p>
+// <cite class="c-quote__author">Sabine M., Seminarteilnehmerin</cite>
+// </blockquote>
+//
+//
+//   Variante 3 – Pressestimme
+//
+// <blockquote class="c-quote c-quote--press">
+// <p class="c-quote__text">„Ein Trainer, der Wissen mit Charme und Struktur vermittelt.“</p>
+// <div class="c-quote__logo">
+// <img src="logo-zeitung.svg" alt="Logo der Zeitung">
+// </div>
+// <cite class="c-quote__author">Redaktion KulturSpiegel</cite>
+// </blockquote>

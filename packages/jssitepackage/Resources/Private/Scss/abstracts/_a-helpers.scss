@@ -1,0 +1,53 @@
+// ======================================================
+// abstracts/_a-helpers.scss
+// Globale Utilities & Base-Referenzen
+// ======================================================
+
+// --- Imports immer ganz oben ---
+@use 'sass:meta';
+@use '../base/b-variables' as v;
+@use '../base/b-fonts' as f;
+@use '../base/b-reset' as reset;
+@use '../base/b-root' as r;
+
+// --------------------------------------
+// Hilfs-Mixins und Utilities
+// --------------------------------------
+
+@mixin hyphens {
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+}
+
+@mixin visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+@mixin outline($color: magenta) {
+  outline: 1px solid $color;
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin respond-min($width) {
+  @media (min-width: $width) {
+    @content;
+  }
+}
+
+@mixin respond-max($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}

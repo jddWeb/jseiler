@@ -1,0 +1,28 @@
+// ======================================================
+// components/_index.scss
+// Komponenten-Übersicht
+// ======================================================
+
+// 1. Basistypografie (muss zuerst kommen)
+@use 'c-typography' as *;
+@use 'c-textblock' as *;
+@use 'c-imageText' as *;
+@use 'c-quote' as *;
+
+// 2. Headlines & Sublines
+@use 'c-headline' as *;
+
+// 3. Buttons
+@use 'c-buttons' as *;
+
+// 4. Weitere Komponenten
+@use 'c-cards' as *;
+@use 'c-forms' as *;
+@use 'c-responsiveVideo' as *;
+@use 'c-gallery' as *;
+@use 'c-icons' as *;
+@use 'c-topbar' as *;
+
+// ======================================================
+// Ende der Komponenten-Sammlung
+// ======================================================

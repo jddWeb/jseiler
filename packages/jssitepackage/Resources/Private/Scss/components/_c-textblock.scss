@@ -1,0 +1,144 @@
+// ======================================================
+// components/_c-textblock.scss
+// Gestaltungs-Layouts für redaktionelle Textinhalte
+// ======================================================
+
+@use '../base/b-variables' as v;
+@use './c-typography' as typo;
+
+// ------------------------------------------------------
+// 1. Basis
+// ------------------------------------------------------
+//
+// Der Standard-Textblock legt Breite, Rhythmus und Abstände fest.
+// Diese Klasse kannst du direkt im Fluid-Template oder in TypoScript zuweisen.
+
+.c-textblock {
+  max-width: 70ch; // optimale Leselänge
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2.5rem;
+  font-family: v.$font-body;
+  font-size: typo.fluid-size(0.95rem, 1rem);
+  line-height: v.$line-height-base;
+  color: v.$color-text;
+
+  p {
+    margin-bottom: 1.2em;
+  }
+
+  a {
+    color: v.$color-primary;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: v.$color-primary-light;
+    }
+  }
+
+  ul,
+  ol {
+    margin: 1.2em 0 1.2em 1.5em;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 0.5em;
+  }
+
+  strong {
+    font-weight: v.$font-weight-bold;
+  }
+
+  em {
+    font-style: italic;
+  }
+}
+
+// ------------------------------------------------------
+// 2. Varianten
+// ------------------------------------------------------
+
+// Schmale Spalten (z. B. für Seitenspalten oder Interviews)
+.c-textblock--narrow {
+  max-width: 50ch;
+}
+
+// Breite Textbereiche (z. B. Landingpages, Story-Abschnitte)
+.c-textblock--wide {
+  max-width: 90ch;
+}
+
+// Zweispaltig (ideal für Magazinlayouts)
+.c-textblock--columns {
+  column-count: 2;
+  column-gap: v.$gutter * 1.5;
+
+  p, ul, ol {
+    break-inside: avoid;
+  }
+
+  @media (max-width: 768px) {
+    column-count: 1;
+  }
+}
+
+// Centered für intros oder Zitatzonen
+.c-textblock--center {
+  text-align: center;
+  max-width: 65ch;
+  margin: 0 auto 2rem;
+}
+
+// ------------------------------------------------------
+// 3. Spezialfälle
+// ------------------------------------------------------
+
+// Intro-Abschnitt mit größerem Schriftgrad und weicherem Zeilenfluss
+.c-textblock--intro {
+  font-size: typo.fluid-size(1.1rem, 1.3rem);
+  line-height: 1.7;
+  color: v.$color-text-light;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+// Zitat-Elemente (als Stilzitat oder Highlight)
+.c-textblock--quote {
+  font-family: v.$font-heading;
+  font-size: typo.fluid-size(1.5rem, 2rem);
+  font-weight: v.$font-weight-medium;
+  color: v.$color-secondary;
+  line-height: 1.4;
+  max-width: 60ch;
+  margin: 2.5rem auto;
+  position: relative;
+
+  &::before {
+    content: "“";
+    font-size: 4rem;
+    line-height: 0.5;
+    position: absolute;
+    left: -0.5rem;
+    top: -0.5rem;
+    color: v.$color-primary-light;
+    opacity: 0.4;
+  }
+}
+
+// ------------------------------------------------------
+// 4. Kombination mit Headlines
+// ------------------------------------------------------
+
+.c-headline + .c-textblock {
+  margin-top: 1.25rem;
+}
+
+.c-textblock + .c-headline {
+  margin-top: 3rem;
+}
+
+// ------------------------------------------------------
+// Ende des Textblock-Moduls
+// ======================================================
