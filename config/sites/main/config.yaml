@@ -1,5 +1,6 @@
 base: 'https://jseiler.ddev.site/'
-errorHandling: {  }
+dependencies:
+  - jensseiler/jssitepackage
 languages:
   -
     title: English
@@ -10,4 +11,4 @@ languages:
     navigationTitle: English
     flag: us
 rootPageId: 1
-routes: {  }
+websiteTitle: ''
