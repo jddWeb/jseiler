@@ -1,19 +1,6 @@
+<f:asset.css identifier="main" href="EXT:jssitepackage/Resources/Public/Css/main.css" />
 <f:layout name="PageLayout" />
 <f:section name="Main">
-
-    <div style="background-color: yellow; padding: 0.5em 1em;">
-        <dl>
-            <dt>Template file</dt>
-            <dd>
-                <code>packages/jssitepackage/Resources/Private/PageView/Pages/Default.html</code>
-            </dd>
-            <dt>Backend Configuration</dt>
-            <dd>
-                <code>packages/jssitepackage/Configuration/Sets/SitePackage/PageTsConfig/BackendLayouts/default.tsconfig</code>
-            </dd>
-        </dl>
-    </div>
-
     <f:render partial="Content" arguments="{records: content.main.records}"/>
-
 </f:section>
+<f:asset.script identifier="main" src="EXT:site_package/Resources/Public/JavaScript/main.js" />

@@ -1,0 +1,6 @@
+pageTree.showPageIdWithTitle = 1
+
+option {
+    showDuplicate = 1
+    clearCache.all = 1
+}
