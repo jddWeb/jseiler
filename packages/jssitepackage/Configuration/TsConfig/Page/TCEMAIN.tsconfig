@@ -1,0 +1,30 @@
+########################################################
+# TCEMAIN.tsconfig – Standardrechte & Verhalten beim Erstellen
+########################################################
+
+# -------------------------------------------------------
+# 1. Custom Content Block "QuoteBox" importieren
+# -------------------------------------------------------
+# @import 'EXT:jssitepackage/ContentBlocks/QuoteBox/QuoteBox.tsconfig'
+
+# -------------------------------------------------------
+# 2. Standard-Berechtigungen für neue Seiten
+# -------------------------------------------------------
+TCEMAIN {
+  permissions {
+    # Owner (Backend User ID) für neue Seiten
+    userid = 2
+
+    # Owner Group (Backend Group ID) für neue Seiten
+    groupid = 1
+
+    # Rechte des Owners
+    user = show,edit,delete,new,editcontent
+
+    # Rechte der Gruppe
+    group = show,edit,delete,new,editcontent
+
+    # Rechte für "alle anderen"
+    everybody =
+  }
+}

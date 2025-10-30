@@ -1,0 +1,62 @@
+########################################################
+# TCEFORM.tsconfig – Steuerung der Felder in Formulareditoren
+########################################################
+
+TCEFORM {
+  pages {
+    # General
+    nav_title.disabled = 0
+    subtitle.disabled = 1
+
+    # Metadata
+    abstract.disabled = 1
+    author.disabled = 1
+    author_email.disabled = 1
+    lastUpdated.disabled = 1
+    keywords.disabled = 1
+
+    # Appearance
+    layout.disabled = 1
+    newUntil.disabled = 1
+
+    # Behavior
+    cache_timeout.disabled = 1
+    cache_tags.disabled = 1
+    no_cache.disabled = 0
+
+    # Resources
+    TSconfig.disabled = 0
+
+    # Categories
+    categories.disabled = 1
+
+    # Access
+    fe_group.disabled = 1
+    fe_login_mode.disabled = 1
+
+    # Notes
+    rowDescription.disabled = 1
+  }
+
+  tt_content {
+    layout.removeItems = 1, 2, 3
+
+    header_layout.altLabels {
+      1 = Headline H1
+      2 = Headline H2
+      3 = Headline H3
+      4 = Headline H4
+      5 = Headline H5
+      6 = Headline H6
+    }
+
+    imageorient.removeItems = 1,2,9,10
+    imagecols.keepItems = 1,2,3,4,6
+
+    frame_class.disabled = 1
+    layout.disabled = 0
+    space_before_class.disabled = 1
+    space_after_class.disabled = 1
+    linkToTop.disabled = 1
+  }
+}

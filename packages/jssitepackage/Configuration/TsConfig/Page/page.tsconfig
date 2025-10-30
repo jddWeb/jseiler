@@ -1,6 +1,6 @@
 ########################################################
 # Page.tsconfig – Hauptkonfiguration für Backend (TYPO3 13.4)
-# Lädt BackendLayouts modular aus separaten Dateien
+# Lädt BackendLayouts, TCEFORM & TCEMAIN modular
 ########################################################
 
 # -------------------------------------------------------
@@ -11,21 +11,20 @@
 @import 'EXT:jssitepackage/Configuration/TsConfig/Page/BackendLayouts/TerminTemplate.tsconfig'
 
 # -------------------------------------------------------
-# 2. Standard Backend Layout für neue Seiten
+# 2. TCEFORM- und TCEMAIN-Konfigurationen importieren
+# -------------------------------------------------------
+@import 'EXT:jssitepackage/Configuration/TsConfig/Page/TCEFORM.tsconfig'
+@import 'EXT:jssitepackage/Configuration/TsConfig/Page/TCEMAIN.tsconfig'
+
+# -------------------------------------------------------
+# 3. Standard Backend Layout für neue Seiten
 # -------------------------------------------------------
 TCAdefaults.pages.backend_layout = jssitepackage__MainTemplate
 TCAdefaults.pages.backend_layout_next_level = jssitepackage__MainTemplate
 
 # -------------------------------------------------------
-# 3. Allgemeine Backend-Einstellungen
+# 4. Allgemeine Backend-Einstellungen
 # -------------------------------------------------------
-TCEFORM {
-  tt_content {
-    # Entferne alte Inhaltselemente
-    CType.removeItems = textpic, image
-  }
-}
-
 mod {
   web_list {
     # Sinnvolle Spalten im Listenmodul
@@ -37,3 +36,8 @@ mod {
     defaultLanguageLabel = Deutsch
   }
 }
+
+# -------------------------------------------------------
+# 5. Sichtbarer Test
+# -------------------------------------------------------
+options.pageTree.showPageIdWithTitle = 1
