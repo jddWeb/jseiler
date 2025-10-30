@@ -1,0 +1,15 @@
+########################################################
+# User.tsconfig – Benutzerspezifische Backend-Einstellungen
+########################################################
+
+# Zeigt Seiten-IDs im Seitenbaum
+options.pageTree.showPageIdWithTitle = 1
+
+# Aktiviert das Admin Panel (Frontend-Debug)
+admPanel.enable = 1
+
+# Zusätzliche Optionen im Backend
+options {
+    showDuplicate = 1
+    clearCache.all = 1
+}
