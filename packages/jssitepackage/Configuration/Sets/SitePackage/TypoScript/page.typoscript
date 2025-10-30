@@ -1,6 +1,6 @@
 ########################################################
 # page.typoscript – TYPO3 13.4 LTS
-# Deaktiviert das Core-Rendering und definiert das eigene PAGE-Objekt
+# Eigenes PAGE-Objekt mit DataProcessing für Menüs & Inhalte
 ########################################################
 
 # 1️⃣ Vorhandene PAGE-Definition (vom Core oder anderen Sets) löschen
@@ -28,15 +28,22 @@ page {
         # Template-Datei (Main.html)
         templateName = Main
 
+        ########################################################
         # DataProcessing – Menü und Inhalte
+        ########################################################
         dataProcessing {
+            # Hauptmenü
             10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
             10 {
                 levels = 2
-                includeSpacer = 1
+                includeSpacer = 0
+                expandAll = 0
                 as = menuMain
+                titleField = nav_title // title
+                entryLevel = 0
             }
 
+            # Hauptinhalts-Spalte
             20 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
             20 {
                 table = tt_content
@@ -46,23 +53,37 @@ page {
                 as = contentMain
             }
 
+            # Seitenleiste (z. B. colPos 1)
             30 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
             30 {
-              table = tt_content
-              pidInList.field = uid
-              orderBy = sorting
-              where = colPos = 1
-              as = contentAside
+                table = tt_content
+                pidInList.field = uid
+                orderBy = sorting
+                where = colPos = 1
+                as = contentAside
             }
 
-            40 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
+            # Footer-Menü (fester Seitenbaum oder manuell definierte Seiten)
+            40 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
             40 {
+                special = list
+                special.value = 12,13
+                includeSpacer = 0
+                as = menuFooter
+                titleField = nav_title // title
+            }
+
+            # Dateien (z. B. Medienanhänge)
+            50 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
+            50 {
                 references.fieldName = media
             }
         }
     }
 
+    ########################################################
     # Meta-Tags
+    ########################################################
     meta {
         viewport = width=device-width, initial-scale=1.0
         robots = index,follow
@@ -71,16 +92,20 @@ page {
         author = Jens Seiler
     }
 
+    ########################################################
     # Stylesheets
+    ########################################################
     includeCSS {
         jssitepackage_layout = EXT:jssitepackage/Resources/Public/Css/layout.css
     }
 
+    ########################################################
     # JavaScript
+    ########################################################
     includeJSFooter {
         jssitepackage_scripts = EXT:jssitepackage/Resources/Public/JavaScript/main.js
     }
 
-    # Favicon (optional)
+    # Favicon
     shortcutIcon = EXT:jssitepackage/Resources/Public/Icons/favicon.ico
 }
