@@ -61,4 +61,6 @@ page {
     includeJSFooter {
         jssitepackage_scripts = EXT:jssitepackage/Resources/Public/JavaScript/main.js
     }
+
+    shortcutIcon = {$JSsitepackage.favicon}
 }
