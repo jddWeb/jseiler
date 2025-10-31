@@ -1,19 +1,25 @@
 ########################################################
-# page.typoscript – TYPO3 13.4 LTS
-# Eigenes PAGE-Objekt mit DataProcessing für Menüs & Inhalte
+# page.typoscript – JS Sitepackage für TYPO3 13.4 LTS
+# -----------------------------------------------------
+# Eigenes PAGE-Objekt mit FLUIDTEMPLATE und DataProcessing
+# für Navigation, Content-Spalten, Footer-Menü und Medien
 ########################################################
 
-# 1️⃣ Vorhandene PAGE-Definition (vom Core oder anderen Sets) löschen
+# Vorhandene PAGE-Definition löschen
 page >
 
-# 2️⃣ Eigenes PAGE-Objekt definieren
+# Neues PAGE-Objekt
 page = PAGE
 page {
     typeNum = 0
-    shortcutIcon = EXT:jssitepackage/Resources/Public/Icons/favicon.ico
 
+    ########################################################
+    # FLUIDTEMPLATE: Struktur und Pfade
+    ########################################################
     10 = FLUIDTEMPLATE
     10 {
+        templateName = Main
+
         # Template-Pfade
         templateRootPaths {
             10 = EXT:jssitepackage/Resources/Private/PageView/Templates/
@@ -25,25 +31,22 @@ page {
             10 = EXT:jssitepackage/Resources/Private/PageView/Partials/
         }
 
-        # Template-Datei (Main.html)
-        templateName = Main
-
         ########################################################
-        # DataProcessing – Menü und Inhalte
+        # DataProcessing – Menüs, Inhalte, Dateien
         ########################################################
         dataProcessing {
-            # Hauptmenü
+            # Hauptmenü (2 Ebenen)
             10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
             10 {
                 levels = 2
                 includeSpacer = 0
-                expandAll = 0
+                expandAll = 1
                 as = menuMain
                 titleField = nav_title // title
                 entryLevel = 0
             }
 
-            # Hauptinhalts-Spalte
+            # Hauptinhalt (colPos 0)
             20 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
             20 {
                 table = tt_content
@@ -53,7 +56,7 @@ page {
                 as = contentMain
             }
 
-            # Seitenleiste (z. B. colPos 1)
+            # Seitenleiste (colPos 1)
             30 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
             30 {
                 table = tt_content
@@ -63,7 +66,7 @@ page {
                 as = contentAside
             }
 
-            # Footer-Menü (fester Seitenbaum oder manuell definierte Seiten)
+            # Footer-Menü (manuell definierte Seiten-IDs)
             40 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
             40 {
                 special = list
@@ -73,16 +76,17 @@ page {
                 titleField = nav_title // title
             }
 
-            # Dateien (z. B. Medienanhänge)
+            # Medien/Dateien
             50 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
             50 {
                 references.fieldName = media
+                as = mediaFiles
             }
         }
     }
 
     ########################################################
-    # Meta-Tags
+    # META-TAGS
     ########################################################
     meta {
         viewport = width=device-width, initial-scale=1.0
@@ -93,19 +97,28 @@ page {
     }
 
     ########################################################
-    # Stylesheets
-    ########################################################
-    includeCSS {
-        jssitepackage_layout = EXT:jssitepackage/Resources/Public/Css/layout.css
-    }
-
-    ########################################################
-    # JavaScript
-    ########################################################
-    includeJSFooter {
-        jssitepackage_scripts = EXT:jssitepackage/Resources/Public/JavaScript/main.js
-    }
-
     # Favicon
+    ########################################################
     shortcutIcon = EXT:jssitepackage/Resources/Public/Icons/favicon.ico
+}
+
+########################################################
+# Content Element Rendering Overrides
+########################################################
+tt_content.text =< lib.contentElement
+tt_content.text {
+    templateName = Text
+
+    templateRootPaths {
+        0 = EXT:fluid_styled_content/Resources/Private/Templates/
+        10 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
+    }
+    partialRootPaths {
+        0 = EXT:fluid_styled_content/Resources/Private/Partials/
+        10 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
+    }
+    layoutRootPaths {
+        0 = EXT:fluid_styled_content/Resources/Private/Layouts/
+        10 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
+    }
 }

@@ -1,7 +1,45 @@
-<f:asset.css identifier="main" href="EXT:jssitepackage/Resources/Public/Css/main.css" />
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index,follow" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Styles -->
+    <f:asset.css
+        identifier="layout"
+        href="EXT:jssitepackage/Resources/Public/Css/layout.css"
+        version="1.0.0" />
+
+    <f:asset.css
+        identifier="main"
+        href="EXT:jssitepackage/Resources/Public/Css/main.css"
+        version="1.0.0" />
+
+    <title><f:if condition="{page.title}" then="{page.title}" else="Jens Seiler" /></title>
+</head>
+
+<body>
+<header>
+    <f:render partial="Header" arguments="{menuMain: menuMain}" />
+</header>
+
 <main>
-    <f:render partial="Header" arguments="{_all}"/>
-    <f:render section="Main"/>
-    <f:render partial="Footer" arguments="{_all}"/>
+    <f:render section="Main" />
 </main>
-<f:asset.script identifier="main" src="EXT:jssitepackage/Resources/Public/JavaScript/main.js" />
+
+<footer>
+    <f:render partial="Footer" arguments="{menuFooter: menuFooter}" />
+</footer>
+
+<!-- JavaScript -->
+<f:asset.script
+    identifier="main"
+    src="EXT:jssitepackage/Resources/Public/JavaScript/main.js"
+    position="footer"
+    version="1.0.0" />
+</body>
+</html>

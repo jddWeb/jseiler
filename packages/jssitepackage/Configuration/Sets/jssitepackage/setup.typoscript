@@ -1,0 +1,8 @@
+########################################################
+# setup.typoscript – Einstiegspunkt für JS Sitepackage
+########################################################
+
+@import 'EXT:fluid_styled_content/Configuration/TypoScript/setup.typoscript'
+@import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/config.typoscript'
+@import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/page.typoscript'
+@import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/constants.typoscript'

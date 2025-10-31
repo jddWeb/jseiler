@@ -1,0 +1,9 @@
+########################################################
+# constants.typoscript – Templatepfade für FAL/Fluid Content Rendering
+########################################################
+
+styles.templates {
+  layoutRootPath = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
+  partialRootPath = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
+  templateRootPath = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
+}

@@ -1,0 +1,51 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  ########################################################
+  # 1️⃣ TypoScript Include (ersetzt addStaticFile)
+  ########################################################
+  jssitepackage.typoscript:
+    class: TYPO3\CMS\Core\Configuration\TypoScript\IncludeStaticFileConfigurator
+    arguments:
+      $extensionKey: 'jssitepackage'
+      $path: 'Configuration/TypoScript'
+      $title: 'JS Sitepackage'
+    tags:
+      - name: 'typo3.typoscript.includeStaticFile'
+
+  ########################################################
+  # 2️⃣ PageTSConfig Include (ersetzt addPageTSConfig)
+  ########################################################
+  jssitepackage.pageTsconfig:
+    class: TYPO3\CMS\Core\Configuration\PageTsConfig\PageTsConfigLoader
+    arguments:
+      $extensionKey: 'jssitepackage'
+      $path: 'Configuration/TsConfig/Page/page.tsconfig'
+    tags:
+      - name: 'typo3.pageTsConfig'
+
+  ########################################################
+  # 3️⃣ UserTSConfig Include (ersetzt addUserTSConfig)
+  ########################################################
+  jssitepackage.userTsconfig:
+    class: TYPO3\CMS\Core\Configuration\UserTsConfig\UserTsConfigLoader
+    arguments:
+      $extensionKey: 'jssitepackage'
+      $path: 'Configuration/TsConfig/User/User.tsconfig'
+    tags:
+      - name: 'typo3.userTsConfig'
+
+  ########################################################
+  # 4️⃣ RTE Preset (ersetzt $GLOBALS["TYPO3_CONF_VARS"]["RTE"]["Presets"])
+  ########################################################
+  jssitepackage.rte:
+    class: TYPO3\CMS\Core\Configuration\RtePreset\RtePresetRegistry
+    arguments:
+      $extensionKey: 'jssitepackage'
+      $path: 'Configuration/RTE/Default.yaml'
+      $presetName: 'jssitepackage'
+    tags:
+      - name: 'typo3.rtePreset'

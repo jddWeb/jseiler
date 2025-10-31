@@ -1,8 +1,10 @@
 base: 'https://jseiler.ddev.site/'
+rootPageId: 1
+websiteTitle: 'Jens der Denker'
+
 dependencies:
   - jensseiler/jssitepackage
-  - typo3/fluid-styled-content-css
-  - typo3/fluid-styled-content
+
 languages:
   -
     title: Deutsch
@@ -10,7 +12,4 @@ languages:
     languageId: 0
     base: /
     locale: de_DE.UTF-8
-    navigationTitle: Deutsch
     flag: de
-rootPageId: 1
-websiteTitle: 'JS Sitepackage'
