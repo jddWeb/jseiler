@@ -1,0 +1,9 @@
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+<f:if condition="{data.bodytext}">
+    <div class="ce ce-{data.CType}">
+        <f:format.html>{data.bodytext}</f:format.html>
+    </div>
+    <f:else>
+        <pre>[Kein Template für CType: {data.CType}]</pre>
+    </f:else>
+</f:if>

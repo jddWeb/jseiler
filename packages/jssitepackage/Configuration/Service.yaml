@@ -5,7 +5,7 @@ services:
     public: false
 
   ########################################################
-  # 1️⃣ TypoScript Include (ersetzt addStaticFile)
+  # TypoScript Include
   ########################################################
   jssitepackage.typoscript:
     class: TYPO3\CMS\Core\Configuration\TypoScript\IncludeStaticFileConfigurator
@@ -17,7 +17,7 @@ services:
       - name: 'typo3.typoscript.includeStaticFile'
 
   ########################################################
-  # 2️⃣ PageTSConfig Include (ersetzt addPageTSConfig)
+  # PageTSconfig Include (BackendLayouts, TCEFORM etc.)
   ########################################################
   jssitepackage.pageTsconfig:
     class: TYPO3\CMS\Core\Configuration\PageTsConfig\PageTsConfigLoader
@@ -28,9 +28,9 @@ services:
       - name: 'typo3.pageTsConfig'
 
   ########################################################
-  # 3️⃣ UserTSConfig Include (ersetzt addUserTSConfig)
+  # UserTSconfig Includes (User + Admin Varianten)
   ########################################################
-  jssitepackage.userTsconfig:
+  jssitepackage.userTsconfig.default:
     class: TYPO3\CMS\Core\Configuration\UserTsConfig\UserTsConfigLoader
     arguments:
       $extensionKey: 'jssitepackage'
@@ -38,8 +38,16 @@ services:
     tags:
       - name: 'typo3.userTsConfig'
 
+  jssitepackage.userTsconfig.admin:
+    class: TYPO3\CMS\Core\Configuration\UserTsConfig\UserTsConfigLoader
+    arguments:
+      $extensionKey: 'jssitepackage'
+      $path: 'Configuration/TsConfig/User/Admin.tsconfig'
+    tags:
+      - name: 'typo3.userTsConfig'
+
   ########################################################
-  # 4️⃣ RTE Preset (ersetzt $GLOBALS["TYPO3_CONF_VARS"]["RTE"]["Presets"])
+  # RTE Preset
   ########################################################
   jssitepackage.rte:
     class: TYPO3\CMS\Core\Configuration\RtePreset\RtePresetRegistry

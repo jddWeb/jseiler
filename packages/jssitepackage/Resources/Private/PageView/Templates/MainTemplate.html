@@ -1,0 +1,33 @@
+<f:layout name="PageLayout" />
+
+<f:section name="Main">
+
+    <header>
+        <nav>
+            <ul>
+                <f:for each="{menuMain}" as="item">
+                    <li>
+                        <a href="{item.link}">{item.title}</a>
+                    </li>
+                </f:for>
+            </ul>
+        </nav>
+    </header>
+    <f:debug title="contentMain Debug">{contentMain}</f:debug>
+    <main class="l-main">
+        <f:for each="{contentMain}" as="element">
+            <f:cObject typoscriptObjectPath="lib.contentElement" data="{element}" />
+        </f:for>
+    </main>
+
+    <footer>
+        <ul>
+            <f:for each="{menuFooter}" as="footerItem">
+                <li>
+                    <a href="{footerItem.link}">{footerItem.title}</a>
+                </li>
+            </f:for>
+        </ul>
+    </footer>
+
+</f:section>

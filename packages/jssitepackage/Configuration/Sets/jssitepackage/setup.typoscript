@@ -1,8 +1,75 @@
 ########################################################
-# setup.typoscript – Einstiegspunkt für JS Sitepackage
+# JS Sitepackage – Setup für TYPO3 13.4 LTS
+# Zukunftssicher für TYPO3 14 (keine Legacy-Imports)
 ########################################################
 
-@import 'EXT:fluid_styled_content/Configuration/TypoScript/setup.typoscript'
+########################################################
+# Core Content Rendering aktivieren (TYPO3 13 + 14)
+########################################################
+@import 'EXT:frontend/Configuration/TypoScript/ContentElementRendering.typoscript'
+
+########################################################
+# Dein Sitepackage TypoScript einbinden
+########################################################
+
+@import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/constants.typoscript'
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/config.typoscript'
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/page.typoscript'
-@import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/constants.typoscript'
+
+########################################################
+# Fallback: eigene lib.contentElement Definition
+# (ersetzt das alte fluid_styled_content Setup)
+########################################################
+
+lib.contentElement = FLUIDTEMPLATE
+lib.contentElement {
+  templateName.field = CType
+
+  templateRootPaths {
+    10 = EXT:fluid_styled_content/Resources/Private/Templates/ContentElements/
+    20 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
+  }
+  partialRootPaths {
+    10 = EXT:fluid_styled_content/Resources/Private/Partials/ContentElements/
+    20 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
+  }
+  layoutRootPaths {
+    10 = EXT:fluid_styled_content/Resources/Private/Layouts/ContentElements/
+    20 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
+  }
+}
+
+########################################################
+# Grunddefinition für tt_content
+########################################################
+
+tt_content = CASE
+tt_content {
+  key.field = CType
+  default =< lib.contentElement
+}
+
+########################################################
+# Beispiel: Override für Text-Element
+########################################################
+
+tt_content.text =< lib.contentElement
+tt_content.text {
+  templateName = Text
+  templateRootPaths {
+    20 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
+  }
+  partialRootPaths {
+    20 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
+  }
+  layoutRootPaths {
+    20 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
+  }
+}
+
+########################################################
+# Fix: tt_content global verfügbar machen für Fluid
+########################################################
+[GLOBAL]
+tt_content < frontend.tt_content
+[END]

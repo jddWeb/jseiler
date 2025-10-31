@@ -1,5 +1,10 @@
-<f:debug title="tt_content.text Debug">{data}</f:debug>
-
-<div style="color:white; background:black; padding:1rem;">
-    <f:format.html>{data.bodytext}</f:format.html>
-</div>
+<f:if condition="{records}">
+    <ul>
+        <f:for each="{records}" as="record">
+            <li>{record.CType} – {record.header}</li>
+        </f:for>
+    </ul>
+    <f:else>
+        <p>Keine Inhalte vorhanden.</p>
+    </f:else>
+</f:if>

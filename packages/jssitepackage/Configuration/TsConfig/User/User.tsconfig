@@ -8,6 +8,9 @@ options.pageTree.showPageIdWithTitle = 1
 # Aktiviert das Admin Panel (Frontend-Debug)
 admPanel.enable = 1
 
+# Listenmodul anpassen
+mod.web_list.hideTables = be_sessions,sys_history
+
 # Zusätzliche Optionen im Backend
 options {
     showDuplicate = 1

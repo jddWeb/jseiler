@@ -38,6 +38,6 @@ mod {
 }
 
 # -------------------------------------------------------
-# 5. Sichtbarer Test
+# 5. Beispiel-Inhalte für Prüfung LTS14
 # -------------------------------------------------------
-options.pageTree.showPageIdWithTitle = 1
+TCEFORM.pages.title.disabled = 0

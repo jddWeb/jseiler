@@ -1,12 +1,5 @@
-{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
-
-<f:if condition="{records}">
-    <f:for each="{records}" as="record">
-        <f:cObject
-            typoscriptObjectPath="tt_content.{record.CType}"
-            data="{record}" />
-    </f:for>
-    <f:else>
-        <p>Keine Inhalte vorhanden.</p>
-    </f:else>
-</f:if>
+<f:for each="{records}" as="record">
+    <div style="border:1px solid red;margin:5px;padding:5px">
+        {record.CType}: {record.header}
+    </div>
+</f:for>
