@@ -13,11 +13,9 @@
             </ul>
         </nav>
     </header>
-    <f:debug title="contentMain Debug">{contentMain}</f:debug>
+
     <main class="l-main">
-        <f:for each="{contentMain}" as="element">
-            <f:cObject typoscriptObjectPath="lib.contentElement" data="{element}" />
-        </f:for>
+        <f:render partial="Content" arguments="{records: contentMain}" />
     </main>
 
     <footer>

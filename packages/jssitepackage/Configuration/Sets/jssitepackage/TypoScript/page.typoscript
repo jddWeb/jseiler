@@ -10,13 +10,25 @@ page >
 ########################################################
 <INCLUDE_TYPOSCRIPT: source="FILE:EXT:frontend/Configuration/TypoScript/ContentElementRendering.typoscript">
 
-# Fallback, wenn kein passendes Template gefunden wird
+########################################################
+# lib.contentElement – moderne Definition mit Fallback
+########################################################
+lib.contentElement = FLUIDTEMPLATE
 lib.contentElement {
   templateName = TEXT
   templateName.field = CType
   templateName.ifEmpty = Default
-}
 
+  templateRootPaths {
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
+  }
+  partialRootPaths {
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
+  }
+  layoutRootPaths {
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
+  }
+}
 
 ########################################################
 # Haupt-PAGE-Objekt
@@ -76,7 +88,6 @@ page {
                 pidInList.field = uid
                 orderBy = sorting
                 where = colPos = 0
-                selectFields = *
                 as = contentMain
             }
 
@@ -86,7 +97,7 @@ page {
                 pidInList.field = uid
                 orderBy = sorting
                 where = colPos = 1
-                selectFields = *
+                selectFields = uid, pid, CType, header, bodytext, image, media, colPos, sorting
                 as = contentAside
             }
 
@@ -122,7 +133,7 @@ page {
 }
 
 ########################################################
-# tt_content – korrekte Core-Definition
+# tt_content – moderne, korrekte Core-Definition
 ########################################################
 tt_content = CASE
 tt_content {
@@ -163,15 +174,12 @@ tt_content.text =< lib.contentElement
 tt_content.text {
   templateName = Text
   templateRootPaths {
-    10 = EXT:fluid_styled_content/Resources/Private/Templates/ContentElements/
-    20 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
   }
   partialRootPaths {
-    10 = EXT:fluid_styled_content/Resources/Private/Partials/ContentElements/
-    20 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
   }
   layoutRootPaths {
-    10 = EXT:fluid_styled_content/Resources/Private/Layouts/ContentElements/
-    20 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
   }
 }

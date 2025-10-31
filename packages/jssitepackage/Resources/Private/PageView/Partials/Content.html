@@ -1,5 +1,5 @@
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+
 <f:for each="{records}" as="record">
-    <div style="border:1px solid red;margin:5px;padding:5px">
-        {record.CType}: {record.header}
-    </div>
+    <f:cObject typoscriptObjectPath="lib.contentElement" data="{record.data}" />
 </f:for>
