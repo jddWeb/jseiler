@@ -1,16 +1,31 @@
 {namespace f=TYPO3\CMS\Fluid\ViewHelpers}
 
-<f:if condition="{menuMain}">
-	<ul class="c-menu__list">
-		<f:for each="{menuMain}" as="item">
-			<li class="c-menu__item {f:if(condition: item.active, then: 'is-active')}">
-				<a href="{item.link}" class="c-menu__link" title="{item.title}">
-					{item.title}
-				</a>
-			</li>
-		</f:for>
-	</ul>
-	<f:else>
-		<p class="c-menu__fallback">Menü noch nicht definiert.</p>
-	</f:else>
+<f:if condition="{menu}">
+    <ul class="c-menu__list" role="menubar">
+        <f:for each="{menu}" as="item">
+            <li class="c-menu__item {f:if(condition: item.active, then: 'is-active')} {f:if(condition: item.current, then: 'is-current')}"
+                role="none">
+
+                <f:if condition="{item.link}">
+                    <a href="{item.link}"
+                       title="{item.title}"
+                       class="c-menu__link"
+                       role="menuitem"
+                       aria-current="{f:if(condition: item.current, then: 'page', else: 'false')}">
+                        {item.title}
+                    </a>
+                    <f:else>
+                        <span class="c-menu__link c-menu__link--nolink">{item.title}</span>
+                    </f:else>
+                </f:if>
+
+                <f:if condition="{item.children}">
+                    <f:render partial="Menu/Sub" arguments="{menu: item.children}" />
+                </f:if>
+            </li>
+        </f:for>
+    </ul>
+    <f:else>
+        <p class="c-menu__fallback">Menü noch nicht definiert.</p>
+    </f:else>
 </f:if>

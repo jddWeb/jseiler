@@ -1,16 +1,18 @@
 {namespace f=TYPO3\CMS\Fluid\ViewHelpers}
 
-<div class="c-header__main">
+<header class="c-header" role="banner">
     <div class="c-header__container">
 
         <!-- ======================================= -->
         <!--   LOGO                                  -->
         <!-- ======================================= -->
         <div class="c-logo">
-            <a href="{f:uri.page(pageUid: 1)}" class="c-logo__link" title="Zur Startseite">
+            <a href="{f:uri.page(pageUid: site.rootPageId)}"
+               class="c-logo__link"
+               title="Zur Startseite">
                 <f:image
                     src="EXT:jssitepackage/Resources/Public/Images/logo.svg"
-                    alt="Logo Jens Seiler"
+                    alt="{site.title}"
                     class="c-logo__img"
                     loading="lazy" />
             </a>
@@ -19,8 +21,22 @@
         <!-- ======================================= -->
         <!--   NAVIGATION                            -->
         <!-- ======================================= -->
-        <nav class="c-menu js-menu" role="navigation" aria-label="Hauptmenü">
-            <f:render partial="Menu/Main" arguments="{menu: menuMain}" />
+        <nav class="c-menu js-menu"
+             role="navigation"
+             aria-label="Hauptmenü"
+             id="main-navigation">
+
+            <button class="c-menu__toggle js-menu-toggle"
+                    aria-controls="main-navigation"
+                    aria-expanded="false">
+                Menü
+            </button>
+
+            <div class="c-menu__wrapper">
+                <f:if condition="{menuMain}">
+                    <f:render partial="Menu/Main" arguments="{menu: menuMain}" />
+                </f:if>
+            </div>
         </nav>
     </div>
-</div>
+</header>
