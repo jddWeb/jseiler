@@ -1,6 +1,6 @@
 ########################################################
 # JS Sitepackage – Haupt-Rendering für TYPO3 13.4 LTS
-# Zukunftssicher für TYPO3 14 LTS
+# Klassisch, stabil und zukunftssicher bis TYPO3 14
 ########################################################
 
 page >
@@ -11,7 +11,7 @@ page >
 <INCLUDE_TYPOSCRIPT: source="FILE:EXT:frontend/Configuration/TypoScript/ContentElementRendering.typoscript">
 
 ########################################################
-# lib.contentElement – moderne Definition mit Fallback
+# lib.contentElement – Definition mit Fallback
 ########################################################
 lib.contentElement = FLUIDTEMPLATE
 lib.contentElement {
@@ -35,140 +35,114 @@ lib.contentElement {
 ########################################################
 page = PAGE
 page {
-    typeNum = 0
+  typeNum = 0
 
-    ########################################################
-    # FLUIDTEMPLATE-Konfiguration
-    ########################################################
-    10 = FLUIDTEMPLATE
-    10 {
-        templateRootPaths {
-            10 = EXT:jssitepackage/Resources/Private/PageView/Templates/
-        }
-        layoutRootPaths {
-            10 = EXT:jssitepackage/Resources/Private/PageView/Layouts/
-        }
-        partialRootPaths {
-            10 = EXT:jssitepackage/Resources/Private/PageView/Partials/
-        }
-
-        ########################################################
-        # Automatische Template-Auswahl nach BackendLayout
-        ########################################################
-        templateName = TEXT
-        templateName.stdWrap.cObject = CASE
-        templateName.stdWrap.cObject {
-            key.data = levelfield:-1, backend_layout_next_level, slide
-            key.override.field = backend_layout
-
-            default = TEXT
-            default.value = MainTemplate
-
-            pagets__SubmainTemplate = TEXT
-            pagets__SubmainTemplate.value = SubmainTemplate
-        }
-
-        ########################################################
-        # DataProcessing – Menü, Inhalte, Medien
-        ########################################################
-        dataProcessing {
-            10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
-            10 {
-                levels = 2
-                includeSpacer = 0
-                expandAll = 1
-                as = menuMain
-                titleField = nav_title // title
-                entryLevel = 0
-            }
-
-            20 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
-            20 {
-                table = tt_content
-                pidInList.field = uid
-                orderBy = sorting
-                where = colPos = 0
-                as = contentMain
-            }
-
-            30 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
-            30 {
-                table = tt_content
-                pidInList.field = uid
-                orderBy = sorting
-                where = colPos = 1
-                selectFields = uid, pid, CType, header, bodytext, image, media, colPos, sorting
-                as = contentAside
-            }
-
-            40 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
-            40 {
-                special = list
-                special.value = 12,13
-                includeSpacer = 0
-                as = menuFooter
-                titleField = nav_title // title
-            }
-
-            50 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
-            50 {
-                references.fieldName = media
-                as = mediaFiles
-            }
-        }
+  ########################################################
+  # FLUIDTEMPLATE-Konfiguration
+  ########################################################
+  10 = FLUIDTEMPLATE
+  10 {
+    templateRootPaths {
+      10 = EXT:jssitepackage/Resources/Private/PageView/Templates/
+    }
+    layoutRootPaths {
+      10 = EXT:jssitepackage/Resources/Private/PageView/Layouts/
+    }
+    partialRootPaths {
+      10 = EXT:jssitepackage/Resources/Private/PageView/Partials/
     }
 
     ########################################################
-    # META-TAGS & Favicon
+    # Automatische Template-Auswahl nach BackendLayout
     ########################################################
-    meta {
-        viewport = width=device-width, initial-scale=1.0
-        robots = index,follow
-        X-UA-Compatible = IE=edge
-        X-UA-Compatible.attribute = http-equiv
-        author = Jens Seiler
+    templateName = TEXT
+    templateName.stdWrap.cObject = CASE
+    templateName.stdWrap.cObject {
+      key.data = levelfield:-1, backend_layout_next_level, slide
+      key.override.field = backend_layout
+
+      default = TEXT
+      default.value = MainTemplate
+
+      pagets__SubmainTemplate = TEXT
+      pagets__SubmainTemplate.value = SubmainTemplate
     }
 
-    shortcutIcon = EXT:jssitepackage/Resources/Public/Icons/favicon.ico
+    ########################################################
+    # DataProcessing – Menü, Inhalte, Medien
+    ########################################################
+    dataProcessing {
+      10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
+      10 {
+        levels = 2
+        includeSpacer = 0
+        expandAll = 1
+        as = menuMain
+        titleField = nav_title // title
+        entryLevel = 0
+      }
+
+      20 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
+      20 {
+        table = tt_content
+        pidInList.field = uid
+        orderBy = sorting
+        where = colPos = 0
+        as = contentMain
+      }
+
+      30 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
+      30 {
+        table = tt_content
+        pidInList.field = uid
+        orderBy = sorting
+        where = colPos = 1
+        selectFields = uid, pid, CType, header, bodytext, image, media, colPos, sorting
+        as = contentAside
+      }
+
+      40 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
+      40 {
+        special = list
+        special.value = 12,13
+        includeSpacer = 0
+        as = menuFooter
+        titleField = nav_title // title
+      }
+
+      50 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
+      50 {
+        references.fieldName = media
+        as = mediaFiles
+      }
+    }
+  }
+
+  ########################################################
+  # META-TAGS & Favicon
+  ########################################################
+  meta {
+    viewport = width=device-width, initial-scale=1.0
+    robots = index,follow
+    X-UA-Compatible = IE=edge
+    X-UA-Compatible.attribute = http-equiv
+    author = Jens Seiler
+  }
+
+  shortcutIcon = EXT:jssitepackage/Resources/Public/Icons/favicon.ico
 }
 
 ########################################################
-# tt_content – moderne, korrekte Core-Definition
+# tt_content – vereinfachte Definition
 ########################################################
 tt_content = CASE
 tt_content {
   key.field = CType
-
-  bullets =< lib.contentElement
   default =< lib.contentElement
-  div =< lib.contentElement
-  felogin_login =< lib.contentElement
-  form_formframework =< lib.contentElement
-  header =< lib.contentElement
-  html =< lib.contentElement
-  image =< lib.contentElement
-  list =< lib.contentElement
-  menu_abstract =< lib.contentElement
-  menu_categorized_content =< lib.contentElement
-  menu_categorized_pages =< lib.contentElement
-  menu_pages =< lib.contentElement
-  menu_recently_updated =< lib.contentElement
-  menu_related_pages =< lib.contentElement
-  menu_section =< lib.contentElement
-  menu_section_pages =< lib.contentElement
-  menu_sitemap =< lib.contentElement
-  menu_sitemap_pages =< lib.contentElement
-  menu_subpages =< lib.contentElement
-  shortcut =< lib.contentElement
-  table =< lib.contentElement
-  text =< lib.contentElement
-  textmedia =< lib.contentElement
-  textpic =< lib.contentElement
-  uploads =< lib.contentElement
 }
 
 ########################################################
-# Override für Text-Element (Beispiel)
+# Beispiel-Override für Text-Element
 ########################################################
 tt_content.text =< lib.contentElement
 tt_content.text {
@@ -183,3 +157,15 @@ tt_content.text {
     10 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
   }
 }
+
+########################################################
+# Klassische Settings direkt in TypoScript
+########################################################
+jssitepackage.settings {
+  topbarTel = +49 151 23456789
+  topbarMail = kontakt@jens-seiler.de
+  copyright = © 2025 Jens Seiler
+}
+
+# Settings an Fluid übergeben
+page.10.variables.settings < jssitepackage.settings
