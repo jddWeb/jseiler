@@ -1,48 +1,44 @@
 ########################################################
 # JS Sitepackage – Setup für TYPO3 13.4 LTS
-# Zukunftssicher für TYPO3 14 (keine Legacy-Imports)
+# Klassische, stabile Struktur ohne YAML-Importe
 ########################################################
 
 ########################################################
-# Core Content Rendering aktivieren (TYPO3 13 + 14)
+# Core Content Rendering aktivieren
 ########################################################
 @import 'EXT:frontend/Configuration/TypoScript/ContentElementRendering.typoscript'
 
 ########################################################
 # Dein Sitepackage TypoScript einbinden
 ########################################################
-
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/constants.typoscript'
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/config.typoscript'
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/page.typoscript'
 
 ########################################################
 # Fallback: eigene lib.contentElement Definition
-# (ersetzt das alte fluid_styled_content Setup)
+# ersetzt fluid_styled_content Setup
 ########################################################
-
 lib.contentElement = FLUIDTEMPLATE
 lib.contentElement {
+  templateName = TEXT
   templateName.field = CType
+  templateName.ifEmpty = Default
 
   templateRootPaths {
-    10 = EXT:fluid_styled_content/Resources/Private/Templates/ContentElements/
-    20 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
   }
   partialRootPaths {
-    10 = EXT:fluid_styled_content/Resources/Private/Partials/ContentElements/
-    20 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
   }
   layoutRootPaths {
-    10 = EXT:fluid_styled_content/Resources/Private/Layouts/ContentElements/
-    20 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
   }
 }
 
 ########################################################
-# Grunddefinition für tt_content
+# Vereinfachtes tt_content Mapping
 ########################################################
-
 tt_content = CASE
 tt_content {
   key.field = CType
@@ -52,24 +48,28 @@ tt_content {
 ########################################################
 # Beispiel: Override für Text-Element
 ########################################################
-
 tt_content.text =< lib.contentElement
 tt_content.text {
   templateName = Text
   templateRootPaths {
-    20 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
   }
   partialRootPaths {
-    20 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
   }
   layoutRootPaths {
-    20 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
+    10 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
   }
 }
 
 ########################################################
-# Fix: tt_content global verfügbar machen für Fluid
+# Globale Settings (klassisch, ohne YAML)
 ########################################################
-[GLOBAL]
-tt_content < frontend.tt_content
-[END]
+jssitepackage.settings {
+  topbarTel = +49 151 23456789
+  topbarMail = kontakt@jens-seiler.de
+  copyright = © 2025 Jens Seiler
+}
+
+# Settings an Fluid weitergeben
+page.10.variables.settings < jssitepackage.settings
