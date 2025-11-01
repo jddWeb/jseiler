@@ -158,14 +158,5 @@ tt_content.text {
   }
 }
 
-########################################################
-# Klassische Settings direkt in TypoScript
-########################################################
-jssitepackage.settings {
-  topbarTel = +49 151 23456789
-  topbarMail = kontakt@jens-seiler.de
-  copyright = © 2025 Jens Seiler
-}
-
 # Settings an Fluid übergeben
 page.10.variables.settings < jssitepackage.settings
