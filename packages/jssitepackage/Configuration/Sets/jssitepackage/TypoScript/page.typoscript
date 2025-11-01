@@ -6,11 +6,6 @@
 page >
 
 ########################################################
-# Core Content-Rendering aktivieren (TYPO3 13 + 14)
-########################################################
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:frontend/Configuration/TypoScript/ContentElementRendering.typoscript">
-
-########################################################
 # lib.contentElement – Definition mit Fallback
 ########################################################
 lib.contentElement = FLUIDTEMPLATE

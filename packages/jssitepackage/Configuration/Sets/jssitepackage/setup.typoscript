@@ -4,11 +4,6 @@
 ########################################################
 
 ########################################################
-# Core Content Rendering aktivieren
-########################################################
-@import 'EXT:frontend/Configuration/TypoScript/ContentElementRendering.typoscript'
-
-########################################################
 # Dein Sitepackage TypoScript einbinden
 ########################################################
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/constants.typoscript'
