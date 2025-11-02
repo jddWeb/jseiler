@@ -16,10 +16,7 @@
             "extension-key": "jssitepackage",
             "site-sets": {
                 "jssitepackage": "Configuration/Sets/jssitepackage"
-            },
-            "content-blocks": [
-                "EXT:jssitepackage/ContentBlocks/"
-            ]
+            }
         }
     }
 }

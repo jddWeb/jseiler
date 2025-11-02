@@ -3,12 +3,7 @@
 ########################################################
 
 # -------------------------------------------------------
-# 1. Custom Content Block "QuoteBox" importieren
-# -------------------------------------------------------
-@import 'EXT:jssitepackage/ContentBlocks/QuoteBox/QuoteBox.tsconfig'
-
-# -------------------------------------------------------
-# 2. Standard-Berechtigungen für neue Seiten
+# Standard-Berechtigungen für neue Seiten
 # -------------------------------------------------------
 TCEMAIN {
   permissions {
