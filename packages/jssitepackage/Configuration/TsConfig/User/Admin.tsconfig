@@ -1,4 +1,0 @@
-# Admin-spezifische UserTSconfig
-options.pageTree.showPageIdWithTitle = 1
-options.saveDocNew.tt_content = 1
-setup.override.edit_docModuleUpload = 1
