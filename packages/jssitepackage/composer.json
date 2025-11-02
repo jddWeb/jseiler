@@ -8,7 +8,7 @@
     },
     "autoload": {
         "psr-4": {
-            "JensSeiler\\JsSitepackage\\": "Classes/"
+            "JensSeiler\\Jssitepackage\\": "Classes/"
         }
     },
     "extra": {
@@ -16,7 +16,10 @@
             "extension-key": "jssitepackage",
             "site-sets": {
                 "jssitepackage": "Configuration/Sets/jssitepackage"
-            }
+            },
+            "content-blocks": [
+                "EXT:jssitepackage/ContentBlocks/"
+            ]
         }
     }
 }

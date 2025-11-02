@@ -1,8 +1,12 @@
 base: 'https://jseiler.ddev.site/'
+rootPageId: 1
+websiteTitle: 'JS Sitepackage'
+
 dependencies:
-  - jssitepackage
-  - typo3/fluid-styled-content-css
   - typo3/fluid-styled-content
+  - typo3/fluid-styled-content-css
+  - jssitepackage
+
 languages:
   -
     title: Deutsch
@@ -12,9 +16,10 @@ languages:
     locale: de_DE.UTF-8
     navigationTitle: Deutsch
     flag: de
-rootPageId: 1
-websiteTitle: 'JS Sitepackage'
+
 sets:
+  typo3/fluid-styled-content:
+    setup: true
   typo3/fluid-styled-content-css:
     setup: true
   jssitepackage:

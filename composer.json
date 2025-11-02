@@ -1,6 +1,6 @@
 {
 	"name": "typo3/cms-base-distribution",
-	"description" : "TYPO3 CMS Base Distribution",
+	"description": "TYPO3 CMS Base Distribution",
 	"license": "GPL-2.0-or-later",
 	"type": "project",
 	"config": {
@@ -14,6 +14,7 @@
 		"sort-packages": true
 	},
 	"require": {
+		"friendsoftypo3/content-blocks": "^1.3",
 		"helhum/typo3-console": "^8.2",
 		"jensseiler/jssitepackage": "@dev",
 		"typo3/cms-backend": "^13.4",
@@ -47,5 +48,12 @@
 			"type": "path",
 			"url": "./packages/*"
 		}
-	]
+	],
+	"extra": {
+		"typo3/cms": {
+			"content-blocks": [
+				"packages/jssitepackage/ContentBlocks/"
+			]
+		}
+	}
 }
