@@ -1,39 +1,43 @@
 {namespace f=TYPO3\CMS\Fluid\ViewHelpers}
 
-<header class="c-header" role="banner">
-<h1>Topbar</h1>
+<header class="c-header"
+        role="banner">
+
     <!-- ======================================= -->
     <!--   TOPBAR                                -->
     <!-- ======================================= -->
-    <f:if condition="{settings.topbarMail} || {settings.topbarTel}">
-        <div class="c-topbar">
-            <div class="c-topbar__inner">
 
-                <f:if condition="{settings.topbarTel}">
-                    <span class="c-topbar__item c-topbar__item--phone c-icon-inline">
-                        <svg class="c-icon c-icon--primary" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24">
-                            <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.36 11.36 0 003.55.57 1 1 0 011 1v3.61a1 1 0 01-1 1A17.92 17.92 0 014 5a1 1 0 011-1h3.61a1 1 0 011 1 11.36 11.36 0 00.57 3.55 1 1 0 01-.21 1.11z"/>
-                        </svg>
-                        <a href="tel:{settings.topbarTel}" class="c-topbar__link">
-                            {settings.topbarTel}
-                        </a>
-                    </span>
-                </f:if>
+    <div class="c-topbar">
+        <div class="c-topbar__inner">
+            <span class="c-topbar__item c-topbar__item--phone c-icon-inline">
+                <svg class="c-icon c-icon--primary"
+                     aria-hidden="true"
+                     width="16"
+                     height="16"
+                     viewBox="0 0 24 24">
+                    <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.36 11.36 0 003.55.57 1 1 0 011 1v3.61a1 1 0 01-1 1A17.92 17.92 0 014 5a1 1 0 011-1h3.61a1 1 0 011 1 11.36 11.36 0 00.57 3.55 1 1 0 01-.21 1.11z"/>
+                </svg>
+                <a href="tel:{settings.topbarTel}"
+                   class="c-topbar__link">
+                    030 55669391
+                </a>
+            </span>
 
-                <f:if condition="{settings.topbarMail}">
-                    <span class="c-topbar__item c-topbar__item--mail c-icon-inline">
-                        <svg class="c-icon c-icon--primary-light" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24">
-                            <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 18V8l8 5 8-5v10H4z"/>
-                        </svg>
-                        <a href="mailto:{settings.topbarMail}" class="c-topbar__link">
-                            {settings.topbarMail}
-                        </a>
-                    </span>
-                </f:if>
-
-            </div>
+            <span class="c-topbar__item c-topbar__item--mail c-icon-inline">
+                <svg class="c-icon c-icon--primary-light"
+                     aria-hidden="true"
+                     width="16"
+                     height="16"
+                     viewBox="0 0 24 24">
+                    <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 18V8l8 5 8-5v10H4z"/>
+                </svg>
+                <a href="mailto:buero@jens-der-denker.de}"
+                   class="c-topbar__link">
+                    MAIL
+                </a>
+            </span>
         </div>
-    </f:if>
+    </div>
 
     <!-- ======================================= -->
     <!--   HEADER-CONTAINER MIT LOGO & MENÜ      -->
@@ -45,11 +49,10 @@
             <a href="{f:uri.page(pageUid: site.rootPageId)}"
                class="c-logo__link"
                title="Zur Startseite">
-                <f:image
-                    src="EXT:jssitepackage/Resources/Public/Images/logo.svg"
-                    alt="{site.title}"
-                    class="c-logo__img"
-                    loading="lazy" />
+                <f:image src="EXT:jssitepackage/Resources/Public/Images/logo.svg"
+                         alt="{site.title}"
+                         class="c-logo__img"
+                         loading="lazy"/>
             </a>
         </div>
 
@@ -67,7 +70,8 @@
 
             <div class="c-menu__wrapper">
                 <f:if condition="{menuMain}">
-                    <f:render partial="Menu/Main" arguments="{menu: menuMain}" />
+                    <f:render partial="Menu/Main"
+                              arguments="{menu: menuMain}"/>
                 </f:if>
             </div>
         </nav>
