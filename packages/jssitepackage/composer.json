@@ -1,26 +1,25 @@
 {
     "name": "jensseiler/jssitepackage",
     "type": "typo3-cms-extension",
-    "description": "",
-    "homepage": "https://jens-der-denker.de",
-    "license": ["GPL-2.0-or-later"],
-    "keywords": ["TYPO3 CMS"],
+    "description": "Sitepackage Jens Seiler",
     "require": {
         "typo3/cms-core": "^13.4",
-        "typo3/cms-rte-ckeditor": "^13.4",
-        "typo3/cms-fluid-styled-content": "^13.4"
-    },
-    "suggest": {
-        "friendsoftypo3/content-blocks": "Allows to create custom content elements. "
+        "friendsoftypo3/content-blocks": "^1.3"
     },
     "autoload": {
         "psr-4": {
-            "jensseiler\\Jssitepackage\\": "Classes/"
+            "JensSeiler\\JsSitepackage\\": "Classes/"
         }
     },
     "extra": {
         "typo3/cms": {
-            "extension-key": "jssitepackage"
+            "extension-key": "jssitepackage",
+            "site-sets": {
+                "jssitepackage": "Configuration/Sets/jssitepackage"
+            },
+            "content-blocks": [
+                "EXT:jssitepackage/ContentBlocks/"
+            ]
         }
     }
 }

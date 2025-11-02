@@ -1,6 +1,6 @@
 base: 'https://jseiler.ddev.site/'
 dependencies:
-  - jensseiler/jssitepackage
+  - jssitepackage
   - typo3/fluid-styled-content-css
   - typo3/fluid-styled-content
 languages:
@@ -17,5 +17,5 @@ websiteTitle: 'JS Sitepackage'
 sets:
   typo3/fluid-styled-content-css:
     setup: true
-  jensseiler/jssitepackage:
+  jssitepackage:
     setup: true
