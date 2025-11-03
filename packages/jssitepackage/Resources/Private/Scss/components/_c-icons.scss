@@ -4,7 +4,7 @@
 // ======================================================
 
 @use "sass:color";
-@use "../base/b-variables" as v;
+@use "globals" as *;
 
 // ------------------------------------------------------
 // 1. Grundstruktur
@@ -26,9 +26,9 @@
   &--large   { width: 2em;   height: 2em; }
   &--small   { width: 0.9em; height: 0.9em; }
 
-  &--primary   { color: v.$color-primary; }
-  &--secondary { color: v.$color-secondary; }
-  &--light     { color: v.$color-text-light; }
+  &--primary   { color: $color-primary; }
+  &--secondary { color: $color-secondary; }
+  &--light     { color: $color-text-light; }
   &--white     { color: #fff; }
 }
 
@@ -65,7 +65,7 @@
 .c-icon--phone,
 .c-icon--mail {
   margin-right: 0.35rem;
-  color: v.$color-primary;
+  color: $color-primary;
 }
 
 // Social Media (runde Buttons)
@@ -74,13 +74,13 @@
   height: 2.4rem;
   padding: 0.4rem;
   border-radius: 50%;
-  border: 1px solid rgba(v.$color-text-light, 0.25);
-  color: v.$color-secondary;
+  border: 1px solid rgba($color-text-light, 0.25);
+  color: $color-secondary;
   transition: all 0.25s ease;
 
   &:hover {
-    background-color: v.$color-primary;
-    border-color: v.$color-primary;
+    background-color: $color-primary;
+    border-color: $color-primary;
     color: #fff;
   }
 }
@@ -91,7 +91,7 @@
 
 @media (prefers-color-scheme: dark) {
   .c-icon {
-    color: lighten(v.$color-text-light, 20%);
+    color: color.scale($color-text-light, $lightness: +20%);
   }
 
   .c-icon--social {

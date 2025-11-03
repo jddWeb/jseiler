@@ -1,0 +1,22 @@
+// ======================================================
+// _globals.scss
+// Zentrales Sass-Modul-Bündel für alle Komponenten
+// ======================================================
+
+@use "sass:color";
+@use "sass:math";
+@use "sass:list";
+@use "sass:map";
+
+// ------------------------------------------------------
+// Projektvariablen weiterreichen
+// ------------------------------------------------------
+@forward "base/b-variables";
+
+// ------------------------------------------------------
+// Core-Funktionen optional weiterreichen
+// ------------------------------------------------------
+@forward "sass:color";
+@forward "sass:math";
+@forward "sass:list";
+@forward "sass:map";

@@ -1,17 +1,33 @@
 // ======================================================
 // main.scss
-// Haupt-Entry für das gesamte TYPO3-Sitepackage
-//
-// Starten aus sitepackage heraus mit:  ./sass-watch.sh
+// Haupt-Einstiegspunkt für das gesamte TYPO3-Sitepackage
+// Start aus sitepackage heraus mit: ./sass-watch.sh
 // ======================================================
 
-// 1. Systemische Ebenen
-@use 'abstracts/index' as *;
-@use 'base/index' as base;
+// ------------------------------------------------------
+// 1. Globale Definitionen (Variablen, Mixins, Funktionen)
+// ------------------------------------------------------
+// Liefert Zugriff auf alle sass:Module (color, math, map, list)
+// sowie auf deine base/b-variables, b-mixins etc.
+@use './globals' as *;
 
-// 2. Layout- und Struktur-Ebene
-@use 'layout/index' as layout;
+// ------------------------------------------------------
+// 2. Systemische Ebenen
+// ------------------------------------------------------
+@use 'abstracts/index' as *; // z. B. Mixins, Utilities
+@use 'base/index' as base;   // Farben, Typo, Resets, Forms etc.
 
-// 3. Komponenten und Content
-@use 'components/index' as comp;
-@use 'content-elements/index' as ce;
+// ------------------------------------------------------
+// 3. Layout- und Struktur-Ebene
+// ------------------------------------------------------
+@use 'layout/index' as layout; // Header, Footer, Grid, Navigation etc.
+
+// ------------------------------------------------------
+// 4. Komponenten und Content
+// ------------------------------------------------------
+@use 'components/index' as comp; // Buttons, Cards, Icons, Widgets
+@use 'content-elements/index' as ce; // CE-spezifische Styles
+
+// ======================================================
+// Ende
+// ======================================================
