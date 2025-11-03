@@ -20,309 +20,244 @@
   &.is-sticky {
     box-shadow: $shadow-soft;
   }
+}
 
-  // ------------------------------
-  // TOPBAR
-  // ------------------------------
-  .c-topbar {
-    background-color: #fff;
-    color: $color-text;
-    font-family: $font-body;
-    font-size: $font-size-small;
-    border-bottom: 1px solid color.scale($color-text-light, $lightness: +40%);
-    padding: 0.5rem 1rem;
+// --------------------------------------
+// TOPBAR
+// --------------------------------------
+.c-topbar {
+  background-color: #fff;
+  color: $color-text;
+  font-family: $font-body;
+  font-size: $font-size-small;
+  border-bottom: 1px solid color.scale($color-text-light, $lightness: +40%);
+  padding: 0.5rem 1rem;
 
-    &__inner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.25rem;
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
 
-      @media (min-width: 768px) {
-        flex-direction: row;
-        justify-content: flex-end;
-        gap: 1.5rem;
-      }
-    }
-
-    &__item {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-
-      &--phone svg,
-      &--mail svg {
-        width: 1rem;
-        height: 1rem;
-        fill: $color-primary;
-      }
-    }
-
-    &__link {
-      color: inherit;
-      text-decoration: none;
-      transition: color 0.2s ease;
-
-      &:hover,
-      &:focus {
-        color: $color-primary;
-      }
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: flex-end;
+      gap: 1.5rem;
     }
   }
 
-  // ------------------------------
-  // HEADER-CONTAINER (Logo + Menü)
-  // ------------------------------
-  .c-header__container {
-    max-width: $max-content-width;
-    margin: 0 auto;
-    padding: 0.75rem 1rem;
+  &__item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 0.4rem;
+
+    &--phone svg,
+    &--mail svg {
+      width: 1rem;
+      height: 1rem;
+      fill: $color-primary;
+    }
+  }
+
+  &__link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover,
+    &:focus {
+      color: $color-primary;
+    }
+  }
+}
+
+// --------------------------------------
+// HEADER-CONTAINER: Logo + Menü
+// --------------------------------------
+.c-header__container {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  max-width: $max-content-width;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .c-menu {
+      width: 100%;
+    }
+  }
+}
+
+// --------------------------------------
+// LOGO
+// --------------------------------------
+.c-logo {
+  &__link {
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  &__img {
+    display: block;
+    height: 40px;
+    transition: transform 0.3s ease;
+
+    .is-sticky & {
+      transform: #{'scale(0.98)'};
+    }
 
     @media (min-width: 992px) {
-      padding: 1rem 2rem;
-    }
-  }
-
-  // ------------------------------
-  // LOGO
-  // ------------------------------
-  .c-logo {
-    &__link {
-      display: inline-block;
-      text-decoration: none;
-    }
-
-    &__img {
-      display: block;
-      height: 40px;
-      transition: transform 0.3s ease;
-
-      .is-sticky & {
-        transform: #{'scale(0.98)'};
-      }
-
-      @media (min-width: 992px) {
-        height: 50px;
-      }
-    }
-  }
-
-  // ------------------------------
-  // NAVIGATION
-  // ------------------------------
-  .c-menu {
-    position: relative;
-
-    // Toggle Button (mobile)
-    &__toggle {
-      background: none;
-      border: none;
-      font-family: $font-heading;
-      font-weight: $font-weight-medium;
-      font-size: 1rem;
-      cursor: pointer;
-      color: $color-text;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      @media (min-width: 768px) {
-        display: none;
-      }
-    }
-
-    // Menü-Wrapper
-    &__wrapper {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      background-color: #fff;
-      padding: 1rem;
-      box-shadow: $shadow-soft;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-
-      &.is-open {
-        display: flex;
-      }
-
-      @media (min-width: 768px) {
-        position: static;
-        display: flex !important;
-        flex-direction: row;
-        gap: 2rem;
-        box-shadow: none;
-        padding: 0;
-      }
-    }
-
-    // Menülinks
-    a {
-      text-decoration: none;
-      color: $color-text;
-      font-weight: $font-weight-medium;
-      padding: 0.5rem 0;
-      transition: color 0.3s ease;
-
-      &:hover,
-      &:focus {
-        color: $color-primary;
-      }
-
-      @media (min-width: 768px) {
-        padding: 0.25rem 0;
-      }
+      height: 50px;
     }
   }
 }
 
 // --------------------------------------
-// Burger-Icon Animation (Arburg-Stil)
-// --------------------------------------
-.c-menu__toggle {
-  position: relative;
-  width: 32px;
-  height: 24px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform 0.3s ease;
-
-  span,
-  span::before,
-  span::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 3px;
-    background-color: $color-text;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-    left: 0;
-  }
-
-  span {
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  span::before {
-    top: -8px;
-  }
-
-  span::after {
-    bottom: -8px;
-  }
-
-  &.is-active span {
-    background-color: transparent;
-  }
-
-  &.is-active span::before {
-    transform: rotate(45deg) translateY(8px);
-  }
-
-  &.is-active span::after {
-    transform: rotate(-45deg) translateY(-8px);
-  }
-}
-
-// --------------------------------------
-// Dropdown Submenus (Arburg-Stil)
+// NAVIGATION
 // --------------------------------------
 .c-menu {
+  position: relative;
+
+  // Toggle Button (mobile)
+  &__toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 32px;
+    height: 24px;
+    position: relative;
+    padding: 0;
+
+    span,
+    span::before,
+    span::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 3px;
+      background-color: $color-text;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      left: 0;
+    }
+
+    span {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    span::before {
+      top: -8px;
+    }
+
+    span::after {
+      bottom: -8px;
+    }
+
+    &.is-active span {
+      background-color: transparent;
+    }
+
+    &.is-active span::before {
+      transform: rotate(45deg) translateY(8px);
+    }
+
+    &.is-active span::after {
+      transform: rotate(-45deg) translateY(-8px);
+    }
+
+    @media (min-width: 768px) {
+      display: none;
+    }
+  }
+
+  // Menüwrapper
+  &__wrapper {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #fff;
+    padding: 1rem;
+
+    &.is-open {
+      display: flex;
+    }
+
+    @media (min-width: 768px) {
+      display: block !important;
+      background: transparent;
+      padding: 0;
+    }
+  }
+
+  // UL im Menüwrapper (mobile & desktop)
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 2rem;
+      width: auto;
+    }
+  }
+
+  // Menülinks
+  &__link {
+    display: block;
+    color: $color-text;
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    transition: color 0.3s ease;
+
+    &:hover,
+    &:focus {
+      color: $color-primary;
+    }
+  }
+
+  // Submenus (Dropdowns)
+  &__submenu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    box-shadow: $shadow-soft;
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    min-width: 200px;
+    z-index: 1001;
+
+    @media (max-width: 767px) {
+      position: static;
+      box-shadow: none;
+      padding: 0.5rem 0 0.5rem 1rem;
+      background: transparent;
+    }
+  }
+
   .has-submenu {
     position: relative;
 
-    > a {
+    &:hover > .c-menu__submenu,
+    &:focus-within > .c-menu__submenu {
       display: flex;
-      align-items: center;
-      gap: 0.25rem;
-
-      &::after {
-        content: "▾";
-        font-size: 0.8rem;
-        color: $color-text-light;
-        transition: transform 0.3s ease, color 0.3s ease;
-      }
-
-      &:hover::after {
-        color: $color-primary;
-        transform: rotate(180deg);
-      }
-    }
-
-    .submenu {
-      display: none;
-      flex-direction: column;
-      background-color: #fff;
-      box-shadow: $shadow-soft;
-      border-radius: 4px;
-      position: absolute;
-      top: calc(100% + 0.5rem);
-      left: 0;
-      min-width: 200px;
-      padding: 0.75rem 1rem;
-      z-index: 1001;
-      opacity: 0;
-      transform: translateY(-5px);
-      pointer-events: none;
-      transition: opacity 0.25s ease, transform 0.25s ease;
-
-      a {
-        display: block;
-        color: $color-text;
-        padding: 0.4rem 0;
-        font-size: 0.95rem;
-        text-decoration: none;
-        white-space: nowrap;
-        transition: color 0.2s ease;
-
-        &:hover,
-        &:focus {
-          color: $color-primary;
-        }
-      }
-    }
-
-    &:hover .submenu,
-    &:focus-within .submenu {
-      display: flex;
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-  }
-}
-
-// --------------------------------------
-// Mobile Verhalten: Submenus einklappbar
-// --------------------------------------
-@media (max-width: 991px) {
-  .c-menu {
-    .submenu {
-      position: static;
-      box-shadow: none;
-      border: none;
-      padding: 0.25rem 0 0.25rem 1rem;
-      opacity: 1;
-      transform: none;
-      pointer-events: auto;
-    }
-
-    .has-submenu > a::after {
-      content: "▸";
-      transform: none;
-    }
-
-    .has-submenu.is-open > a::after {
-      content: "▾";
     }
   }
 }
