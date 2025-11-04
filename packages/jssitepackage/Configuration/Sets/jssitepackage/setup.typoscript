@@ -11,8 +11,7 @@
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/page.typoscript'
 
 ########################################################
-# Fallback: eigene lib.contentElement Definition
-# ersetzt fluid_styled_content Setup
+# fluid_styled_content Fallback: eigene lib.contentElement
 ########################################################
 lib.contentElement = FLUIDTEMPLATE
 lib.contentElement {
@@ -58,13 +57,13 @@ tt_content.text {
 }
 
 ########################################################
-# Globale Settings (klassisch, ohne YAML)
+# Globale Settings (klassisch)
 ########################################################
 jssitepackage.settings {
   topbarTel = +49 151 23456789
   topbarMail = kontakt@jens-seiler.de
   copyright = © 2025 Jens Seiler
-}
 
-# Settings an Fluid weitergeben
-page.10.variables.settings < jssitepackage.settings
+  # Fallback für Logo-Link, falls SiteProcessor nicht greift
+  homePid = 1
+}

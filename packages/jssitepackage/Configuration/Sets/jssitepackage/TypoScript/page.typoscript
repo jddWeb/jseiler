@@ -3,27 +3,8 @@
 # Klassisch, stabil und zukunftssicher bis TYPO3 14
 ########################################################
 
+# Aufräumen und neu definieren
 page >
-
-########################################################
-# lib.contentElement – Definition mit Fallback
-########################################################
-lib.contentElement = FLUIDTEMPLATE
-lib.contentElement {
-  templateName = TEXT
-  templateName.field = CType
-  templateName.ifEmpty = Default
-
-  templateRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
-  }
-  partialRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
-  }
-  layoutRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
-  }
-}
 
 ########################################################
 # Haupt-PAGE-Objekt
@@ -64,9 +45,17 @@ page {
     }
 
     ########################################################
-    # DataProcessing – Menü, Inhalte, Medien
+    # Variablen für Fluid (Settings)
+    ########################################################
+    variables {
+      settings < jssitepackage.settings
+    }
+
+    ########################################################
+    # DataProcessing – Menü, Inhalte, Medien, Site
     ########################################################
     dataProcessing {
+      # Hauptmenü
       10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
       10 {
         levels = 2
@@ -77,25 +66,27 @@ page {
         entryLevel = 0
       }
 
+      # Inhalt Spalte 0 (Main)
       20 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
       20 {
         table = tt_content
-        pidInList.field = uid
+        pidInList.data = page:uid
         orderBy = sorting
         where = colPos = 0
         as = contentMain
       }
 
+      # Inhalt Spalte 1 (Aside)
       30 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
       30 {
         table = tt_content
-        pidInList.field = uid
+        pidInList.data = page:uid
         orderBy = sorting
         where = colPos = 1
-        selectFields = uid, pid, CType, header, bodytext, image, media, colPos, sorting
         as = contentAside
       }
 
+      # Footer-Menüs (Beispiel)
       40 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
       40 {
         special = list
@@ -105,11 +96,15 @@ page {
         titleField = nav_title // title
       }
 
+      # Media-Referenzen der aktuellen Seite (falls genutzt)
       50 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
       50 {
         references.fieldName = media
         as = mediaFiles
       }
+
+      # >>> WICHTIG: Stellt {site.*} bereit (z. B. {site.rootPageId})
+      60 = TYPO3\CMS\Frontend\DataProcessing\SiteProcessor
     }
   }
 
@@ -125,33 +120,25 @@ page {
   }
 
   shortcutIcon = EXT:jssitepackage/Resources/Public/Icons/favicon.ico
+
+  ########################################################
+  # Assets einbinden
+  ########################################################
+  includeCSS {
+    site = EXT:jssitepackage/Resources/Public/Css/main.css
+  }
+
+  includeJSFooter {
+    main = EXT:jssitepackage/Resources/Public/Js/main.js
+    main.defer = 1
+  }
 }
 
 ########################################################
-# tt_content – vereinfachte Definition
+# tt_content – vereinfachte Definition (aus setup)
 ########################################################
 tt_content = CASE
 tt_content {
   key.field = CType
   default =< lib.contentElement
 }
-
-########################################################
-# Beispiel-Override für Text-Element
-########################################################
-tt_content.text =< lib.contentElement
-tt_content.text {
-  templateName = Text
-  templateRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
-  }
-  partialRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
-  }
-  layoutRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
-  }
-}
-
-# Settings an Fluid übergeben
-page.10.variables.settings < jssitepackage.settings

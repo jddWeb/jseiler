@@ -17,10 +17,13 @@ styles.templates {
 ########################################################
 
 # cat=jssitepackage//a; type=string; label=Telefonnummer (Topbar)
-jssitepackage.settings.topbarTel = +49 151 23456789
+jssitepackage.settings.topbarTel = +49 30 55669391
 
 # cat=jssitepackage//b; type=string; label=E-Mail-Adresse (Topbar)
-jssitepackage.settings.topbarMail = kontakt@jens-seiler.de
+jssitepackage.settings.topbarMail = buero@jens-der-denker.de
 
 # cat=jssitepackage//c; type=string; label=Copyright-Hinweis im Footer
-jssitepackage.settings.copyright = © 2025 Jens Seiler
+jssitepackage.settings.copyright = © 2025 Jens Seiler - Büro Jens der Denker
+
+# cat=jssitepackage//d; type=int; label=Startseiten-UID (Logo-Link Fallback)
+jssitepackage.settings.homePid = 1

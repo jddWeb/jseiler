@@ -1,16 +1,24 @@
 {namespace f=TYPO3\CMS\Fluid\ViewHelpers}
 
+<f:variable name="homePid" value="{f:if(condition: site, then: site.rootPageId, else: settings.homePid)}" />
+<f:variable name="homeUrl">
+    <f:if condition="{homePid}">
+        <f:then><f:uri.page pageUid="{homePid}" /></f:then>
+        <f:else>/</f:else>
+    </f:if>
+</f:variable>
+
+<!-- debug: homePid={homePid} homeUrl={homeUrl} -->
 <div class="c-logo">
-    <f:link.page
-        pageUid="{site.rootPageId}"
-        class="c-logo__link"
-        title="Zur Startseite"
-        rel="home">
+    <a class="c-logo__link"
+       href="{homeUrl}"
+       title="Zur Startseite"
+       rel="home">
         <f:image
             src="EXT:jssitepackage/Resources/Public/Images/logo.svg"
-            alt="{site.title}"
+            alt="{f:if(condition: site, then: site.title, else: 'Startseite')}"
             class="c-logo__img"
             loading="eager"
             additionalAttributes="{decoding:'async', fetchpriority:'high'}" />
-    </f:link.page>
+    </a>
 </div>
