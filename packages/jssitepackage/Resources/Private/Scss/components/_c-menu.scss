@@ -1,0 +1,227 @@
+// ======================================================
+// components/_c-menu.scss
+// Navigation (Hauptmenü + Submenüs) – BEM & mobile-first
+// ======================================================
+
+@use "globals" as *;
+
+.c-menu {
+  position: relative;
+  font-family: $font-body;
+
+  // --------------------------------------
+  // Toggle (Burger) – mobile
+  // --------------------------------------
+  &__toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 32px;
+    height: 24px;
+    position: relative;
+    padding: 0;
+
+    // Hamburger-Linien
+    span,
+    span::before,
+    span::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 3px;
+      background-color: $color-text;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      left: 0;
+    }
+
+    span {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    span::before { top: -8px; }
+    span::after  { bottom: -8px; }
+
+    // X-Zustand, wenn aktiv
+    &.is-active span {
+      background-color: transparent;
+    }
+    &.is-active span::before {
+      transform: rotate(45deg) translateY(8px);
+    }
+    &.is-active span::after {
+      transform: rotate(-45deg) translateY(-8px);
+    }
+
+    @media (min-width: 768px) {
+      display: none;
+    }
+  }
+
+  // --------------------------------------
+  // Wrapper um UL (klappt mobil auf/zu)
+  // --------------------------------------
+  &__wrapper {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #fff;
+    padding: 1rem;
+
+    // Wird per JS gesetzt, wenn Menü geöffnet
+    &.is-open {
+      display: flex;
+    }
+
+    @media (min-width: 768px) {
+      display: block !important;
+      background: transparent;
+      padding: 0;
+    }
+  }
+
+  // --------------------------------------
+  // Primäre Liste
+  // --------------------------------------
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 2rem;
+      width: auto;
+    }
+  }
+
+  // --------------------------------------
+  // Items & Links
+  // --------------------------------------
+  &__item {
+    position: relative;
+
+    // Mobile: offener Zustand für Submenü via JS
+    &.open > .c-menu__submenu {
+      display: flex;
+    }
+
+    // Desktop: Hover öffnet Submenü
+    @media (min-width: 768px) {
+      &:hover > .c-menu__submenu,
+      &:focus-within > .c-menu__submenu {
+        display: block;
+      }
+    }
+
+    // visueller Indikator für Submenü
+    &.has-submenu > .c-menu__link::after {
+      content: "▾";
+      margin-left: 0.35rem;
+      font-size: 0.85em;
+      line-height: 1;
+      display: inline-block;
+      transform: translateY(-1px);
+    }
+  }
+
+  &__link {
+    display: block;
+    color: $color-text;
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    transition: color 0.3s ease;
+    padding: 0.5rem 0;
+
+    @media (min-width: 768px) {
+      padding: 0.75rem 0;
+    }
+
+    &:hover,
+    &:focus {
+      color: $color-primary;
+      outline: none;
+    }
+  }
+
+  // --------------------------------------
+  // Submenü (Dropdown)
+  // --------------------------------------
+  &__submenu {
+    // Mobile (default): untereinander, eingerückt
+    display: none;
+    flex-direction: column;
+    position: static;
+    padding-left: 1rem;
+    list-style: none;
+    margin: 0.25rem 0 0;
+
+    @media (min-width: 768px) {
+      // Desktop: Dropdown
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 220px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: $shadow-soft;
+      border: 1px solid rgba(0,0,0,.05);
+      padding: 0.5rem 0;
+      display: none;
+      z-index: 1001;
+    }
+  }
+
+  &__submenu-item {
+    margin: 0;
+    @media (min-width: 768px) { white-space: nowrap; }
+  }
+
+  &__submenu-link {
+    display: block;
+    text-decoration: none;
+    color: $color-text;
+    padding: 0.5rem 0;
+
+    @media (min-width: 768px) {
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+    }
+
+    transition: color 0.2s ease, background-color 0.2s ease;
+
+    &:hover,
+    &:focus {
+      color: $color-primary;
+      @media (min-width: 768px) { background: #f5f7f8; }
+      outline: none;
+    }
+  }
+
+  // --------------------------------------
+  // States am gesamten Menü (optional)
+  // --------------------------------------
+  &.is-open {
+    // Kann alternativ statt .c-menu__wrapper.is-open benutzt werden
+    > .c-menu__wrapper { display: flex; }
+  }
+}
+
+/* ------------------------------------------------------
+   Hinweise zur Verantwortungsteilung (Layout vs. Component)
+
+   - Sticky-Logik, top-Offsets (z. B. top: 40px wegen Topbar),
+     Maxbreite/zentrierter Container -> in layout/_l-header.scss.
+   - Die Regel ".c-header__container .c-menu { width: 100%; }"
+     bleibt im Layout, weil sie den Containerfluss betrifft.
+   - Alles Interaktive (Toggle, Open-States, Dropdown-Pos.) -> hier.
+------------------------------------------------------- */

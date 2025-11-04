@@ -1,1 +1,42 @@
-// menuMain
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+<nav class="c-menu js-menu"
+     role="navigation"
+     aria-label="Hauptmenü"
+     id="main-navigation">
+
+    <!-- Toggle (mobile) -->
+    <button class="c-menu__toggle js-menu-toggle"
+            type="button"
+            aria-controls="main-navigation-list"
+            aria-expanded="false"
+            aria-label="Hauptmenü ein- und ausklappen">
+        <span></span>
+    </button>
+
+    <!-- Menüstruktur -->
+    <div class="c-menu__wrapper" id="main-navigation-wrapper">
+        <f:if condition="{menuMain}">
+            <ul class="c-menu__list" id="main-navigation-list">
+                <f:for each="{menuMain}" as="item">
+                    <f:variable name="hasChildren" value="{item.children}" />
+                    <f:variable name="itemUid" value="{item.data.uid}" />
+
+                    <li class="c-menu__item{f:if(condition: hasChildren, then:' has-submenu')}{f:if(condition: item.active, then:' is-active')}{f:if(condition: item.current, then:' is-current')}">
+                        <a href="{item.link}"
+                           class="c-menu__link js-menu-parent"
+                           title="{item.title}"
+                           aria-haspopup="{f:if(condition: hasChildren, then:'true', else:'false')}"
+                           aria-expanded="{f:if(condition: hasChildren, then:'false', else:'false')}"
+                           aria-controls="{f:if(condition: hasChildren, then:'submenu-{itemUid}')}">
+                            {item.title}
+                        </a>
+
+                        <f:if condition="{hasChildren}">
+                            <f:render partial="menu/Sub" arguments="{children: item.children, parentUid: itemUid}" />
+                        </f:if>
+                    </li>
+                </f:for>
+            </ul>
+        </f:if>
+    </div>
+</nav>

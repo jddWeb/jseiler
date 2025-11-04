@@ -1,1 +1,17 @@
-// menuSub
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+<ul class="c-menu__submenu submenu"
+    id="submenu-{parentUid}"
+    role="menu"
+    aria-label="Untermenü">
+    <f:for each="{children}" as="subitem">
+        <li class="c-menu__submenu-item" role="none">
+            <a href="{subitem.link}"
+               class="c-menu__submenu-link"
+               title="{subitem.title}"
+               role="menuitem"
+               aria-current="{f:if(condition: subitem.current, then:'page')}">
+                {subitem.title}
+            </a>
+        </li>
+    </f:for>
+</ul>

@@ -1,5 +1,6 @@
 {namespace f=TYPO3\CMS\Fluid\ViewHelpers}
 
+<!-- Gesamter sticky Header-Wrapper -->
 <header class="c-header" role="banner">
 
     <!-- ======================================= -->
@@ -29,10 +30,7 @@
                      viewBox="0 0 24 24">
                     <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 18V8l8 5 8-5v10H4z"/>
                 </svg>
-                <a href="mailto:buero@jens-der-denker.de"
-                   class="c-topbar__link">
-                    MAIL
-                </a>
+                <a href="mailto:buero@jens-der-denker.de" class="c-topbar__link">MAIL</a>
             </span>
 
         </div>
@@ -43,58 +41,13 @@
     <!-- ======================================= -->
     <div class="c-header__container">
 
-        <!-- LOGO -->
-        <div class="c-logo">
-            <a href="{f:uri.page(pageUid: site.rootPageId)}"
-               class="c-logo__link"
-               title="Zur Startseite">
-                <f:image src="EXT:jssitepackage/Resources/Public/Images/logo.svg"
-                         alt="{site.title}"
-                         class="c-logo__img"
-                         loading="lazy" />
-            </a>
-        </div>
+        <!-- Logo -->
+        <f:render partial="Logo"
+                  arguments="{site: site, rootPageId: site.rootPageId}" />
 
-        <!-- NAVIGATION -->
-        <nav class="c-menu js-menu"
-             role="navigation"
-             aria-label="Hauptmenü"
-             id="main-navigation">
+        <!-- Navigation -->
+        <f:render partial="Menu/Main"
+                  arguments="{menuMain: menuMain}" />
 
-            <!-- Toggle (mobile) -->
-            <button class="c-menu__toggle js-menu-toggle"
-                    aria-controls="main-navigation"
-                    aria-expanded="false">
-                <span></span>
-            </button>
-
-            <!-- Menüstruktur -->
-            <div class="c-menu__wrapper">
-                <f:if condition="{menuMain}">
-                    <ul class="c-menu__list">
-                        <f:for each="{menuMain}" as="item">
-                            <li class="c-menu__item{f:if(condition:item.children, then:' has-submenu')}">
-                                <a href="{item.link}" class="c-menu__link"
-                                   title="{item.title}">
-                                    {item.title}
-                                </a>
-                                <f:if condition="{item.children}">
-                                    <ul class="c-menu__submenu submenu">
-                                        <f:for each="{item.children}" as="subitem">
-                                            <li class="c-menu__submenu-item">
-                                                <a href="{subitem.link}" class="c-menu__submenu-link"
-                                                   title="{subitem.title}">
-                                                    {subitem.title}
-                                                </a>
-                                            </li>
-                                        </f:for>
-                                    </ul>
-                                </f:if>
-                            </li>
-                        </f:for>
-                    </ul>
-                </f:if>
-            </div>
-        </nav>
     </div>
 </header>

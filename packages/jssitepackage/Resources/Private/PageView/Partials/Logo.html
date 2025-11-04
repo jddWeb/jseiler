@@ -1,0 +1,16 @@
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+
+<div class="c-logo">
+    <f:link.page
+        pageUid="{site.rootPageId}"
+        class="c-logo__link"
+        title="Zur Startseite"
+        rel="home">
+        <f:image
+            src="EXT:jssitepackage/Resources/Public/Images/logo.svg"
+            alt="{site.title}"
+            class="c-logo__img"
+            loading="eager"
+            additionalAttributes="{decoding:'async', fetchpriority:'high'}" />
+    </f:link.page>
+</div>

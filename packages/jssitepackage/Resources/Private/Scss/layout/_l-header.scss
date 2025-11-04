@@ -1,6 +1,6 @@
 // ======================================================
 // layout/_l-header.scss
-// Gesamter Header inkl. Topbar + Navigation (Arburg-Stil)
+// Gesamter Header inkl. Topbar, Container & Logo (Arburg-Stil)
 // ======================================================
 
 @use "sass:color";
@@ -72,7 +72,7 @@
 }
 
 // --------------------------------------
-// HEADER-CONTAINER: Logo + Menü
+// HEADER-CONTAINER: Logo + (externe) Navigation
 // --------------------------------------
 .c-header__container {
   display: flex;
@@ -87,6 +87,8 @@
     flex-direction: column;
     align-items: flex-start;
 
+    // Hinweis: .c-menu wird in components/_c-menu.scss definiert.
+    // Die Breitenregel für Mobile bleibt hier, weil sie das Container-Layout betrifft.
     .c-menu {
       width: 100%;
     }
@@ -113,151 +115,6 @@
 
     @media (min-width: 992px) {
       height: 50px;
-    }
-  }
-}
-
-// --------------------------------------
-// NAVIGATION
-// --------------------------------------
-.c-menu {
-  position: relative;
-
-  // Toggle Button (mobile)
-  &__toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    width: 32px;
-    height: 24px;
-    position: relative;
-    padding: 0;
-
-    span,
-    span::before,
-    span::after {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 3px;
-      background-color: $color-text;
-      border-radius: 2px;
-      transition: all 0.3s ease;
-      left: 0;
-    }
-
-    span {
-      top: 50%;
-      transform: translateY(-50%);
-    }
-
-    span::before {
-      top: -8px;
-    }
-
-    span::after {
-      bottom: -8px;
-    }
-
-    &.is-active span {
-      background-color: transparent;
-    }
-
-    &.is-active span::before {
-      transform: rotate(45deg) translateY(8px);
-    }
-
-    &.is-active span::after {
-      transform: rotate(-45deg) translateY(-8px);
-    }
-
-    @media (min-width: 768px) {
-      display: none;
-    }
-  }
-
-  // Menüwrapper
-  &__wrapper {
-    display: none;
-    flex-direction: column;
-    align-items: flex-start;
-    background-color: #fff;
-    padding: 1rem;
-
-    &.is-open {
-      display: flex;
-    }
-
-    @media (min-width: 768px) {
-      display: block !important;
-      background: transparent;
-      padding: 0;
-    }
-  }
-
-  // UL im Menüwrapper (mobile & desktop)
-  &__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    width: 100%;
-
-    @media (min-width: 768px) {
-      flex-direction: row;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 2rem;
-      width: auto;
-    }
-  }
-
-  // Menülinks
-  &__link {
-    display: block;
-    color: $color-text;
-    text-decoration: none;
-    font-weight: $font-weight-medium;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    transition: color 0.3s ease;
-
-    &:hover,
-    &:focus {
-      color: $color-primary;
-    }
-  }
-
-  // Submenus (Dropdowns)
-  &__submenu {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: #fff;
-    box-shadow: $shadow-soft;
-    border-radius: 4px;
-    padding: 0.75rem 1rem;
-    min-width: 200px;
-    z-index: 1001;
-
-    @media (max-width: 767px) {
-      position: static;
-      box-shadow: none;
-      padding: 0.5rem 0 0.5rem 1rem;
-      background: transparent;
-    }
-  }
-
-  .has-submenu {
-    position: relative;
-
-    &:hover > .c-menu__submenu,
-    &:focus-within > .c-menu__submenu {
-      display: flex;
     }
   }
 }
