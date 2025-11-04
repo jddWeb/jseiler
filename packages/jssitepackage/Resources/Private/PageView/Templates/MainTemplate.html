@@ -2,30 +2,8 @@
 
 <f:section name="Main">
 
-    <header>
-        <nav>
-            <ul>
-                <f:for each="{menuMain}" as="item">
-                    <li>
-                        <a href="{item.link}">{item.title}</a>
-                    </li>
-                </f:for>
-            </ul>
-        </nav>
-    </header>
-
     <main class="l-main">
         <f:render partial="Content" arguments="{records: contentMain}" />
     </main>
-
-    <footer>
-        <ul>
-            <f:for each="{menuFooter}" as="footerItem">
-                <li>
-                    <a href="{footerItem.link}">{footerItem.title}</a>
-                </li>
-            </f:for>
-        </ul>
-    </footer>
 
 </f:section>
