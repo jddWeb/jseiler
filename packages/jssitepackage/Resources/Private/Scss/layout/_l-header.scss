@@ -4,17 +4,18 @@
 // ======================================================
 
 @use "sass:color";
+@use "sass:meta";
 @use "globals" as *;
 
 // Fallbacks, falls Variablen in globals nicht existieren
-$__dark-bg: if(global-variable-exists(color-dark), $color-dark, #101418);
-$__on-dark: if(global-variable-exists(color-on-dark), $color-on-dark, #ffffff);
-$__primary: if(global-variable-exists(color-primary), $color-primary, #00ac80);
-$__max-content: if(global-variable-exists(max-content-width), $max-content-width, 1200px);
-$__shadow-soft: if(global-variable-exists(shadow-soft), $shadow-soft, 0 4px 14px rgba(0,0,0,.08));
+$__dark-bg: if(meta.global-variable-exists(color-dark), $color-dark, #101418);
+$__on-dark: if(meta.global-variable-exists(color-on-dark), $color-on-dark, #ffffff);
+$__primary: if(meta.global-variable-exists(color-primary), $color-primary, #00ac80);
+$__max-content: if(meta.global-variable-exists(max-content-width), $max-content-width, 1200px);
+$__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 4px 14px rgba(0,0,0,.08));
 
-// Abgeleitete Farben – WICHTIG: Prozentwerte!
-$__muted-on-dark: color.scale($__on-dark, $alpha: -35%);  // ~65% Weiß
+// Abgeleitete Farben – Prozentwerte verwenden!
+$__muted-on-dark: color.scale($__on-dark, $alpha: -35%);   // ~65% Weiß
 $__divider-on-dark: color.scale($__on-dark, $alpha: -80%); // sehr dezent
 
 // --------------------------------------
@@ -39,8 +40,8 @@ $__divider-on-dark: color.scale($__on-dark, $alpha: -80%); // sehr dezent
 .c-topbar {
   background-color: $__dark-bg;
   color: $__on-dark;
-  font-family: if(global-variable-exists(font-body), $font-body, inherit);
-  font-size: if(global-variable-exists(font-size-small), $font-size-small, 0.9rem);
+  font-family: if(meta.global-variable-exists(font-body), $font-body, inherit);
+  font-size: if(meta.global-variable-exists(font-size-small), $font-size-small, 0.9rem);
   border-bottom: 1px solid $__divider-on-dark;
   padding: 0.35rem 1rem;
 
@@ -54,12 +55,14 @@ $__divider-on-dark: color.scale($__on-dark, $alpha: -80%); // sehr dezent
     gap: 0.5rem 1rem;
   }
 
+  // Einzel-Item (Icon + Label)
   &__item {
     position: relative;
     display: inline-flex;
     align-items: center;
     line-height: 1;
 
+    // Dezente Trenner ab Tablet
     @media (min-width: 768px) {
       &:not(:last-child) { padding-right: 0.75rem; }
       &:not(:last-child)::after {
@@ -73,6 +76,7 @@ $__divider-on-dark: color.scale($__on-dark, $alpha: -80%); // sehr dezent
       }
     }
 
+    // Icon-Größe & Farbe (erbt von Link)
     &--video svg,
     &--instagram svg,
     &--phone svg,
@@ -85,23 +89,28 @@ $__divider-on-dark: color.scale($__on-dark, $alpha: -80%); // sehr dezent
     }
   }
 
+  // Klickbarer Bereich (Icon + Text gemeinsam)
   &__link {
     display: inline-flex;
     align-items: center;
     gap: .45rem;
-    color: $__muted-on-dark;
+    color: $__muted-on-dark;               // etwas leiser als reines Weiß
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    font-weight: if(global-variable-exists(font-weight-medium), $font-weight-medium, 600);
+    font-weight: if(meta.global-variable-exists(font-weight-medium), $font-weight-medium, 600);
     white-space: nowrap;
     transition: color 0.18s ease;
 
     &:hover,
-    &:focus { color: $__on-dark; }
+    &:focus {
+      color: $__on-dark;                    // auf Hover heller
+      text-decoration: none;
+    }
 
     &.is-active { color: $__primary; }
 
+    // Sichtbarer Fokus auf dunklem Grund
     &:focus-visible {
       outline: 2px solid color.scale($__primary, $lightness: +20%);
       outline-offset: 2px;
@@ -109,6 +118,7 @@ $__divider-on-dark: color.scale($__on-dark, $alpha: -80%); // sehr dezent
     }
   }
 
+  // Mobile kompakter, ohne Trenner
   @media (max-width: 479px) {
     padding: 0.4rem 0.75rem;
 
@@ -116,6 +126,7 @@ $__divider-on-dark: color.scale($__on-dark, $alpha: -80%); // sehr dezent
       justify-content: center;
       gap: 0.35rem 0.75rem;
     }
+
     &__item {
       &:not(:last-child)::after { display: none; }
     }

@@ -7,6 +7,7 @@
 @use "sass:math";
 @use "sass:list";
 @use "sass:map";
+@use "sass:meta";
 
 // ------------------------------------------------------
 // Projektvariablen weiterreichen
@@ -15,8 +16,10 @@
 
 // ------------------------------------------------------
 // Core-Funktionen optional weiterreichen
+// (vereinheitlichtes Import-Gateway für alle Module)
 // ------------------------------------------------------
 @forward "sass:color";
 @forward "sass:math";
 @forward "sass:list";
 @forward "sass:map";
+@forward "sass:meta";

@@ -1,8 +1,9 @@
 // ======================================================
 // components/_c-forms.scss
-// Formulare – minimalistisch, klar, an artburg.com angelehnt
+// Formulare – minimalistisch, klar, an arburg.com angelehnt
 // ======================================================
 
+@use "sass:color";
 @use '../base/b-variables' as v;
 @use './c-typography' as typo;
 
@@ -35,7 +36,7 @@
     font-size: v.$font-size-base;
     font-family: inherit;
     color: v.$color-text;
-    border: 1px solid lighten(v.$color-text-light, 20%);
+    border: 1px solid color.adjust(v.$color-text-light, $lightness: 20%);
     border-radius: 6px;
     background: #fff;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
@@ -43,11 +44,12 @@
     &:focus {
       outline: none;
       border-color: v.$color-primary;
+      // rgba($color, $alpha) ist weiterhin erlaubt
       box-shadow: 0 0 0 3px rgba(v.$color-primary, 0.15);
     }
 
     &::placeholder {
-      color: lighten(v.$color-text-light, 15%);
+      color: color.adjust(v.$color-text-light, $lightness: 15%);
     }
 
     &:disabled {
@@ -127,7 +129,7 @@
     }
 
     &:disabled {
-      background-color: lighten(v.$color-primary, 30%);
+      background-color: color.adjust(v.$color-primary, $lightness: 30%);
       cursor: not-allowed;
     }
   }

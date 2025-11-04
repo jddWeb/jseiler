@@ -4,6 +4,40 @@
 // ======================================================
 
 @use '../base/b-variables' as v;
+@use 'sass:math';
+@use 'sass:meta';
+
+// ------------------------------------------------------
+// 0. Helper: beliebige Längen -> px normalisieren
+// ------------------------------------------------------
+@function to-px($value) {
+  @if meta.type-of($value) != 'number' {
+    @error 'to-px(): Expected a number, got #{meta.type-of($value)}.';
+  }
+
+  // Unitlos -> als px interpretieren
+  @if math.is-unitless($value) {
+    @return $value * 1px;
+  }
+
+  // Bereits px?
+  @if math.compatible($value, 1px) {
+    // durch 1px teilen: dimensionless, dann wieder px anhängen
+    @return math.div($value, 1px) * 1px;
+  }
+
+  // rem -> px (Systemannahme: 1rem = 16px)
+  @if math.compatible($value, 1rem) {
+    @return math.div($value, 1rem) * 16px;
+  }
+
+  // em -> px (bewusst fix 16px Basis; keine kontextabhängigen em)
+  @if math.compatible($value, 1em) {
+    @return math.div($value, 1em) * 16px;
+  }
+
+  @error 'to-px(): Unsupported unit for #{$value}. Use px/rem/em or unitless.';
+}
 
 // ------------------------------------------------------
 // 1. Fluid-Scale-Funktion (unit-safe Version)
@@ -12,19 +46,27 @@
 // Erzeugt dynamische Fontgrößen auf Basis der Viewportbreite.
 // Beispiel:
 //   font-size: fluid-size(16px, 48px);
-// Ergibt: clamp(1rem, 0.5rem + 2vw, 3rem);
+// Ergibt: clamp(1rem, <intercept>rem + <slope>vw, 3rem);
 
-@function fluid-size($min, $max, $min-vw: 320, $max-vw: 1440) {
-  // Entferne px/rem aus Rechenoperationen → rechne einheitenlos
-  $slope: ($max - $min) / ($max-vw - $min-vw);
-  $intercept: $min - $slope * $min-vw;
+@function fluid-size($min, $max, $min-vw: 320px, $max-vw: 1440px) {
+  // Eingaben nach px normalisieren
+  $min-px: to-px($min);
+  $max-px: to-px($max);
+  $minvw-px: to-px($min-vw);
+  $maxvw-px: to-px($max-vw);
 
-  // Einheitlich in rem umrechnen (angenommen: Basis 16px)
-  $min-rem: $min / 16;
-  $max-rem: $max / 16;
-  $intercept-rem: $intercept / 16;
+  // Steigung als vw-Koeffizient (% pro vw)
+  $slope-vw: math.div(($max-px - $min-px), ($maxvw-px - $minvw-px)) * 100;
 
-  @return clamp(#{$min-rem}rem, #{$intercept-rem}rem + #{100 * $slope}vw, #{$max-rem}rem);
+  // Achsenabschnitt in px (bei min-vw)
+  $intercept-px: $min-px - math.div($slope-vw, 100) * $minvw-px;
+
+  // Ausgabe in rem/vw (Basis 16px)
+  $min-rem: math.div($min-px, 16px);
+  $max-rem: math.div($max-px, 16px);
+  $intercept-rem: math.div($intercept-px, 16px);
+
+  @return clamp(#{$min-rem}rem, #{$intercept-rem}rem + #{$slope-vw}vw, #{$max-rem}rem);
 }
 
 // ------------------------------------------------------
