@@ -1,10 +1,21 @@
 // ======================================================
 // layout/_l-header.scss
-// Gesamter Header inkl. Topbar, Container
+// Gesamter Header inkl. Topbar, Container (dark topbar)
 // ======================================================
 
 @use "sass:color";
 @use "globals" as *;
+
+// Fallbacks, falls Variablen in globals nicht existieren
+$__dark-bg: if(global-variable-exists(color-dark), $color-dark, #101418);
+$__on-dark: if(global-variable-exists(color-on-dark), $color-on-dark, #ffffff);
+$__primary: if(global-variable-exists(color-primary), $color-primary, #00ac80);
+$__max-content: if(global-variable-exists(max-content-width), $max-content-width, 1200px);
+$__shadow-soft: if(global-variable-exists(shadow-soft), $shadow-soft, 0 4px 14px rgba(0,0,0,.08));
+
+// Abgeleitete Farben – WICHTIG: Prozentwerte!
+$__muted-on-dark: color.scale($__on-dark, $alpha: -35%);  // ~65% Weiß
+$__divider-on-dark: color.scale($__on-dark, $alpha: -80%); // sehr dezent
 
 // --------------------------------------
 // HEADER-GRUNDELEMENT
@@ -18,80 +29,115 @@
   box-shadow: none;
 
   &.is-sticky {
-    box-shadow: $shadow-soft;
+    box-shadow: $__shadow-soft;
   }
 }
 
 // --------------------------------------
-// TOPBAR
+// TOPBAR – dunkel, helle Schrift
 // --------------------------------------
 .c-topbar {
-  background-color: #fff;
-  color: $color-text;
-  font-family: $font-body;
-  font-size: $font-size-small;
-  border-bottom: 1px solid color.scale($color-text-light, $lightness: +40%);
-  padding: 0.5rem 1rem;
+  background-color: $__dark-bg;
+  color: $__on-dark;
+  font-family: if(global-variable-exists(font-body), $font-body, inherit);
+  font-size: if(global-variable-exists(font-size-small), $font-size-small, 0.9rem);
+  border-bottom: 1px solid $__divider-on-dark;
+  padding: 0.35rem 1rem;
 
   &__inner {
+    max-width: $__max-content;
+    margin: 0 auto;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.25rem;
-
-    @media (min-width: 768px) {
-      flex-direction: row;
-      justify-content: flex-end;
-      gap: 1.5rem;
-    }
+    justify-content: flex-end;
+    gap: 0.5rem 1rem;
   }
 
   &__item {
-    display: flex;
+    position: relative;
+    display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    line-height: 1;
 
+    @media (min-width: 768px) {
+      &:not(:last-child) { padding-right: 0.75rem; }
+      &:not(:last-child)::after {
+        content: "";
+        display: inline-block;
+        width: 1px;
+        height: 0.9em;
+        margin-left: 0.75rem;
+        background-color: $__divider-on-dark;
+        vertical-align: middle;
+      }
+    }
+
+    &--video svg,
+    &--instagram svg,
     &--phone svg,
     &--mail svg {
       width: 1rem;
       height: 1rem;
-      fill: $color-primary;
+      display: block;
+      color: currentColor;
+      path, circle { fill: currentColor; }
     }
   }
 
   &__link {
-    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    color: $__muted-on-dark;
     text-decoration: none;
-    transition: color 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: if(global-variable-exists(font-weight-medium), $font-weight-medium, 600);
+    white-space: nowrap;
+    transition: color 0.18s ease;
 
     &:hover,
-    &:focus {
-      color: $color-primary;
+    &:focus { color: $__on-dark; }
+
+    &.is-active { color: $__primary; }
+
+    &:focus-visible {
+      outline: 2px solid color.scale($__primary, $lightness: +20%);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+  }
+
+  @media (max-width: 479px) {
+    padding: 0.4rem 0.75rem;
+
+    &__inner {
+      justify-content: center;
+      gap: 0.35rem 0.75rem;
+    }
+    &__item {
+      &:not(:last-child)::after { display: none; }
     }
   }
 }
 
 // --------------------------------------
-// HEADER-CONTAINER: Logo + (externe) Navigation
+// HEADER-CONTAINER: Logo + Navigation
 // --------------------------------------
 .c-header__container {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
-  max-width: $max-content-width;
+  max-width: $__max-content;
   margin: 0 auto;
   padding: 0.75rem 1rem;
 
   @media (max-width: 767px) {
     flex-direction: column;
     align-items: flex-start;
-
-    // Hinweis: .c-menu wird in components/_c-menu.scss definiert.
-    // Die Breitenregel für Mobile bleibt hier, weil sie das Container-Layout betrifft.
-    .c-menu {
-      width: 100%;
-    }
+    .c-menu { width: 100%; }
   }
 }
 
@@ -106,13 +152,13 @@
 
   &__img {
     display: block;
-    color: $color-primary;
     height: 40px;
+    color: $__primary; // nur bei inline-SVG relevant
     transition: transform 0.3s ease;
 
     .is-sticky & {
       transform: #{'scale(0.98)'};
-      color: #009e75;
+      color: color.scale($__primary, $lightness: -5%);
     }
 
     @media (min-width: 992px) {
