@@ -1,6 +1,6 @@
 // ======================================================
 // layout/_l-header.scss
-// Gesamter Header inkl. Topbar, Container & Logo (Arburg-Stil)
+// Gesamter Header inkl. Topbar, Container
 // ======================================================
 
 @use "sass:color";
@@ -106,7 +106,7 @@
 
   &__img {
     display: block;
-    color: #00ac80;
+    color: $color-primary;
     height: 40px;
     transition: transform 0.3s ease;
 
