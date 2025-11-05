@@ -55,6 +55,12 @@ page {
       topbarMail = TEXT
       topbarMail.value = {$jssitepackage.settings.topbarMail}
       topbarMail.ifEmpty = buero@jens-der-denker.de
+
+      instagramUrl = TEXT
+      instagramUrl.value = {$jssitepackage.settings.social.instagramUrl}
+
+      wikipediaUrl = TEXT
+      wikipediaUrl.value = {$jssitepackage.settings.social.wikipediaUrl}
     }
 
     dataProcessing {

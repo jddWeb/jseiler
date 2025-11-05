@@ -29,3 +29,9 @@ jssitepackage.settings.ctaPublic.label = Öffentliche Seminartermine
 
 # cat=jssitepackage/cta/b; type=string; label=Ziel-Seiten-ID (Header-CTA)
 jssitepackage.settings.ctaPublic.pageUid = 25
+
+# cat=jssitepackage/social/a; type=string; label=Instagram-URL
+jssitepackage.settings.social.instagramUrl = https://www.instagram.com/jensderdenker/
+
+# cat=jssitepackage/social/b; type=string; label=Wikipedia-URL
+jssitepackage.settings.social.wikipediaUrl = https://de.wikipedia.org/wiki/Jens_Seiler

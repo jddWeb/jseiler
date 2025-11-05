@@ -26,41 +26,50 @@
 
             <!-- Wikipedia -->
             <span class="c-topbar__item c-topbar__item--wikipedia">
-        <f:link.external uri="https://de.wikipedia.org/wiki/Jens_Seiler"
-                         target="_blank"
-                         rel="noopener noreferrer"
-                         class="c-topbar__link"
-                         title="Wikipedia: Jens Seiler"
-                         aria-label="Wikipedia: Jens Seiler">
-          <svg xmlns="http://www.w3.org/2000/svg"
-               width="16" height="16" viewBox="0 0 24 24"
-               aria-hidden="true" focusable="false">
-            <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9.25"/>
-              <path d="M6.5 8.5l3.2 7 2.3-5 2.3 5 3.2-7"/>
-            </g>
-          </svg>
-          <span>Wikipedia</span>
-        </f:link.external>
-      </span>
+  <f:variable name="wikiHref" value="{wikipediaUrl}" />
+  <f:if condition="{wikiHref}"><f:then /><f:else>
+    <f:variable name="wikiHref" value="https://de.wikipedia.org/wiki/Jens_Seiler" />
+  </f:else></f:if>
+
+  <f:link.external uri="{wikiHref}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="c-topbar__link"
+                   title="Wikipedia: Jens Seiler"
+                   aria-label="Wikipedia: Jens Seiler">
+    <!-- Icon (inline, currentColor) -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+         viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9.25"/>
+        <path d="M6.5 8.5l3.2 7 2.3-5 2.3 5 3.2-7"/>
+      </g>
+    </svg>
+    <span>Wikipedia</span>
+  </f:link.external>
+</span>
 
             <!-- Instagram -->
             <span class="c-topbar__item c-topbar__item--instagram">
-        <f:link.external uri="https://www.instagram.com/jensderdenker/"
-                         target="_blank"
-                         rel="me noopener noreferrer"
-                         class="c-topbar__link"
-                         title="Instagram: @jensderdenker">
-          <svg xmlns="http://www.w3.org/2000/svg"
-               viewBox="0 0 16 16" width="16" height="16"
-               aria-hidden="true" focusable="false">
-            <path fill="currentColor" d="M8 1.5c1.987 0 2.235.008 3.02.044.78.036 1.312.166 1.78.355.48.193.888.45 1.295.858.407.407.665.816.858 1.295.19.468.319 1 .355 1.78.036.785.044 1.033.044 3.02s-.008 2.235-.044 3.02c-.036.78-.166 1.312-.355 1.78-.193.48-.45.888-.858 1.295-.407.407-.816.665-1.295.858-.468.19-1 .319-1.78.355-.785.036-1.033.044-3.02.044s-2.235-.008-3.02-.044c-.78-.036-1.312-.166-1.78-.355a3.86 3.86 0 0 1-1.295-.858 3.86 3.86 0 0 1-.858-1.295c-.19-.468-.319-1-.355-1.78C1.508 10.235 1.5 9.987 1.5 8s.008-2.235.044-3.02c.036-.78.166-1.312.355-1.78.193-.48.45-.888.858-1.295.407-.407.816-.665 1.295-.858.468-.19 1-.319 1.78-.355C5.765 1.508 6.013 1.5 8 1.5zM8 0C6 0 5.738.008 4.945.044 4.15.08 3.48.216 2.89.452A5.36 5.36 0 0 0 .452 2.89C.216 3.48.08 4.15.044 4.945.008 5.738 0 6 0 8s.008 2.262.044 3.055c.036.795.172 1.465.408 2.055.236.59.57 1.093 1.038 1.56.467.468.97.802 1.56 1.038.59.236 1.26.372 2.055.408C5.738 15.992 6 16 8 16s2.262-.008 3.055-.044c.795-.036 1.465-.172 2.055-.408.59-.236 1.093-.57 1.56-1.038.468-.467.802-.97 1.038-1.56.236-.59.372-1.26.408-2.055.036-.793.044-1.055.044-3.055s-.008-2.262-.044-3.055c-.036-.795-.172-1.465-.408-2.055a4.86 4.86 0 0 0-1.038-1.56 4.86 4.86 0 0 0-1.56-1.038c-.59-.236-1.26-.372-2.055-.408C10.262.008 10 0 8 0z"/>
-            <path fill="currentColor" d="M8 3.889a4.111 4.111 0 1 0 0 8.222 4.111 4.111 0 0 0 0-8.222zm0 6.778a2.667 2.667 0 1 1 0-5.334 2.667 2.667 0 0 1 0 5.334z"/>
-            <circle fill="currentColor" cx="12.111" cy="3.889" r="1.111"/>
-          </svg>
-          <span>Instagram</span>
-        </f:link.external>
-      </span>
+  <f:variable name="igHref" value="{instagramUrl}" />
+  <f:if condition="{igHref}"><f:then /><f:else>
+    <f:variable name="igHref" value="https://www.instagram.com/jensderdenker/" />
+  </f:else></f:if>
+
+  <f:link.external uri="{igHref}"
+                   target="_blank"
+                   rel="me noopener noreferrer"
+                   class="c-topbar__link"
+                   title="Instagram: @jensderdenker">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
+         width="16" height="16" aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="M8 1.5c1.987 0 2.235.008 3.02.044..."/>
+      <path fill="currentColor" d="M8 3.889a4.111 4.111 0 1 0 0 8.222..."/>
+      <circle fill="currentColor" cx="12.111" cy="3.889" r="1.111"/>
+    </svg>
+    <span>Instagram</span>
+  </f:link.external>
+</span>
 
             <!-- Telefon -->
             <span class="c-topbar__item c-topbar__item--phone c-icon-inline">
