@@ -2,38 +2,43 @@
 #### CONFIG ####
 ################
 config {
-    absRefPrefix = auto
-    no_cache = {$config.no_cache}
-    uniqueLinkVars = 1
-    pageTitleFirst = 1
-    linkVars = L
-    prefixLocalAnchors = {$config.prefixLocalAnchors}
-    renderCharset = utf-8
-    metaCharset = utf-8
-    doctype = html5
-    removeDefaultJS = {$config.removeDefaultJS}
-    inlineStyle2TempFile = 1
-    admPanel = {$config.admPanel}
-    debug = 0
-    cache_period = 86400
-    sendCacheHeaders = {$config.sendCacheHeaders}
-    intTarget =
-    extTarget =
-    disablePrefixComment = 1
-    index_enable = 1
-    index_externals = 1
-    index_metatags = 1
-    headerComment = {$config.headerComment}
+  absRefPrefix = auto
 
-    # Disable Image Upscaling
-    noScaleUp = 1
+  # Charset & HTML
+  renderCharset = utf-8
+  metaCharset   = utf-8
+  doctype       = html5
 
-    # Compression and Concatenation of CSS and JS Files
-    compressJs = 0
-    compressCss = 0
-    concatenateJs = 0
-    concatenateCss = 0
+  # Index / SEO-Basics
+  index_enable    = 1
+  index_externals = 1
+  index_metatags  = 1
 
-    # ✅ Cache Busting / Version Number in Filenames
-    versionNumberInFilename = 1
+  # Caching
+  no_cache         = 0
+  cache_period     = 86400
+  sendCacheHeaders = 1
+
+  # Ausgaben
+  disablePrefixComment = 1
+  debug                = 0
+
+  # Assets
+  inlineStyle2TempFile   = 1
+  concatenateCss         = 0
+  concatenateJs          = 0
+  compressCss            = 0
+  compressJs             = 0
+
+  # Links
+  uniqueLinkVars   = 1
+  linkVars         = L
+  pageTitleFirst   = 1
+  prefixLocalAnchors = 0
+
+  # Bilder
+  noScaleUp = 1
+
+  # Cache-Busting
+  versionNumberInFilename = 1
 }

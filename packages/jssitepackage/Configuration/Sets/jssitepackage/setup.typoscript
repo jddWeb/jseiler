@@ -1,12 +1,8 @@
 ########################################################
 # JS Sitepackage – Setup für TYPO3 13.4 LTS
-# Klassische, stabile Struktur ohne YAML-Importe
+# Klassische Struktur ohne YAML
 ########################################################
 
-########################################################
-# Dein Sitepackage TypoScript einbinden
-########################################################
-@import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/constants.typoscript'
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/config.typoscript'
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/page.typoscript'
 
@@ -57,13 +53,33 @@ tt_content.text {
 }
 
 ########################################################
-# Globale Settings (klassisch)
+# Globale Settings – lesen Constants, haben Fallbacks
 ########################################################
 jssitepackage.settings {
-  topbarTel = +49 151 23456789
-  topbarMail = kontakt@jens-seiler.de
-  copyright = © 2025 Jens Seiler
 
-  # Fallback für Logo-Link, falls SiteProcessor nicht greift
-  homePid = 1
+  topbarTel = TEXT
+  topbarTel.value = {$jssitepackage.settings.topbarTel}
+  topbarTel.ifEmpty = +49 30 55669391
+
+  topbarMail = TEXT
+  topbarMail.value = {$jssitepackage.settings.topbarMail}
+  topbarMail.ifEmpty = buero@jens-der-denker.de
+
+  copyright = TEXT
+  copyright.value = {$jssitepackage.settings.copyright}
+  copyright.ifEmpty = © 2025 Jens Seiler - Büro Jens der Denker
+
+  homePid = TEXT
+  homePid.value = {$jssitepackage.settings.homePid}
+  homePid.ifEmpty = 1
+
+  ctaPublic {
+    label = TEXT
+    label.value = {$jssitepackage.settings.ctaPublic.label}
+    label.ifEmpty = Öffentliche Seminartermine
+
+    pageUid = TEXT
+    pageUid.value = {$jssitepackage.settings.ctaPublic.pageUid}
+    pageUid.ifEmpty = 25
+  }
 }

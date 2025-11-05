@@ -1,21 +1,13 @@
 ########################################################
 # JS Sitepackage – Haupt-Rendering für TYPO3 13.4 LTS
-# Klassisch, stabil und zukunftssicher bis TYPO3 14
 ########################################################
 
-# Aufräumen und neu definieren
 page >
 
-########################################################
-# Haupt-PAGE-Objekt
-########################################################
 page = PAGE
 page {
   typeNum = 0
 
-  ########################################################
-  # FLUIDTEMPLATE-Konfiguration
-  ########################################################
   10 = FLUIDTEMPLATE
   10 {
     templateRootPaths {
@@ -28,34 +20,44 @@ page {
       10 = EXT:jssitepackage/Resources/Private/PageView/Partials/
     }
 
-    ########################################################
-    # Automatische Template-Auswahl nach BackendLayout
-    ########################################################
+    # Template-Auswahl
     templateName = TEXT
     templateName.stdWrap.cObject = CASE
     templateName.stdWrap.cObject {
       key.data = levelfield:-1, backend_layout_next_level, slide
       key.override.field = backend_layout
-
       default = TEXT
       default.value = MainTemplate
-
       pagets__SubmainTemplate = TEXT
       pagets__SubmainTemplate.value = SubmainTemplate
     }
 
     ########################################################
-    # Variablen für Fluid (Settings)
+    # Variablen (ein Block, nichts überschreibt sich)
     ########################################################
     variables {
-      settings < jssitepackage.settings
+      # 1) Ganzes Settings-Array (falls du es anderswo brauchst)
+      settings =< jssitepackage.settings
+
+      # 2) Flache, vorgerenderte Variablen für Header/Topbar/CTA
+      ctaPublicPageUid = TEXT
+      ctaPublicPageUid.value = {$jssitepackage.settings.ctaPublic.pageUid}
+      ctaPublicPageUid.ifEmpty = 25
+
+      ctaPublicLabel = TEXT
+      ctaPublicLabel.value = {$jssitepackage.settings.ctaPublic.label}
+      ctaPublicLabel.ifEmpty = Öffentliche Seminartermine
+
+      topbarTel = TEXT
+      topbarTel.value = {$jssitepackage.settings.topbarTel}
+      topbarTel.ifEmpty = +49 30 55669391
+
+      topbarMail = TEXT
+      topbarMail.value = {$jssitepackage.settings.topbarMail}
+      topbarMail.ifEmpty = buero@jens-der-denker.de
     }
 
-    ########################################################
-    # DataProcessing – Menü, Inhalte, Medien, Site
-    ########################################################
     dataProcessing {
-      # Hauptmenü
       10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
       10 {
         levels = 2
@@ -66,7 +68,6 @@ page {
         entryLevel = 0
       }
 
-      # Inhalt Spalte 0 (Main)
       20 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
       20 {
         table = tt_content
@@ -76,7 +77,6 @@ page {
         as = contentMain
       }
 
-      # Inhalt Spalte 1 (Aside)
       30 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
       30 {
         table = tt_content
@@ -86,7 +86,6 @@ page {
         as = contentAside
       }
 
-      # Footer-Menüs (Beispiel)
       40 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
       40 {
         special = list
@@ -96,21 +95,16 @@ page {
         titleField = nav_title // title
       }
 
-      # Media-Referenzen der aktuellen Seite (falls genutzt)
       50 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
       50 {
         references.fieldName = media
         as = mediaFiles
       }
 
-      # >>> WICHTIG: Stellt {site.*} bereit (z. B. {site.rootPageId})
       60 = TYPO3\CMS\Frontend\DataProcessing\SiteProcessor
     }
   }
 
-  ########################################################
-  # META-TAGS & Favicon
-  ########################################################
   meta {
     viewport = width=device-width, initial-scale=1.0
     robots = index,follow
@@ -121,9 +115,6 @@ page {
 
   shortcutIcon = EXT:jssitepackage/Resources/Public/Icons/favicon.ico
 
-  ########################################################
-  # Assets einbinden
-  ########################################################
   includeCSS {
     site = EXT:jssitepackage/Resources/Public/Css/main.css
   }
@@ -134,9 +125,7 @@ page {
   }
 }
 
-########################################################
-# tt_content – vereinfachte Definition (aus setup)
-########################################################
+# tt_content – Fallback
 tt_content = CASE
 tt_content {
   key.field = CType
