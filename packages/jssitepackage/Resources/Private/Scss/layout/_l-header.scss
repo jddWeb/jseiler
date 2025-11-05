@@ -148,10 +148,9 @@ $__bp-mobile-max: 1229px;
       order: 3;
       margin-left: 2.25rem;
     }
-    /* Abstand rechts vom Menü */
   }
 
-  /* MOBILE: stapeln; CTA vor Menü; Burger oben rechts */
+  /* MOBILE: stapeln; CTA vor Menü; Burger oben rechts – vertikal auf Logo zentriert */
   @media (max-width: $__bp-mobile-max) {
     flex-direction: column;
     align-items: stretch;
@@ -163,8 +162,11 @@ $__bp-mobile-max: 1229px;
 
     > nav.c-menu > .c-menu__toggle {
       position: absolute !important;
-      top: .75rem !important;
+      /* Mittelpunkt der Schaltfläche auf Logo-Mittelpunkt setzen:
+         1.75rem (Container-Padding oben) + 20px (Logo-Hälfte bei 40px) */
+      top: calc(1.75rem + 20px) !important;
       right: 1rem !important;
+      transform: translateY(-50%) !important;
       width: 32px !important;
       height: 24px !important;
       display: inline-flex !important;
@@ -174,7 +176,14 @@ $__bp-mobile-max: 1229px;
       z-index: 1003 !important;
     }
 
-    /* Luft, damit Toggle nicht über Logo liegt */
+    /* Bei größeren Mobilscreens (Logo 50px) die Mitte anpassen */
+    @media (min-width: 992px) and (max-width: $__bp-mobile-max) {
+      > nav.c-menu > .c-menu__toggle {
+        top: calc(1.75rem + 25px) !important;
+      }
+    }
+
+    /* Luft bleibt bestehen */
     padding-top: 2.25rem;
 
     /* Reihenfolge: CTA vor Menü (Logo bleibt oben) */

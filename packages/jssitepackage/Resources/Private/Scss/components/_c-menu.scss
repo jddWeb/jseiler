@@ -36,7 +36,7 @@ $__bp-desktop: 1230px;
     border: 0;
     cursor: pointer;
 
-    position: relative; /* z-index wirksam */
+    position: relative;
     z-index: 1005;
     pointer-events: auto;
 
@@ -75,7 +75,7 @@ $__bp-desktop: 1230px;
     flex-direction: column;
     align-items: stretch;
     background-color: #fff;
-    padding: 0; /* Kopfbereich hat eigenen Padding */
+    padding: 0;
     box-shadow: none;
     border-radius: 0;
 
@@ -127,7 +127,7 @@ $__bp-desktop: 1230px;
       background: $__text;
       transform-origin: center;
     }
-    span { opacity: 0; } /* Mittelstrich unsichtbar */
+    span { opacity: 0; }
     span::before { transform: translate(-50%, -50%) rotate(45deg); }
     span::after  { transform: translate(-50%, -50%) rotate(-45deg); }
 
@@ -235,7 +235,7 @@ $__bp-desktop: 1230px;
     }
 
     &__head,
-    &__close { display: none; } /* Close-Header nur mobil */
+    &__close { display: none; }
 
     &__list {
       flex-direction: row;
@@ -248,15 +248,11 @@ $__bp-desktop: 1230px;
       background: transparent;
     }
 
-    &__item {
-      border: 0;
-
-      &.has-submenu > .c-menu__link { padding-right: 0; }
-    }
+    &__item { border: 0; }
 
     &__link { padding: 0; }
 
-    &__drill { display: none; } /* Desktop: Pfeil nicht nötig */
+    &__drill { display: none; }
 
     &__submenu {
       display: none;
@@ -280,7 +276,7 @@ $__bp-desktop: 1230px;
   }
 }
 
-/* CTA im Overlay (unter der Liste) */
+/* CTA im Overlay (unter der Liste) – nur mobil sichtbar */
 .c-menu__cta {
   display: inline-flex;
   align-items: center;
@@ -306,7 +302,11 @@ $__bp-desktop: 1230px;
   }
 }
 
-/* Header-Layering: nichts über dem Toggle */
+@media (min-width: $__bp-desktop) {
+  .c-menu__cta { display: none !important; }
+}
+
+/* Header-Layering */
 .c-header {
   position: sticky;
   top: 0;
