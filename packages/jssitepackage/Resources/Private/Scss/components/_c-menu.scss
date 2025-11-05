@@ -12,26 +12,35 @@ $__text-light: if(meta.global-variable-exists(color-text-light), $color-text-lig
 $__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 8px 24px rgba(0,0,0,.08));
 
 $__bp-desktop: 1230px;
-$__bp-mobile-max: 1229px;
+
+.u-visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
 
 .c-menu {
   position: relative;
 
-  // Toggle (Hamburger) – mobile sichtbar
   &__toggle {
-    display: inline-flex; /* NIE full width */
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: none;
-    border: none;
-    cursor: pointer;
     width: 32px;
     height: 24px;
-    position: static; /* Referenzpunkt ist der Container */
-    padding: 0;
-    margin: 0;
-    box-sizing: content-box;
-    z-index: 1003;
+    background: none;
+    border: 0;
+    cursor: pointer;
+
+    /* WICHTIG: z-index greift nur bei position != static */
+    position: relative;
+    z-index: 1005;           /* über Wrapper & CTA */
+    pointer-events: auto;
+
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 
     span,
     span::before,
@@ -57,7 +66,6 @@ $__bp-mobile-max: 1229px;
     }
   }
 
-  // Dropdown-Panel (mobile)
   &__wrapper {
     display: none;
     flex-direction: column;
@@ -66,10 +74,11 @@ $__bp-mobile-max: 1229px;
     padding: 1rem;
     box-shadow: $__shadow-soft;
     border-radius: 4px;
+
     position: absolute;
     right: 0;
     top: calc(100% + 12px);
-    z-index: 1001;
+    z-index: 1003;           /* unter Toggle */
     min-width: 260px;
 
     &.is-open { display: flex; }
@@ -107,10 +116,7 @@ $__bp-mobile-max: 1229px;
     transition: color .25s ease;
 
     &:hover,
-    &:focus {
-      color: $__primary;
-      text-decoration: none;
-    }
+    &:focus { color: $__primary; text-decoration: none; }
   }
 
   &__submenu {
@@ -125,7 +131,6 @@ $__bp-mobile-max: 1229px;
       text-decoration: none;
       padding: .25rem 0;
       transition: color .2s ease;
-
       &:hover,
       &:focus { color: $__primary; }
     }
@@ -133,7 +138,6 @@ $__bp-mobile-max: 1229px;
 
   .has-submenu.open > .c-menu__submenu { display: flex; }
 
-  // DESKTOP (>= 1230px)
   @media (min-width: $__bp-desktop) {
     &__toggle { display: none; }
 
@@ -144,6 +148,7 @@ $__bp-mobile-max: 1229px;
       padding: 0;
       box-shadow: none;
       min-width: unset;
+      z-index: auto;
     }
 
     &__list {
@@ -165,7 +170,7 @@ $__bp-mobile-max: 1229px;
       border-radius: 4px;
       padding: .75rem 1rem;
       min-width: 220px;
-      z-index: 1002;
+      z-index: 1004;
     }
 
     .has-submenu:hover > .c-menu__submenu,
@@ -174,3 +179,17 @@ $__bp-mobile-max: 1229px;
     }
   }
 }
+
+/* Header-Layering: nichts über dem Toggle */
+.c-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;       /* über Content */
+  background: #fff;
+}
+
+.c-topbar,
+.c-header__container { position: relative; z-index: 1; }
+
+/* CTA darf niemals über dem Toggle liegen */
+.c-header__cta { position: relative; z-index: 2; }
