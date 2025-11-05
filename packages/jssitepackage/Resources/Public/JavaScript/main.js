@@ -190,19 +190,6 @@
         window.addEventListener("resize", throttle(cleanup, 100));
     }
 
-    // --- 4) Diagnose: Liegt etwas drüber? -----------------------------------
-    window.JD.hitTestMenu = function(){
-        var b = document.querySelector("[data-menu-toggle], .c-menu__toggle");
-        if (!b) { console.warn("Kein Toggle im DOM."); return null; }
-        var r = b.getBoundingClientRect();
-        var x = r.left + r.width/2, y = r.top + r.height/2;
-        var top = document.elementFromPoint(x, y);
-        var ok = (top === b) || b.contains(top);
-        console.log("Hit-Test:", { toggle: b, topElement: top, toggleReceivesClick: ok });
-        if (!ok) console.warn("Ein Element liegt über dem Toggle:", top);
-        return { toggle: b, topElement: top, toggleReceivesClick: ok };
-    };
-
     // --- Boot ---------------------------------------------------------------
     function boot(){
         ensureMenuStructure();   // idempotent – ergänzt fehlende Teile
