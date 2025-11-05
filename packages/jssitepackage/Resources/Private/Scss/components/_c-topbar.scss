@@ -1,0 +1,98 @@
+// ======================================================
+// components/_c-topbar.scss – Weiß auf Schwarz (global)
+// Mobile-first; <915px zentriert
+// ======================================================
+
+@use "sass:meta";
+@use "globals" as *;
+
+/* Feste Farben (unabhängig von globalen Tokens) */
+$__bg: #000;                        // Schwarz
+$__text: #fff;                      // Weiß
+$__text-muted: rgba(255,255,255,.8);
+$__link-hover: if(meta.global-variable-exists(color-primary), $color-primary, #9fe7cf); // optionaler Akzent
+
+$__bp-center: 915px;
+
+.c-topbar {
+  /* Harte Vorgabe + CSS-Var für späteres Theming */
+  --topbar-bg: #{$__bg};
+  --topbar-fg: #{$__text};
+
+  background-color: var(--topbar-bg);
+  color: var(--topbar-fg);
+  font-size: .9375rem;
+  line-height: 1.4;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Desktop standard: rechts */
+    gap: 16px;
+    padding: 6px 16px;
+    min-height: 36px;
+    width: 100%;
+    background-color: inherit; /* übernimmt Schwarz */
+    color: inherit;            /* übernimmt Weiß */
+  }
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: $__text-muted;      /* leicht abgeschwächt */
+    white-space: nowrap;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: currentColor;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $__link-hover;
+      text-decoration: underline;
+    }
+  }
+}
+
+/* < 915px: zentrieren & wrap – Farben bleiben erhalten */
+@media (max-width: $__bp-center) {
+  .c-topbar {
+    background-color: var(--topbar-bg);
+    color: var(--topbar-fg);
+
+    &__inner {
+      justify-content: center;
+      flex-wrap: wrap;
+      row-gap: 8px;
+      text-align: center;
+      background-color: inherit;
+      color: inherit;
+    }
+
+    &__item { font-size: .9rem; }
+  }
+}
+
+/* Hardening: nichts im Header darf das übermalen */
+.c-header .c-topbar,
+.c-header.is-sticky .c-topbar {
+  background-color: var(--topbar-bg) !important;
+  color: var(--topbar-fg) !important;
+}
+
+/* Icons folgen currentColor => weiß/muted */
+.c-icon { display: inline-block; vertical-align: middle; }
+.c-icon--primary { color: currentColor; }
+.c-icon--primary-light { color: $__text-muted; }
+
+/* Kontraststarker Fokus-Ring */
+.c-topbar a:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+  text-decoration: none;
+}
