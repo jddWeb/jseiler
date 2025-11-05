@@ -13,7 +13,7 @@ $__on-dark: if(meta.global-variable-exists(color-on-dark), $color-on-dark, #ffff
 $__primary: if(meta.global-variable-exists(color-primary), $color-primary, #00ac80);
 $__max-content: if(meta.global-variable-exists(max-content-width), $max-content-width, 1200px);
 $__max-header: if(meta.global-variable-exists(max-header-width), $max-header-width, $__max-content);
-$__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 4px 14px rgba(0,0,0,.08));
+$__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 4px 14px rgba(0, 0, 0, .08));
 
 $__muted-on-dark: color.scale($__on-dark, $alpha: -35%);
 $__divider-on-dark: color.scale($__on-dark, $alpha: -80%);
@@ -31,7 +31,9 @@ $__bp-mobile-max: 1229px;
   transition: box-shadow .3s ease, background-color .3s ease;
   box-shadow: none;
 
-  &.is-sticky { box-shadow: $__shadow-soft; }
+  &.is-sticky {
+    box-shadow: $__shadow-soft;
+  }
 }
 
 /* TOPBAR (dunkel) */
@@ -60,54 +62,93 @@ $__bp-mobile-max: 1229px;
     line-height: 1;
 
     @media (min-width: 768px) {
-      &:not(:last-child){ padding-right: .75rem; }
+      &:not(:last-child) {
+        padding-right: .75rem;
+      }
       &:not(:last-child)::after {
-        content:"";
-        width:1px; height:.9em; margin-left:.75rem;
+        content: "";
+        width: 1px;
+        height: .9em;
+        margin-left: .75rem;
         background-color: $__divider-on-dark;
-        display:inline-block; vertical-align: middle;
+        display: inline-block;
+        vertical-align: middle;
       }
     }
 
     &--video svg, &--instagram svg, &--phone svg, &--mail svg {
-      width:1rem; height:1rem; display:block; color: currentColor;
-      path, circle { fill: currentColor; }
+      width: 1rem;
+      height: 1rem;
+      display: block;
+      color: currentColor;
+
+      path, circle {
+        fill: currentColor;
+      }
     }
   }
 
   &__link {
-    display:inline-flex; align-items:center; gap:.45rem;
-    color: $__muted-on-dark; text-decoration:none; text-transform:uppercase;
-    letter-spacing:.06em;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    color: $__muted-on-dark;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: .06em;
     font-weight: if(meta.global-variable-exists(font-weight-medium), $font-weight-medium, 600);
-    white-space:nowrap; transition: color .18s ease;
+    white-space: nowrap;
+    transition: color .18s ease;
 
-    &:hover,&:focus{ color: $__on-dark; text-decoration:none; }
+    &:hover, &:focus {
+      color: $__on-dark;
+      text-decoration: none;
+    }
 
-    &:focus-visible{
-      outline:2px solid color.scale($__primary, $lightness:+20%);
-      outline-offset:2px; border-radius:6px;
+    &:focus-visible {
+      outline: 2px solid color.scale($__primary, $lightness: +20%);
+      outline-offset: 2px;
+      border-radius: 6px;
     }
   }
 
   @media (max-width: 479px) {
-    padding:.4rem .75rem;
-    &__inner{ justify-content:center; gap:.35rem .75rem; }
-    &__item:not(:last-child)::after{ display:none; }
+    padding: .4rem .75rem;
+    &__inner {
+      justify-content: center;
+      gap: .35rem .75rem;
+    }
+    &__item:not(:last-child)::after {
+      display: none;
+    }
   }
 }
 
 /* CONTAINER: Logo + CTA + Menü */
 .c-header__container {
   position: relative; /* Bezugspunkt für Toggle */
-  display:flex; flex-wrap:nowrap; justify-content:space-between; align-items:center;
-  max-width: $__max-header; margin:0 auto; padding:.75rem 1rem; gap:1rem;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  max-width: $__max-header;
+  margin: 0 auto;
+  padding: 1.75rem 1rem;
+  gap: 1rem;
 
   /* DESKTOP: Reihenfolge Logo (1), Menü (2), CTA (3) */
   @media (min-width: $__bp-desktop) {
-    .c-logo { order: 1; }
-    > nav.c-menu { order: 2; }
-    .c-header__cta { order: 3; margin-left: 2.25rem; } /* Abstand rechts vom Menü */
+    .c-logo {
+      order: 1;
+    }
+    > nav.c-menu {
+      order: 2;
+    }
+    .c-header__cta {
+      order: 3;
+      margin-left: 2.25rem;
+    }
+    /* Abstand rechts vom Menü */
   }
 
   /* MOBILE: stapeln; CTA vor Menü; Burger oben rechts */
@@ -116,7 +157,9 @@ $__bp-mobile-max: 1229px;
     align-items: stretch;
     gap: .75rem;
 
-    > nav.c-menu { position: static !important; }
+    > nav.c-menu {
+      position: static !important;
+    }
 
     > nav.c-menu > .c-menu__toggle {
       position: absolute !important;
@@ -135,45 +178,76 @@ $__bp-mobile-max: 1229px;
     padding-top: 2.25rem;
 
     /* Reihenfolge: CTA vor Menü (Logo bleibt oben) */
-    .c-header__cta { order: 1; }
-    > nav.c-menu   { order: 2; }
+    .c-header__cta {
+      order: 1;
+    }
+    > nav.c-menu {
+      order: 2;
+    }
 
-    .c-menu { width: 100%; }
+    .c-menu {
+      width: 100%;
+    }
   }
 }
 
 /* LOGO */
 .c-logo {
-  &__link { display:inline-block; text-decoration:none; }
+  &__link {
+    display: inline-block;
+    text-decoration: none;
+  }
+
   &__img {
-    display:block; height:40px; color: $__primary; transition: transform .3s ease;
+    display: block;
+    height: 40px;
+    color: $__primary;
+    transition: transform .3s ease;
 
-    .is-sticky & { transform: #{'scale(0.98)'}; color: color.scale($__primary, $lightness:-5%); }
+    .is-sticky & {
+      transform: #{'scale(0.98)'};
+      color: color.scale($__primary, $lightness: -5%);
+    }
 
-    @media (min-width: 992px) { height:50px; }
+    @media (min-width: 992px) {
+      height: 50px;
+    }
   }
 }
 
 /* CTA */
 .c-header__cta {
-  display:inline-flex; align-items:center; justify-content:center;
-  padding:.9rem 1.4rem; border-radius:0; min-width:14ch;
-  background-color: $__primary; color:#fff; text-decoration:none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .9rem 1.4rem;
+  border-radius: 0;
+  min-width: 14ch;
+  background-color: $__primary;
+  color: #fff;
+  text-decoration: none;
   font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
-  letter-spacing:.02em; line-height:1; white-space:nowrap;
+  letter-spacing: .02em;
+  line-height: 1;
+  white-space: nowrap;
   transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
 
-  &:hover,&:focus{
-    background-color: $__primary-hover; text-decoration:none;
-    transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  &:hover, &:focus {
+    background-color: $__primary-hover;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
   }
 
-  &:focus-visible{
-    outline:2px solid color.scale($__primary, $lightness:+20%);
-    outline-offset:3px;
+  &:focus-visible {
+    outline: 2px solid color.scale($__primary, $lightness: +20%);
+    outline-offset: 3px;
   }
 
-  @media (min-width: 992px) { padding:1rem 1.6rem; min-width:16ch; }
+  @media (min-width: 992px) {
+    padding: 1rem 1.6rem;
+    min-width: 16ch;
+  }
 
   /* <415px: kompakter */
   @media (max-width: 414px) {
@@ -184,7 +258,9 @@ $__bp-mobile-max: 1229px;
 }
 
 .c-header__cta-label {
-  text-transform: uppercase; letter-spacing:.06em; font-size:.92rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: .92rem;
   @media (max-width: 414px) {
     font-size: .86rem;
     letter-spacing: .02em;
@@ -192,14 +268,26 @@ $__bp-mobile-max: 1229px;
 }
 
 .c-header__cta-icon {
-  margin-left:.65rem; width:18px; height:18px; display:inline-block;
-  transform: translateX(0); transition: transform .18s ease; color: currentColor;
-  path { fill: currentColor; }
+  margin-left: .65rem;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  transform: translateX(0);
+  transition: transform .18s ease;
+  color: currentColor;
+
+  path {
+    fill: currentColor;
+  }
 
   @media (max-width: 414px) {
-    margin-left: .5rem; width: 16px; height: 16px;
+    margin-left: .5rem;
+    width: 16px;
+    height: 16px;
   }
 }
 
 .c-header__cta:hover .c-header__cta-icon,
-.c-header__cta:focus .c-header__cta-icon { transform: translateX(3px); }
+.c-header__cta:focus .c-header__cta-icon {
+  transform: translateX(3px);
+}
