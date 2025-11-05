@@ -3,19 +3,14 @@
 # TYPO3 13.4+ – vollständig backendfähig
 ########################################################
 
-########################################################
 # Templating: Standardpfade für Content Elements
-########################################################
 styles.templates {
   layoutRootPath = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
   partialRootPath = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
   templateRootPath = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
 }
 
-########################################################
 # JS Sitepackage – Allgemeine Einstellungen
-########################################################
-
 # cat=jssitepackage//a; type=string; label=Telefonnummer (Topbar)
 jssitepackage.settings.topbarTel = +49 30 55669391
 
@@ -27,3 +22,10 @@ jssitepackage.settings.copyright = © 2025 Jens Seiler - Büro Jens der Denker
 
 # cat=jssitepackage//d; type=int; label=Startseiten-UID (Logo-Link Fallback)
 jssitepackage.settings.homePid = 1
+
+# CTA „Öffentliche Seminartermine“
+# cat=jssitepackage/cta/a; type=string; label=CTA-Label (Header)
+jssitepackage.settings.ctaPublic.label = Öffentliche Seminartermine
+
+# cat=jssitepackage/cta/b; type=string; label=Ziel-Seiten-ID (Header-CTA)
+jssitepackage.settings.ctaPublic.pageUid = 25

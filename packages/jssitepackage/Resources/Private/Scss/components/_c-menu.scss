@@ -1,27 +1,38 @@
 // ======================================================
 // components/_c-menu.scss
-// Navigation (Hauptmenü + Submenüs) – BEM & mobile-first
+// Hauptnavigation (BEM) – Mobile-first, Breakpoint 1230px
 // ======================================================
 
+@use "sass:meta";
 @use "globals" as *;
+
+$__primary: if(meta.global-variable-exists(color-primary), $color-primary, #00ac80);
+$__text: if(meta.global-variable-exists(color-text), $color-text, #1a1a1a);
+$__text-light: if(meta.global-variable-exists(color-text-light), $color-text-light, #6c757d);
+$__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 8px 24px rgba(0,0,0,.08));
+
+$__bp-desktop: 1230px;
+$__bp-mobile-max: 1229px;
 
 .c-menu {
   position: relative;
-  font-family: $font-body;
 
-  // --------------------------------------
-  // Toggle (Burger) – mobile
-  // --------------------------------------
+  // Toggle (Hamburger) – mobile sichtbar
   &__toggle {
+    display: inline-flex; /* NIE full width */
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
     cursor: pointer;
     width: 32px;
     height: 24px;
-    position: relative;
+    position: static; /* Referenzpunkt ist der Container */
     padding: 0;
+    margin: 0;
+    box-sizing: content-box;
+    z-index: 1003;
 
-    // Hamburger-Linien
     span,
     span::before,
     span::after {
@@ -29,199 +40,137 @@
       position: absolute;
       width: 100%;
       height: 3px;
-      background-color: $color-text;
-      border-radius: 2px;
-      transition: all 0.3s ease;
       left: 0;
+      border-radius: 2px;
+      background-color: $__text;
+      transition: transform .3s ease, opacity .3s ease, top .3s ease, bottom .3s ease, background-color .3s ease;
     }
 
-    span {
-      top: 50%;
-      transform: translateY(-50%);
-    }
-
+    span { top: 50%; transform: translateY(-50%); }
     span::before { top: -8px; }
     span::after  { bottom: -8px; }
 
-    // X-Zustand, wenn aktiv
-    &.is-active span {
-      background-color: transparent;
-    }
-    &.is-active span::before {
-      transform: rotate(45deg) translateY(8px);
-    }
-    &.is-active span::after {
-      transform: rotate(-45deg) translateY(-8px);
-    }
-
-    @media (min-width: 768px) {
-      display: none;
+    &.is-active {
+      span { background-color: transparent; }
+      span::before { top: 0; transform: rotate(45deg); }
+      span::after  { bottom: 0; transform: rotate(-45deg); }
     }
   }
 
-  // --------------------------------------
-  // Wrapper um UL (klappt mobil auf/zu)
-  // --------------------------------------
+  // Dropdown-Panel (mobile)
   &__wrapper {
     display: none;
     flex-direction: column;
     align-items: flex-start;
     background-color: #fff;
     padding: 1rem;
+    box-shadow: $__shadow-soft;
+    border-radius: 4px;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 12px);
+    z-index: 1001;
+    min-width: 260px;
 
-    // Wird per JS gesetzt, wenn Menü geöffnet
-    &.is-open {
-      display: flex;
-    }
-
-    @media (min-width: 768px) {
-      display: block !important;
-      background: transparent;
-      padding: 0;
-    }
+    &.is-open { display: flex; }
   }
 
-  // --------------------------------------
-  // Primäre Liste
-  // --------------------------------------
   &__list {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: .75rem;
     width: 100%;
-
-    @media (min-width: 768px) {
-      flex-direction: row;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 2rem;
-      width: auto;
-    }
   }
 
-  // --------------------------------------
-  // Items & Links
-  // --------------------------------------
   &__item {
     position: relative;
 
-    // Mobile: offener Zustand für Submenü via JS
-    &.open > .c-menu__submenu {
-      display: flex;
-    }
-
-    // Desktop: Hover öffnet Submenü
-    @media (min-width: 768px) {
-      &:hover > .c-menu__submenu,
-      &:focus-within > .c-menu__submenu {
-        display: block;
-      }
-    }
-
-    // visueller Indikator für Submenü
     &.has-submenu > .c-menu__link::after {
       content: "▾";
-      margin-left: 0.35rem;
-      font-size: 0.85em;
-      line-height: 1;
-      display: inline-block;
-      transform: translateY(-1px);
+      margin-left: .35rem;
+      font-size: .8rem;
+      opacity: .75;
     }
   }
 
   &__link {
     display: block;
-    color: $color-text;
+    color: $__text;
     text-decoration: none;
-    font-weight: $font-weight-medium;
+    font-weight: if(meta.global-variable-exists(font-weight-medium), $font-weight-medium, 600);
     text-transform: uppercase;
-    letter-spacing: 0.03em;
-    transition: color 0.3s ease;
-    padding: 0.5rem 0;
-
-    @media (min-width: 768px) {
-      padding: 0.75rem 0;
-    }
+    letter-spacing: .03em;
+    padding: .4rem 0;
+    transition: color .25s ease;
 
     &:hover,
     &:focus {
-      color: $color-primary;
-      outline: none;
+      color: $__primary;
+      text-decoration: none;
     }
   }
 
-  // --------------------------------------
-  // Submenü (Dropdown)
-  // --------------------------------------
   &__submenu {
-    // Mobile (default): untereinander, eingerückt
     display: none;
     flex-direction: column;
-    position: static;
     padding-left: 1rem;
-    list-style: none;
-    margin: 0.25rem 0 0;
+    margin-top: .25rem;
 
-    @media (min-width: 768px) {
-      // Desktop: Dropdown
+    &-link {
+      display: block;
+      color: $__text-light;
+      text-decoration: none;
+      padding: .25rem 0;
+      transition: color .2s ease;
+
+      &:hover,
+      &:focus { color: $__primary; }
+    }
+  }
+
+  .has-submenu.open > .c-menu__submenu { display: flex; }
+
+  // DESKTOP (>= 1230px)
+  @media (min-width: $__bp-desktop) {
+    &__toggle { display: none; }
+
+    &__wrapper {
+      display: block !important;
+      position: static;
+      background: transparent;
+      padding: 0;
+      box-shadow: none;
+      min-width: unset;
+    }
+
+    &__list {
+      flex-direction: row;
+      align-items: center;
+      gap: 2rem;
+      width: auto;
+    }
+
+    &__link { padding: 0; }
+
+    &__submenu {
+      display: none;
       position: absolute;
       top: 100%;
       left: 0;
-      min-width: 220px;
       background: #fff;
+      box-shadow: $__shadow-soft;
       border-radius: 4px;
-      box-shadow: $shadow-soft;
-      border: 1px solid rgba(0,0,0,.05);
-      padding: 0.5rem 0;
-      display: none;
-      z-index: 1001;
-    }
-  }
-
-  &__submenu-item {
-    margin: 0;
-    @media (min-width: 768px) { white-space: nowrap; }
-  }
-
-  &__submenu-link {
-    display: block;
-    text-decoration: none;
-    color: $color-text;
-    padding: 0.5rem 0;
-
-    @media (min-width: 768px) {
-      padding: 0.5rem 0.75rem;
-      border-radius: 4px;
+      padding: .75rem 1rem;
+      min-width: 220px;
+      z-index: 1002;
     }
 
-    transition: color 0.2s ease, background-color 0.2s ease;
-
-    &:hover,
-    &:focus {
-      color: $color-primary;
-      @media (min-width: 768px) { background: #f5f7f8; }
-      outline: none;
+    .has-submenu:hover > .c-menu__submenu,
+    .has-submenu:focus-within > .c-menu__submenu {
+      display: flex;
     }
-  }
-
-  // --------------------------------------
-  // States am gesamten Menü (optional)
-  // --------------------------------------
-  &.is-open {
-    // Kann alternativ statt .c-menu__wrapper.is-open benutzt werden
-    > .c-menu__wrapper { display: flex; }
   }
 }
-
-/* ------------------------------------------------------
-   Hinweise zur Verantwortungsteilung (Layout vs. Component)
-
-   - Sticky-Logik, top-Offsets (z. B. top: 40px wegen Topbar),
-     Maxbreite/zentrierter Container -> in layout/_l-header.scss.
-   - Die Regel ".c-header__container .c-menu { width: 100%; }"
-     bleibt im Layout, weil sie den Containerfluss betrifft.
-   - Alles Interaktive (Toggle, Open-States, Dropdown-Pos.) -> hier.
-------------------------------------------------------- */
