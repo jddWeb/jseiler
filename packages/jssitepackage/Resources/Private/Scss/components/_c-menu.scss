@@ -4,12 +4,14 @@
 // ======================================================
 
 @use "sass:meta";
+@use "sass:color";
 @use "globals" as *;
 
 $__primary: if(meta.global-variable-exists(color-primary), $color-primary, #00ac80);
 $__text: if(meta.global-variable-exists(color-text), $color-text, #1a1a1a);
 $__text-light: if(meta.global-variable-exists(color-text-light), $color-text-light, #6c757d);
-$__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 8px 24px rgba(0,0,0,.08));
+$__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 8px 24px rgba(0,0,0,.18));
+$__divider: rgba(0,0,0,.08);
 
 $__bp-desktop: 1230px;
 
@@ -34,9 +36,8 @@ $__bp-desktop: 1230px;
     border: 0;
     cursor: pointer;
 
-    /* WICHTIG: z-index greift nur bei position != static */
-    position: relative;
-    z-index: 1005;           /* über Wrapper & CTA */
+    position: relative; /* z-index wirksam */
+    z-index: 1005;
     pointer-events: auto;
 
     -webkit-tap-highlight-color: transparent;
@@ -66,78 +67,159 @@ $__bp-desktop: 1230px;
     }
   }
 
+  /* -------------------------- */
+  /* OVERLAY (MOBILE ≤ 1230px)  */
+  /* -------------------------- */
   &__wrapper {
     display: none;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     background-color: #fff;
-    padding: 1rem;
-    box-shadow: $__shadow-soft;
-    border-radius: 4px;
+    padding: 0; /* Kopfbereich hat eigenen Padding */
+    box-shadow: none;
+    border-radius: 0;
 
-    position: absolute;
-    right: 0;
-    top: calc(100% + 12px);
-    z-index: 1003;           /* unter Toggle */
-    min-width: 260px;
+    position: fixed;
+    inset: 0;
+    z-index: 1003;
+    overflow: auto;
 
     &.is-open { display: flex; }
   }
 
+  /* Kopfbereich im Overlay */
+  &__head {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: .5rem;
+    padding: .9rem 1rem;
+    border-bottom: 1px solid $__divider;
+    background: #fff;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
+    letter-spacing: .01em;
+  }
+
+  /* Close-Button (X) oben rechts */
+  &__close {
+    appearance: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid $__divider;
+    background: #fff;
+    cursor: pointer;
+    position: relative;
+
+    span, span::before, span::after {
+      content: "";
+      position: absolute;
+      inset: 50% auto auto 50%;
+      width: 16px; height: 2px;
+      background: $__text;
+      transform-origin: center;
+    }
+    span { opacity: 0; } /* Mittelstrich unsichtbar */
+    span::before { transform: translate(-50%, -50%) rotate(45deg); }
+    span::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+    &:hover, &:focus { border-color: color.scale($__text, $alpha: -35%); }
+  }
+
   &__list {
     list-style: none;
-    margin: 0;
-    padding: 0;
+    margin: 0 0 1rem;
+    padding: 0 1rem;
     display: flex;
     flex-direction: column;
-    gap: .75rem;
     width: 100%;
+    border-top: 1px solid $__divider;
+    background: #fff;
   }
 
   &__item {
     position: relative;
+    border-bottom: 1px solid $__divider;
 
-    &.has-submenu > .c-menu__link::after {
-      content: "▾";
-      margin-left: .35rem;
-      font-size: .8rem;
-      opacity: .75;
-    }
+    &.has-submenu > .c-menu__link { padding-right: 2.25rem; }
   }
 
   &__link {
     display: block;
     color: $__text;
     text-decoration: none;
-    font-weight: if(meta.global-variable-exists(font-weight-medium), $font-weight-medium, 600);
+    font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
     text-transform: uppercase;
     letter-spacing: .03em;
-    padding: .4rem 0;
-    transition: color .25s ease;
+    padding: 1rem 0;
+    line-height: 1.2;
+    transition: color .2s ease;
 
     &:hover,
     &:focus { color: $__primary; text-decoration: none; }
   }
 
+  /* Rechts-Pfeil (Drill-In) */
+  &__drill {
+    appearance: none;
+    position: absolute;
+    right: .25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: 1px solid $__divider;
+    background: #fff;
+    cursor: pointer;
+    display: inline-grid;
+    place-items: center;
+    transition: border-color .2s ease, transform .15s ease;
+
+    &:hover, &:focus { border-color: color.scale($__text, $alpha: -35%); }
+    &:active { transform: translateY(-50%) #{'scale(0.98)'}; }
+
+    &::before {
+      content: "";
+      display: block;
+      width: 8px; height: 8px;
+      border-right: 2px solid $__text;
+      border-bottom: 2px solid $__text;
+      transform: rotate(-45deg);
+    }
+  }
+
   &__submenu {
     display: none;
     flex-direction: column;
-    padding-left: 1rem;
-    margin-top: .25rem;
+    padding: .25rem 0 .75rem 0;
+    margin: 0;
 
     &-link {
       display: block;
       color: $__text-light;
       text-decoration: none;
-      padding: .25rem 0;
-      transition: color .2s ease;
+      padding: .5rem 0 .5rem 1rem;
+      transition: color .15s ease;
+
       &:hover,
       &:focus { color: $__primary; }
     }
   }
 
-  .has-submenu.open > .c-menu__submenu { display: flex; }
+  .c-menu__item.is-open > .c-menu__submenu { display: flex; }
 
+  /* -------------------------- */
+  /* DESKTOP ≥ 1230px           */
+  /* -------------------------- */
   @media (min-width: $__bp-desktop) {
     &__toggle { display: none; }
 
@@ -149,16 +231,32 @@ $__bp-desktop: 1230px;
       box-shadow: none;
       min-width: unset;
       z-index: auto;
+      overflow: visible;
     }
+
+    &__head,
+    &__close { display: none; } /* Close-Header nur mobil */
 
     &__list {
       flex-direction: row;
       align-items: center;
       gap: 2rem;
       width: auto;
+      border-top: 0;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    &__item {
+      border: 0;
+
+      &.has-submenu > .c-menu__link { padding-right: 0; }
     }
 
     &__link { padding: 0; }
+
+    &__drill { display: none; } /* Desktop: Pfeil nicht nötig */
 
     &__submenu {
       display: none;
@@ -167,10 +265,12 @@ $__bp-desktop: 1230px;
       left: 0;
       background: #fff;
       box-shadow: $__shadow-soft;
-      border-radius: 4px;
+      border-radius: 6px;
       padding: .75rem 1rem;
       min-width: 220px;
       z-index: 1004;
+
+      &-link { padding-left: 0; }
     }
 
     .has-submenu:hover > .c-menu__submenu,
@@ -180,16 +280,41 @@ $__bp-desktop: 1230px;
   }
 }
 
+/* CTA im Overlay (unter der Liste) */
+.c-menu__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(100% - 2rem);
+  margin: .25rem 1rem 1rem;
+  padding: 1rem 1.25rem;
+  background-color: $__primary;
+  color: #fff;
+  text-decoration: none;
+  font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  border-radius: 0;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
+
+  &:hover, &:focus {
+    background-color: color.scale($__primary, $lightness: -6%);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.12);
+    text-decoration: none;
+  }
+}
+
 /* Header-Layering: nichts über dem Toggle */
 .c-header {
   position: sticky;
   top: 0;
-  z-index: 100;       /* über Content */
+  z-index: 100;
   background: #fff;
 }
 
 .c-topbar,
 .c-header__container { position: relative; z-index: 1; }
 
-/* CTA darf niemals über dem Toggle liegen */
 .c-header__cta { position: relative; z-index: 2; }

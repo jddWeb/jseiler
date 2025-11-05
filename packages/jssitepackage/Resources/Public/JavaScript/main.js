@@ -6,33 +6,23 @@
 
     // Globale Diagnose
     window.JD = window.JD || {};
-    window.JD._version = "main.js:selfheal:2025-11-05a";
+    window.JD._version = "main.js:selfheal:2025-11-05c";
 
     function ready(fn){
         if (document.readyState !== "loading") fn();
         else document.addEventListener("DOMContentLoaded", fn);
     }
 
-    // Helpers: unterstützen 1- oder 2-Argument-Aufruf
+    // Helpers
     function $(a, b){
-        // $(selector)  -> document.querySelector(selector)
-        // $(root, sel) -> root.querySelector(sel)
-        if (b === undefined) {
-            return document.querySelector(a);
-        }
+        if (b === undefined) { return document.querySelector(a); }
         var root = (a && typeof a.querySelector === "function") ? a : document;
         return root.querySelector(b);
     }
     function $$(a, b){
-        // $$(selector)  -> Array(document.querySelectorAll(selector))
-        // $$(root, sel) -> Array(root.querySelectorAll(sel))
         var root, sel;
-        if (b === undefined) {
-            root = document; sel = a;
-        } else {
-            root = (a && typeof a.querySelectorAll === "function") ? a : document;
-            sel = b;
-        }
+        if (b === undefined) { root = document; sel = a; }
+        else { root = (a && typeof a.querySelectorAll === "function") ? a : document; sel = b; }
         return Array.prototype.slice.call(root.querySelectorAll(sel));
     }
     function throttle (fn, wait){
@@ -44,20 +34,16 @@
         };
     }
 
-    // --- 1) SELF-HEAL: Menü-Struktur sicherstellen --------------------------
+    // --- 1) SELF-HEAL -------------------------------------------------------
     function ensureMenuStructure(){
-        // Finde das Hauptmenü
         var menu = $(".c-menu") || $("nav[aria-label='Hauptnavigation']") || $(".js-menu");
         if (!menu) return null;
 
-        // Root-Attribut
         menu.classList.add("js-menu");
         if (!menu.hasAttribute("data-menu-root")) menu.setAttribute("data-menu-root", "");
 
-        // Wrapper sicherstellen
         var wrapper = $(menu, "[data-menu-wrapper], .c-menu__wrapper");
         if (!wrapper) {
-            // Finde die Liste
             var list = $(menu, ".c-menu__list") || $(menu, "ul");
             if (list) {
                 wrapper = document.createElement("div");
@@ -68,13 +54,11 @@
                 wrapper.appendChild(list);
             }
         } else {
-            // Wrapper-Attribute harmonisieren
             wrapper.classList.add("c-menu__wrapper");
             wrapper.setAttribute("data-menu-wrapper", "");
             if (!wrapper.id) wrapper.id = "primary-menu-wrapper";
         }
 
-        // Toggle sicherstellen
         var toggle = $(menu, "[data-menu-toggle], .c-menu__toggle");
         if (!toggle) {
             toggle = document.createElement("button");
@@ -83,7 +67,6 @@
             toggle.setAttribute("data-menu-toggle", "");
             toggle.setAttribute("aria-controls", (wrapper && wrapper.id) ? wrapper.id : "primary-menu-wrapper");
             toggle.setAttribute("aria-expanded", "false");
-
             var bar = document.createElement("span");
             bar.setAttribute("aria-hidden", "true");
             var sr = document.createElement("span");
@@ -91,7 +74,6 @@
             sr.textContent = "Menü";
             toggle.appendChild(bar);
             toggle.appendChild(sr);
-
             if (wrapper) wrapper.parentNode.insertBefore(toggle, wrapper);
             else menu.insertBefore(toggle, menu.firstChild);
         } else {
@@ -101,21 +83,45 @@
             if (wrapper && !toggle.getAttribute("aria-controls")) toggle.setAttribute("aria-controls", wrapper.id);
         }
 
-        // Submenu-Parents kennzeichnen
+        // Parents + Submenu IDs
         $$(menu, ".c-menu__item").forEach(function (item, idx){
-            var parentLink = $(item, ".js-menu-parent,[data-menu-parent], .c-menu__link[aria-haspopup='true']");
             var sub = $(item, ".c-menu__submenu");
-            if (sub && parentLink) {
-                parentLink.classList.add("js-menu-parent");
-                parentLink.setAttribute("data-menu-parent", "");
-                parentLink.setAttribute("aria-haspopup", "true");
+            var linkEl = $(item, ".c-menu__link");
+            if (sub && linkEl) {
+                item.classList.add("has-submenu");
+                linkEl.classList.add("js-menu-parent");
+                linkEl.setAttribute("data-menu-parent", "");
+                linkEl.setAttribute("aria-haspopup", "true");
                 if (!sub.id) sub.id = "submenu-auto-" + idx;
-                parentLink.setAttribute("aria-controls", sub.id);
-                parentLink.setAttribute("aria-expanded", "false");
+                linkEl.setAttribute("aria-controls", sub.id);
+                linkEl.setAttribute("aria-expanded", "false");
+
+                // Drill einhängen, wenn nicht vorhanden
+                if (!$(item, ".c-menu__drill")) {
+                    var btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "c-menu__drill";
+                    btn.setAttribute("aria-label", "Ebene öffnen");
+                    btn.setAttribute("data-menu-drill", sub.id);
+                    item.appendChild(btn);
+                }
             }
         });
 
-        return { menu: menu, wrapper: wrapper, toggle: toggle };
+        // CTA im Overlay – nur falls nicht im Markup vorhanden
+        if (!$(wrapper, ".c-menu__cta")) {
+            var headerCTA = $(".c-header__cta");
+            if (headerCTA) {
+                var cta = document.createElement("a");
+                cta.className = "c-menu__cta";
+                cta.href = headerCTA.getAttribute("href") || "#";
+                var lbl = $(headerCTA, ".c-header__cta-label");
+                cta.textContent = (lbl && lbl.textContent) ? lbl.textContent : headerCTA.textContent.trim() || "Öffentliche Seminare";
+                wrapper.appendChild(cta);
+            }
+        }
+
+        return { menu: menu, wrapper: wrapper };
     }
 
     // --- 2) Sticky Header ----------------------------------------------------
@@ -133,7 +139,7 @@
     function initMenuDelegated(){
         var mqDesktop = window.matchMedia("(min-width: 1230px)");
 
-        // Toggle clicks (capture-Phase)
+        // Toggle (öffnen/schließen) – synchronisiert alle zugehörigen Toggles
         document.addEventListener("click", function(e){
             var toggle = e.target.closest("[data-menu-toggle], .c-menu__toggle");
             if (!toggle) return;
@@ -141,28 +147,32 @@
             var menuRoot = toggle.closest("[data-menu-root], .js-menu") || document;
             var wrapper  = $(menuRoot, "[data-menu-wrapper], .c-menu__wrapper");
 
-            // Safety gegen vererbtes pointer-events:none
-            toggle.style.pointerEvents = "auto";
+            if (!wrapper) return;
+            e.preventDefault();
 
-            if (wrapper){
-                e.preventDefault();
-                var open = !wrapper.classList.contains("is-open");
-                wrapper.classList.toggle("is-open", open);
-                menuRoot.classList.toggle("is-open", open);
-                toggle.classList.toggle("is-active", open);
-                toggle.setAttribute("aria-expanded", String(open));
-            }
+            var willOpen = !wrapper.classList.contains("is-open");
+            wrapper.classList.toggle("is-open", willOpen);
+            menuRoot.classList.toggle("is-open", willOpen);
+
+            // Alle Toggles, die auf denselben Wrapper zeigen, angleichen
+            var id = wrapper.id;
+            $$(menuRoot, "[data-menu-toggle], .c-menu__toggle").forEach(function(tg){
+                var controls = tg.getAttribute("aria-controls");
+                if (!controls || controls === id) {
+                    tg.classList.toggle("is-active", willOpen);
+                    tg.setAttribute("aria-expanded", String(willOpen));
+                }
+            });
         }, { capture: true, passive: false });
 
-        // Submenu mobile
+        // Submenu mobile – Klick auf Parent
         document.addEventListener("click", function(e){
             var parent = e.target.closest(".js-menu-parent,[data-menu-parent]");
             if (!parent) return;
-            if (mqDesktop.matches) return; // Desktop per CSS
+            if (mqDesktop.matches) return;
 
             var controls = parent.getAttribute("aria-controls");
-            if (!controls) return;
-            var submenu = document.getElementById(controls);
+            var submenu = controls && document.getElementById(controls);
             var item = parent.closest(".c-menu__item");
             if (!submenu || !item) return;
 
@@ -172,14 +182,35 @@
             submenu.style.display = isOpen ? "flex" : "none";
         });
 
-        // Cleanup auf Desktop
+        // Submenu mobile – Klick auf Drill-Pfeil
+        document.addEventListener("click", function(e){
+            var drill = e.target.closest(".c-menu__drill");
+            if (!drill) return;
+            if (mqDesktop.matches) return;
+
+            var subId = drill.getAttribute("data-menu-drill");
+            var submenu = subId && document.getElementById(subId);
+            var item = drill.closest(".c-menu__item");
+            var parent = item && $(item, ".js-menu-parent");
+            if (!submenu || !item || !parent) return;
+
+            e.preventDefault();
+            var isOpen = item.classList.toggle("is-open");
+            parent.setAttribute("aria-expanded", String(isOpen));
+            submenu.style.display = isOpen ? "flex" : "none";
+        });
+
+        // Cleanup beim Wechsel zu Desktop
         function cleanup(){
             if (!mqDesktop.matches) return;
             $$(document, "[data-menu-root], .js-menu").forEach(function(menuRoot){
                 var wrapper = $(menuRoot, "[data-menu-wrapper], .c-menu__wrapper");
-                var toggle  = $(menuRoot, "[data-menu-toggle], .c-menu__toggle");
-                if (wrapper) wrapper.classList.remove("is-open");
-                if (toggle) { toggle.classList.remove("is-active"); toggle.setAttribute("aria-expanded", "false"); }
+                if (!wrapper) return;
+                wrapper.classList.remove("is-open");
+                $$(menuRoot, "[data-menu-toggle], .c-menu__toggle").forEach(function(tg){
+                    tg.classList.remove("is-active");
+                    tg.setAttribute("aria-expanded", "false");
+                });
                 $$(menuRoot, ".c-menu__item.is-open").forEach(function (it){ it.classList.remove("is-open"); });
                 $$(menuRoot, ".c-menu__submenu").forEach(function (sm){ sm.style.display = ""; });
             });
@@ -190,9 +221,9 @@
         window.addEventListener("resize", throttle(cleanup, 100));
     }
 
-    // --- Boot ---------------------------------------------------------------
+    // --- Boot ----------------------------------------------------------------
     function boot(){
-        ensureMenuStructure();   // idempotent – ergänzt fehlende Teile
+        ensureMenuStructure();
         initStickyHeader();
         initMenuDelegated();
         console.log("JD ready:", window.JD._version);
