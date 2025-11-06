@@ -11,7 +11,7 @@
         <span class="u-visually-hidden">Menü</span>
     </button>
 
-    <!-- Overlay-Wrapper -->
+    <!-- Overlay-Wrapper (mobil) -->
     <div id="primary-menu-wrapper" class="c-menu__wrapper" data-menu-wrapper>
 
         <!-- Overlay-Header mit Titel + Schließen -->
@@ -42,7 +42,8 @@
                            {f:if(condition:item.children, then:'has-submenu')}
                            {f:if(condition:item.active, then:' is-active')}
                            {f:if(condition:item.current, then:' is-active')}"
-                    {f:if(condition:item.children, then:'data-has-submenu="true"')}>
+                    {f:if(condition:item.children, then:'data-has-submenu="true"')}
+                data-mega-item="{item.uid}">
                 <f:if condition="{item.children}">
                     <f:then>
                         <!-- Parent-Link -->
@@ -52,19 +53,64 @@
                            aria-haspopup="true"
                            aria-expanded="false"
                            aria-controls="submenu-{item.uid}"
-                           data-menu-parent>
+                           data-menu-parent
+                           data-mega-trigger="{item.uid}">
                             {item.title}
                         </a>
 
-                        <!-- Drill-Pfeil rechts -->
+                        <!-- Drill-Pfeil rechts (nur mobil sichtbar) -->
                         <button class="c-menu__drill"
                                 type="button"
                                 aria-label="Ebene öffnen"
                                 data-menu-drill="submenu-{item.uid}">
                         </button>
 
-                        <!-- Submenü -->
-                        <div id="submenu-{item.uid}" class="c-menu__submenu" role="group" data-menu-submenu>
+                        <!-- DESKTOP: Mega-Panel-Content (content-section) -->
+                        <!--
+                          Struktur:
+                            - c-menu__panel: vollbreites, fixed positioniertes Panel unter dem Header
+                            - links: c-menu__panel-nav (Unterpunkte)
+                            - rechts: c-menu__panel-content (frei für deine Inhalte)
+                          Hinweis: Diese Section ist von dir erwähnt ("liegt schon in main") – du kannst
+                          rechte Spalte beliebig füllen (Teaser, Bilder, Texte).
+                        -->
+                        <section id="submenu-{item.uid}"
+                                 class="c-menu__panel"
+                                 role="region"
+                                 aria-label="{item.title}"
+                                 data-mega-panel="{item.uid}">
+                            <div class="c-menu__panel-inner">
+                                <nav class="c-menu__panel-nav" aria-label="{item.title} – Untermenü">
+                                    <ul class="c-menu__panel-list" role="list">
+                                        <f:for each="{item.children}" as="child">
+                                            <li class="c-menu__panel-item {f:if(condition:child.active, then:' is-active')}">
+                                                <a href="{child.link}" class="c-menu__panel-link {f:if(condition:child.active, then:' is-active')}">
+                                                    {child.title}
+                                                </a>
+                                            </li>
+                                        </f:for>
+                                    </ul>
+                                </nav>
+
+                                <div class="c-menu__panel-content">
+                                    <!-- Deine content-section:
+                                         Hier kannst du pro Item rich content einfügen (Fluid-Teilbereiche, CE-Renders, etc.)
+                                         Beispiel-Placeholder (entfernen/ersetzen):
+                                    -->
+                                    <f:if condition="{item.abstract}">
+                                        <p class="c-menu__panel-text">{item.abstract}</p>
+                                    </f:if>
+                                    <!-- Optional: Bild/Teaser – Beispiel-API anpassen -->
+                                    <f:if condition="{item.media.0.publicUrl}">
+                                        <img src="{item.media.0.publicUrl}" alt="" class="c-menu__panel-image" />
+                                    </f:if>
+                                    <!-- Ende Placeholder -->
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- MOBIL: Akkordeon-Submenü (weiterhin unter dem Parent) -->
+                        <div class="c-menu__submenu" role="group" data-menu-submenu>
                             <f:for each="{item.children}" as="child">
                                 <a href="{child.link}"
                                    class="c-menu__submenu-link {f:if(condition:child.active, then:' is-active')}">
@@ -84,7 +130,7 @@
             </f:for>
         </ul>
 
-        <!-- CTA unterhalb der Hauptnavigation -->
+        <!-- CTA unterhalb der Hauptnavigation (nur mobil sichtbar via CSS) -->
         <f:variable name="ctaLabel" value="{ctaPublicLabel}" />
         <f:if condition="{ctaLabel}"><f:then /><f:else><f:variable name="ctaLabel" value="{settings.ctaPublic.label}" /></f:else></f:if>
         <f:if condition="{ctaLabel}"><f:then /><f:else><f:variable name="ctaLabel" value="Öffentliche Seminartermine" /></f:else></f:if>

@@ -1,7 +1,7 @@
 // ======================================================
 // components/_c-menu.scss
-// Hauptnavigation (BEM) – Mobile-first, Breakpoint 1230px
-// Mit Overlay-Transition, prefers-reduced-motion, Active-State
+// Hauptnavigation – Mobil Overlay, Desktop Mega-Panel
+// Fix: Hamburger-Icon mobil erzwingen
 // ======================================================
 
 @use "sass:meta";
@@ -15,6 +15,7 @@ $__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 8px
 $__divider: rgba(0,0,0,.08);
 
 $__bp-desktop: 1230px;
+$__bp-mobile-max: 1229px;
 
 .u-visually-hidden {
   position: absolute !important;
@@ -27,6 +28,7 @@ $__bp-desktop: 1230px;
 .c-menu {
   position: relative;
 
+  /* Hamburger-Toggle */
   &__toggle {
     display: inline-flex;
     align-items: center;
@@ -40,15 +42,16 @@ $__bp-desktop: 1230px;
     position: relative; /* z-index wirksam */
     z-index: 1005;
     pointer-events: auto;
-
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
 
+    /* Fix: Balken robust zeichnen */
     span,
     span::before,
     span::after {
       content: '';
       position: absolute;
+      display: block;
       width: 100%;
       height: 3px;
       left: 0;
@@ -56,7 +59,6 @@ $__bp-desktop: 1230px;
       background-color: $__text;
       transition: transform .3s ease, opacity .3s ease, top .3s ease, bottom .3s ease, background-color .3s ease;
     }
-
     span { top: 50%; transform: translateY(-50%); }
     span::before { top: -8px; }
     span::after  { bottom: -8px; }
@@ -68,17 +70,13 @@ $__bp-desktop: 1230px;
     }
   }
 
-  /* -------------------------- */
-  /* OVERLAY (MOBILE ≤ 1230px)  */
-  /* -------------------------- */
+  /* --- Overlay (mobil) --- */
   &__wrapper {
-    /* statt display toggeln → animierbar via opacity/visibility */
     display: flex;
     flex-direction: column;
     align-items: stretch;
     background-color: #fff;
     padding: 0;
-    box-shadow: none;
     border-radius: 0;
 
     position: fixed;
@@ -86,273 +84,120 @@ $__bp-desktop: 1230px;
     z-index: 1003;
     overflow: auto;
 
-    /* initial "zu" */
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateY(-2%);
+    opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-2%);
     transition: opacity .22s ease, transform .22s ease, visibility 0s linear .22s;
 
-    &.is-open {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: translateY(0);
-      transition: opacity .22s ease, transform .22s ease, visibility 0s;
-    }
+    &.is-open { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); transition: opacity .22s ease, transform .22s ease, visibility 0s; }
   }
 
-  /* Kopfbereich im Overlay */
   &__head {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: .5rem;
-    padding: .9rem 1rem;
-    border-bottom: 1px solid $__divider;
-    background: #fff;
+    position: sticky; top: 0; z-index: 1;
+    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .5rem;
+    padding: .9rem 1rem; border-bottom: 1px solid $__divider; background: #fff;
   }
-
-  &__title {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
-    letter-spacing: .01em;
-  }
-
-  /* Close-Button (X) oben rechts */
-  &__close {
-    appearance: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 999px;
-    border: 1px solid $__divider;
-    background: #fff;
-    cursor: pointer;
-    position: relative;
-
-    span, span::before, span::after {
-      content: "";
-      position: absolute;
-      inset: 50% auto auto 50%;
-      width: 16px; height: 2px;
-      background: $__text;
-      transform-origin: center;
-    }
-    span { opacity: 0; }
-    span::before { transform: translate(-50%, -50%) rotate(45deg); }
-    span::after  { transform: translate(-50%, -50%) rotate(-45deg); }
-
-    &:hover, &:focus { border-color: color.scale($__text, $alpha: -35%); }
-  }
+  &__title { margin: 0; font-size: 1.125rem; font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600); letter-spacing: .01em; }
 
   &__list {
     list-style: none;
     margin: 0 0 1rem;
     padding: 0 1rem;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    border-top: 1px solid $__divider;
-    background: #fff;
+    display: flex; flex-direction: column; width: 100%;
+    border-top: 1px solid $__divider; background: #fff;
   }
 
-  &__item {
-    position: relative;
-    border-bottom: 1px solid $__divider;
-
-    &.has-submenu > .c-menu__link { padding-right: 2.25rem; }
-    &.is-active > .c-menu__link { color: $__primary; }
-  }
-
+  &__item { position: relative; border-bottom: 1px solid $__divider; &.has-submenu > .c-menu__link { padding-right: 2.25rem; } }
   &__link {
-    display: block;
-    color: $__text;
-    text-decoration: none;
+    display: block; color: $__text; text-decoration: none;
     font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
-    text-transform: uppercase;
-    letter-spacing: .03em;
-    padding: 1rem 0;
-    line-height: 1.2;
-    transition: color .2s ease;
-
-    &.is-active { color: $__primary; }
-
-    &:hover,
-    &:focus { color: $__primary; text-decoration: none; }
+    text-transform: uppercase; letter-spacing: .03em;
+    padding: 1rem 0; line-height: 1.2; transition: color .2s ease;
+    &:hover, &:focus { color: $__primary; text-decoration: none; }
   }
 
-  /* Rechts-Pfeil (Drill-In) */
   &__drill {
-    appearance: none;
-    position: absolute;
-    right: .25rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 34px;
-    height: 34px;
-    border-radius: 999px;
-    border: 1px solid $__divider;
-    background: #fff;
-    cursor: pointer;
-    display: inline-grid;
-    place-items: center;
-    transition: border-color .2s ease, transform .15s ease;
-
+    appearance: none; position: absolute; right: .25rem; top: 50%; transform: translateY(-50%);
+    width: 34px; height: 34px; border-radius: 999px; border: 1px solid $__divider; background: #fff; cursor: pointer;
+    display: inline-grid; place-items: center; transition: border-color .2s ease, transform .15s ease;
     &:hover, &:focus { border-color: color.scale($__text, $alpha: -35%); }
     &:active { transform: translateY(-50%) #{'scale(0.98)'}; }
-
-    &::before {
-      content: "";
-      display: block;
-      width: 8px; height: 8px;
-      border-right: 2px solid $__text;
-      border-bottom: 2px solid $__text;
-      transform: rotate(-45deg);
-    }
+    &::before { content: ""; display: block; width: 8px; height: 8px; border-right: 2px solid $__text; border-bottom: 2px solid $__text; transform: rotate(-45deg); }
   }
 
   &__submenu {
-    display: none;
-    flex-direction: column;
-    padding: .25rem 0 .75rem 0;
-    margin: 0;
-
-    &-link {
-      display: block;
-      color: $__text-light;
-      text-decoration: none;
-      padding: .5rem 0 .5rem 1rem;
-      transition: color .15s ease;
-
-      &.is-active { color: $__primary; }
-
-      &:hover,
-      &:focus { color: $__primary; }
+    display: none; flex-direction: column;
+    padding: .25rem 0 .75rem 0; margin: 0;
+    .c-menu__submenu-link {
+      display: block; color: $__text-light; text-decoration: none; padding: .5rem 0 .5rem 1rem; transition: color .15s ease;
+      &:hover, &:focus { color: $__primary; }
     }
   }
 
-  .c-menu__item.is-open > .c-menu__submenu { display: flex; }
+  /* WICHTIG: Mega-Panel mobil NIE anzeigen */
+  &__panel { display: none; }
 
-  /* -------------------------- */
-  /* DESKTOP ≥ 1230px           */
-  /* -------------------------- */
+  /* --- Desktop: Mega-Panel --- */
   @media (min-width: $__bp-desktop) {
-    &__toggle { display: none; }
+    &__toggle { display: none; } /* nur Desktop ausblenden */
 
     &__wrapper {
-      display: block !important;
-      position: static;
-      background: transparent;
-      padding: 0;
-      box-shadow: none;
-      min-width: unset;
-      z-index: auto;
-      overflow: visible;
-
-      /* Overlay-Effekte am Desktop neutralisieren */
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: none;
-      transition: none;
+      display: block !important; position: static; background: transparent; padding: 0;
+      opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: none; overflow: visible;
     }
-
-    &__head,
-    &__close { display: none; }
-
-    &__list {
-      flex-direction: row;
-      align-items: center;
-      gap: 2rem;
-      width: auto;
-      border-top: 0;
-      margin: 0;
-      padding: 0;
-      background: transparent;
-    }
-
+    &__list { flex-direction: row; align-items: center; gap: 2rem; width: auto; border-top: 0; margin: 0; padding: 0; background: transparent; }
     &__item { border: 0; }
-
     &__link { padding: 0; }
+    &__drill, &__head, &__close { display: none; }
 
-    &__drill { display: none; }
-
-    &__submenu {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background: #fff;
-      box-shadow: $__shadow-soft;
-      border-radius: 6px;
-      padding: .75rem 1rem;
-      min-width: 220px;
-      z-index: 1004;
-
-      &-link { padding-left: 0; }
+    &__panel {
+      display: block;
+      position: fixed; left: 0; right: 0;
+      top: var(--header-bottom, 0px);
+      background: #fff; border-top: 1px solid $__divider; box-shadow: $__shadow-soft; z-index: 1002;
+      opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-6px);
+      transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+    }
+    &__item.is-mega-open > &__panel {
+      opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
+      transition: opacity .18s ease, transform .18s ease, visibility 0s;
     }
 
-    .has-submenu:hover > .c-menu__submenu,
-    .has-submenu:focus-within > .c-menu__submenu {
-      display: flex;
+    &__panel-inner {
+      max-width: if(meta.global-variable-exists(max-header-width), $max-header-width, 1200px);
+      margin: 0 auto; padding: 1.25rem 1rem 1.5rem;
+      display: grid; grid-template-columns: 320px 1fr; gap: 2rem;
     }
+    &__panel-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+    &__panel-link { display: block; text-decoration: none; color: $__text; padding: .35rem 0; font-weight: if(meta.global-variable-exists(font-weight-medium), $font-weight-medium, 600); transition: color .15s ease; &:hover, &:focus { color: $__primary; text-decoration: none; } }
+    &__panel-content { display: grid; gap: .75rem; align-content: start; color: rgba(0,0,0,.6); font-size: .98rem; line-height: 1.55; }
   }
 }
 
-/* CTA im Overlay (unter der Liste) – nur mobil sichtbar */
+/* CTA im Overlay nur mobil */
 .c-menu__cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: calc(100% - 2rem);
-  margin: .25rem 1rem 1rem;
-  padding: 1rem 1.25rem;
-  background-color: $__primary;
-  color: #fff;
-  text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: calc(100% - 2rem); margin: .25rem 1rem 1rem; padding: 1rem 1.25rem;
+  background-color: $__primary; color: #fff; text-decoration: none;
   font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  border-radius: 0;
+  text-transform: uppercase; letter-spacing: .04em; border-radius: 0;
   box-shadow: 0 6px 18px rgba(0,0,0,.08);
   transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
 
-  &:hover, &:focus {
-    background-color: color.scale($__primary, $lightness: -6%);
-    transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(0,0,0,.12);
-    text-decoration: none;
-  }
+  &:hover, &:focus { background-color: color.scale($__primary, $lightness: -6%); transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.12); text-decoration: none; }
 }
-@media (min-width: $__bp-desktop) {
-  .c-menu__cta { display: none !important; }
-}
+@media (min-width: $__bp-desktop) { .c-menu__cta { display: none !important; } }
 
-/* Motion-Preferences respektieren */
+/* Motion-Preferences */
 @media (prefers-reduced-motion: reduce) {
-  .c-menu__wrapper {
-    transition: none !important;
-    transform: none !important;
-  }
-  .c-menu__toggle span,
-  .c-menu__toggle span::before,
-  .c-menu__toggle span::after { transition: none !important; }
+  .c-menu__wrapper { transition: none !important; transform: none !important; }
+  .c-menu__panel { transition: none !important; transform: none !important; }
   .c-menu__drill { transition: none !important; }
 }
 
-/* Header-Layering */
-.c-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: #fff;
+/* *** WICHTIGER FIX: Hamburger mobil erzwingen *** */
+@media (max-width: $__bp-mobile-max) {
+  .c-menu > .c-menu__toggle {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
 }
-
-.c-topbar,
-.c-header__container { position: relative; z-index: 1; }
-
-.c-header__cta { position: relative; z-index: 2; }
