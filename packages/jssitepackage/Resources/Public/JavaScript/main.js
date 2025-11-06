@@ -1,12 +1,13 @@
 /** =========================================================================
  * main.js – Self-healing Menu (fixierte Helpers, injiziert Toggle/Wrapper)
+ * + Active-Path-Highlight
  * ========================================================================= */
 (function () {
     "use strict";
 
     // Globale Diagnose
     window.JD = window.JD || {};
-    window.JD._version = "main.js:selfheal:2025-11-05c";
+    window.JD._version = "main.js:selfheal:2025-11-06a";
 
     function ready(fn){
         if (document.readyState !== "loading") fn();
@@ -83,7 +84,7 @@
             if (wrapper && !toggle.getAttribute("aria-controls")) toggle.setAttribute("aria-controls", wrapper.id);
         }
 
-        // Parents + Submenu IDs
+        // Parents + Submenu IDs + Drill
         $$(menu, ".c-menu__item").forEach(function (item, idx){
             var sub = $(item, ".c-menu__submenu");
             var linkEl = $(item, ".c-menu__link");
@@ -95,8 +96,6 @@
                 if (!sub.id) sub.id = "submenu-auto-" + idx;
                 linkEl.setAttribute("aria-controls", sub.id);
                 linkEl.setAttribute("aria-expanded", "false");
-
-                // Drill einhängen, wenn nicht vorhanden
                 if (!$(item, ".c-menu__drill")) {
                     var btn = document.createElement("button");
                     btn.type = "button";
@@ -139,14 +138,13 @@
     function initMenuDelegated(){
         var mqDesktop = window.matchMedia("(min-width: 1230px)");
 
-        // Toggle (öffnen/schließen) – synchronisiert alle zugehörigen Toggles
+        // Öffnen/Schließen – synchronisiert alle zugehörigen Toggles
         document.addEventListener("click", function(e){
             var toggle = e.target.closest("[data-menu-toggle], .c-menu__toggle");
             if (!toggle) return;
 
             var menuRoot = toggle.closest("[data-menu-root], .js-menu") || document;
             var wrapper  = $(menuRoot, "[data-menu-wrapper], .c-menu__wrapper");
-
             if (!wrapper) return;
             e.preventDefault();
 
@@ -154,7 +152,6 @@
             wrapper.classList.toggle("is-open", willOpen);
             menuRoot.classList.toggle("is-open", willOpen);
 
-            // Alle Toggles, die auf denselben Wrapper zeigen, angleichen
             var id = wrapper.id;
             $$(menuRoot, "[data-menu-toggle], .c-menu__toggle").forEach(function(tg){
                 var controls = tg.getAttribute("aria-controls");
@@ -221,11 +218,48 @@
         window.addEventListener("resize", throttle(cleanup, 100));
     }
 
+    // --- 4) Active-Path-Highlight (Fallback, falls Fluid nichts markiert) ---
+    function markActivePath(){
+        try {
+            var loc = window.location;
+            var here = loc.origin + loc.pathname.replace(/\/+$/, "/"); // normalisiert trailing slash
+            var best = null, bestLen = 0;
+
+            $$(".c-menu .c-menu__link").forEach(function(a){
+                var href = a.getAttribute("href");
+                if (!href || href.indexOf("#") === 0 || href.indexOf("mailto:") === 0 || href.indexOf("tel:") === 0) return;
+
+                var url;
+                try { url = new URL(href, loc.origin); } catch(e){ return; }
+                var path = url.origin + url.pathname.replace(/\/+$/, "/");
+
+                if (here.indexOf(path) === 0 && path.length > bestLen) {
+                    best = a; bestLen = path.length;
+                }
+            });
+
+            if (best) {
+                best.classList.add("is-active");
+                var li = best.closest(".c-menu__item");
+                if (li) li.classList.add("is-active");
+                // Elternpfade kennzeichnen
+                var parent = li && li.parentElement && li.parentElement.closest(".c-menu__item");
+                while (parent) {
+                    parent.classList.add("is-active");
+                    parent = parent.parentElement && parent.parentElement.closest(".c-menu__item");
+                }
+            }
+        } catch(e){
+            // defensive no-op
+        }
+    }
+
     // --- Boot ----------------------------------------------------------------
     function boot(){
         ensureMenuStructure();
         initStickyHeader();
         initMenuDelegated();
+        markActivePath();
         console.log("JD ready:", window.JD._version);
     }
     ready(boot);

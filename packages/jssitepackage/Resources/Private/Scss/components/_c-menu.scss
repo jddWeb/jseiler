@@ -1,6 +1,7 @@
 // ======================================================
 // components/_c-menu.scss
 // Hauptnavigation (BEM) – Mobile-first, Breakpoint 1230px
+// Mit Overlay-Transition, prefers-reduced-motion, Active-State
 // ======================================================
 
 @use "sass:meta";
@@ -36,7 +37,7 @@ $__bp-desktop: 1230px;
     border: 0;
     cursor: pointer;
 
-    position: relative;
+    position: relative; /* z-index wirksam */
     z-index: 1005;
     pointer-events: auto;
 
@@ -71,7 +72,8 @@ $__bp-desktop: 1230px;
   /* OVERLAY (MOBILE ≤ 1230px)  */
   /* -------------------------- */
   &__wrapper {
-    display: none;
+    /* statt display toggeln → animierbar via opacity/visibility */
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     background-color: #fff;
@@ -84,7 +86,20 @@ $__bp-desktop: 1230px;
     z-index: 1003;
     overflow: auto;
 
-    &.is-open { display: flex; }
+    /* initial "zu" */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-2%);
+    transition: opacity .22s ease, transform .22s ease, visibility 0s linear .22s;
+
+    &.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+      transition: opacity .22s ease, transform .22s ease, visibility 0s;
+    }
   }
 
   /* Kopfbereich im Overlay */
@@ -150,6 +165,7 @@ $__bp-desktop: 1230px;
     border-bottom: 1px solid $__divider;
 
     &.has-submenu > .c-menu__link { padding-right: 2.25rem; }
+    &.is-active > .c-menu__link { color: $__primary; }
   }
 
   &__link {
@@ -162,6 +178,8 @@ $__bp-desktop: 1230px;
     padding: 1rem 0;
     line-height: 1.2;
     transition: color .2s ease;
+
+    &.is-active { color: $__primary; }
 
     &:hover,
     &:focus { color: $__primary; text-decoration: none; }
@@ -210,6 +228,8 @@ $__bp-desktop: 1230px;
       padding: .5rem 0 .5rem 1rem;
       transition: color .15s ease;
 
+      &.is-active { color: $__primary; }
+
       &:hover,
       &:focus { color: $__primary; }
     }
@@ -232,6 +252,13 @@ $__bp-desktop: 1230px;
       min-width: unset;
       z-index: auto;
       overflow: visible;
+
+      /* Overlay-Effekte am Desktop neutralisieren */
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+      transition: none;
     }
 
     &__head,
@@ -301,9 +328,20 @@ $__bp-desktop: 1230px;
     text-decoration: none;
   }
 }
-
 @media (min-width: $__bp-desktop) {
   .c-menu__cta { display: none !important; }
+}
+
+/* Motion-Preferences respektieren */
+@media (prefers-reduced-motion: reduce) {
+  .c-menu__wrapper {
+    transition: none !important;
+    transform: none !important;
+  }
+  .c-menu__toggle span,
+  .c-menu__toggle span::before,
+  .c-menu__toggle span::after { transition: none !important; }
+  .c-menu__drill { transition: none !important; }
 }
 
 /* Header-Layering */

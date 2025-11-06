@@ -38,13 +38,17 @@
             </li>
 
             <f:for each="{menuMain}" as="item">
-                <li class="c-menu__item {f:if(condition:item.children, then:'has-submenu')}"
+                <li class="c-menu__item
+                           {f:if(condition:item.children, then:'has-submenu')}
+                           {f:if(condition:item.active, then:' is-active')}
+                           {f:if(condition:item.current, then:' is-active')}"
                     {f:if(condition:item.children, then:'data-has-submenu="true"')}>
                 <f:if condition="{item.children}">
                     <f:then>
                         <!-- Parent-Link -->
                         <a href="{item.link}"
-                           class="c-menu__link js-menu-parent"
+                           class="c-menu__link js-menu-parent
+                                      {f:if(condition:item.active, then:' is-active')}{f:if(condition:item.current, then:' is-active')}"
                            aria-haspopup="true"
                            aria-expanded="false"
                            aria-controls="submenu-{item.uid}"
@@ -62,12 +66,18 @@
                         <!-- Submenü -->
                         <div id="submenu-{item.uid}" class="c-menu__submenu" role="group" data-menu-submenu>
                             <f:for each="{item.children}" as="child">
-                                <a href="{child.link}" class="c-menu__submenu-link">{child.title}</a>
+                                <a href="{child.link}"
+                                   class="c-menu__submenu-link {f:if(condition:child.active, then:' is-active')}">
+                                    {child.title}
+                                </a>
                             </f:for>
                         </div>
                     </f:then>
                     <f:else>
-                        <a href="{item.link}" class="c-menu__link">{item.title}</a>
+                        <a href="{item.link}"
+                           class="c-menu__link {f:if(condition:item.active, then:' is-active')}{f:if(condition:item.current, then:' is-active')}">
+                            {item.title}
+                        </a>
                     </f:else>
                 </f:if>
                 </li>
