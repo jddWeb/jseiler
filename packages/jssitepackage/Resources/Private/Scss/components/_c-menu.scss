@@ -1,7 +1,7 @@
 // ======================================================
 // components/_c-menu.scss
-// Hauptnavigation – Mobil Overlay, Desktop Mega-Panel
-// Fix: Hamburger-Icon mobil erzwingen
+// Mobil: Overlay + Akkordeon / Desktop: Mega-Panel
+// CTA mit hoher Spezifität, „Startseite“ nur mobil
 // ======================================================
 
 @use "sass:meta";
@@ -28,35 +28,19 @@ $__bp-mobile-max: 1229px;
 .c-menu {
   position: relative;
 
-  /* Hamburger-Toggle */
+  /* Toggle */
   &__toggle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 24px;
-    background: none;
-    border: 0;
-    cursor: pointer;
+    width: 32px; height: 24px;
+    background: none; border: 0; cursor: pointer;
+    position: relative; z-index: 1005; pointer-events: auto;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 
-    position: relative; /* z-index wirksam */
-    z-index: 1005;
-    pointer-events: auto;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-
-    /* Fix: Balken robust zeichnen */
-    span,
-    span::before,
-    span::after {
-      content: '';
-      position: absolute;
-      display: block;
-      width: 100%;
-      height: 3px;
-      left: 0;
-      border-radius: 2px;
-      background-color: $__text;
+    span, span::before, span::after {
+      content: ''; position: absolute; display: block;
+      width: 100%; height: 3px; left: 0; border-radius: 2px; background-color: $__text;
       transition: transform .3s ease, opacity .3s ease, top .3s ease, bottom .3s ease, background-color .3s ease;
     }
     span { top: 50%; transform: translateY(-50%); }
@@ -70,49 +54,23 @@ $__bp-mobile-max: 1229px;
     }
   }
 
-  /* --- Overlay (mobil) --- */
+  /* Overlay (mobil) */
   &__wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    background-color: #fff;
-    padding: 0;
-    border-radius: 0;
-
-    position: fixed;
-    inset: 0;
-    z-index: 1003;
-    overflow: auto;
-
+    display: flex; flex-direction: column; align-items: stretch;
+    background-color: #fff; padding: 0; border-radius: 0;
+    position: fixed; inset: 0; z-index: 1003; overflow: auto;
     opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-2%);
     transition: opacity .22s ease, transform .22s ease, visibility 0s linear .22s;
 
     &.is-open { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); transition: opacity .22s ease, transform .22s ease, visibility 0s; }
   }
 
-  &__head {
-    position: sticky; top: 0; z-index: 1;
-    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .5rem;
-    padding: .9rem 1rem; border-bottom: 1px solid $__divider; background: #fff;
-  }
-  &__title { margin: 0; font-size: 1.125rem; font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600); letter-spacing: .01em; }
+  &__head { position: sticky; top: 0; z-index: 1; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .5rem; padding: .9rem 1rem; border-bottom: 1px solid $__divider; background: #fff; }
+  &__title { margin: 0; font-size: 1.125rem; font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600); }
 
-  &__list {
-    list-style: none;
-    margin: 0 0 1rem;
-    padding: 0 1rem;
-    display: flex; flex-direction: column; width: 100%;
-    border-top: 1px solid $__divider; background: #fff;
-  }
-
+  &__list { list-style: none; margin: 0 0 1rem; padding: 0 1rem; display: flex; flex-direction: column; width: 100%; border-top: 1px solid $__divider; background: #fff; }
   &__item { position: relative; border-bottom: 1px solid $__divider; &.has-submenu > .c-menu__link { padding-right: 2.25rem; } }
-  &__link {
-    display: block; color: $__text; text-decoration: none;
-    font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
-    text-transform: uppercase; letter-spacing: .03em;
-    padding: 1rem 0; line-height: 1.2; transition: color .2s ease;
-    &:hover, &:focus { color: $__primary; text-decoration: none; }
-  }
+  &__link { display: block; color: $__text; text-decoration: none; font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600); text-transform: uppercase; letter-spacing: .03em; padding: 1rem 0; line-height: 1.2; transition: color .2s ease; &:hover, &:focus { color: $__primary; text-decoration: none; } }
 
   &__drill {
     appearance: none; position: absolute; right: .25rem; top: 50%; transform: translateY(-50%);
@@ -124,80 +82,68 @@ $__bp-mobile-max: 1229px;
   }
 
   &__submenu {
-    display: none; flex-direction: column;
-    padding: .25rem 0 .75rem 0; margin: 0;
-    .c-menu__submenu-link {
-      display: block; color: $__text-light; text-decoration: none; padding: .5rem 0 .5rem 1rem; transition: color .15s ease;
-      &:hover, &:focus { color: $__primary; }
-    }
+    display: none; flex-direction: column; padding: .25rem 0 .75rem 0; margin: 0;
+    .c-menu__submenu-link { display: block; color: $__text-light; text-decoration: none; padding: .5rem 0 .5rem 1rem; transition: color .15s ease; &:hover, &:focus { color: $__primary; } }
   }
 
-  /* WICHTIG: Mega-Panel mobil NIE anzeigen */
+  /* Mobil: Panel nie anzeigen */
   &__panel { display: none; }
 
-  /* --- Desktop: Mega-Panel --- */
+  /* Desktop: Mega-Panel */
   @media (min-width: $__bp-desktop) {
-    &__toggle { display: none; } /* nur Desktop ausblenden */
-
-    &__wrapper {
-      display: block !important; position: static; background: transparent; padding: 0;
-      opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: none; overflow: visible;
-    }
+    &__toggle { display: none; }
+    &__wrapper { display: block !important; position: static; background: transparent; padding: 0; opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: none; overflow: visible; }
     &__list { flex-direction: row; align-items: center; gap: 2rem; width: auto; border-top: 0; margin: 0; padding: 0; background: transparent; }
     &__item { border: 0; }
     &__link { padding: 0; }
     &__drill, &__head, &__close { display: none; }
 
     &__panel {
-      display: block;
-      position: fixed; left: 0; right: 0;
-      top: var(--header-bottom, 0px);
+      display: block; position: fixed; left: 0; right: 0; top: var(--header-bottom, 0px);
       background: #fff; border-top: 1px solid $__divider; box-shadow: $__shadow-soft; z-index: 1002;
       opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-6px);
       transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
     }
-    &__item.is-mega-open > &__panel {
-      opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
-      transition: opacity .18s ease, transform .18s ease, visibility 0s;
-    }
+    &__item.is-mega-open > &__panel { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); transition: opacity .18s ease, transform .18s ease, visibility 0s; }
 
-    &__panel-inner {
-      max-width: if(meta.global-variable-exists(max-header-width), $max-header-width, 1200px);
-      margin: 0 auto; padding: 1.25rem 1rem 1.5rem;
-      display: grid; grid-template-columns: 320px 1fr; gap: 2rem;
-    }
+    &__panel-inner { max-width: if(meta.global-variable-exists(max-header-width), $max-header-width, 1200px); margin: 0 auto; padding: 1.25rem 1rem 1.5rem; display: grid; grid-template-columns: 320px 1fr; gap: 2rem; }
     &__panel-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
     &__panel-link { display: block; text-decoration: none; color: $__text; padding: .35rem 0; font-weight: if(meta.global-variable-exists(font-weight-medium), $font-weight-medium, 600); transition: color .15s ease; &:hover, &:focus { color: $__primary; text-decoration: none; } }
+
+    /* Ebene 3 im Panel */
+    &__panel-sublist { list-style: none; margin: .25rem 0 .5rem 0; padding: 0 0 0 1rem; display: grid; gap: .25rem; }
+    &__panel-sublink { display: block; text-decoration: none; color: $__text-light; padding: .2rem 0; transition: color .15s ease; &:hover, &:focus { color: $__primary; } }
     &__panel-content { display: grid; gap: .75rem; align-content: start; color: rgba(0,0,0,.6); font-size: .98rem; line-height: 1.55; }
   }
 }
 
-/* CTA im Overlay nur mobil */
-.c-menu__cta {
+/* CTA – höhere Spezifität + klare Button-Optik */
+.c-menu .c-menu__wrapper .c-menu__cta {
   display: inline-flex; align-items: center; justify-content: center;
   width: calc(100% - 2rem); margin: .25rem 1rem 1rem; padding: 1rem 1.25rem;
-  background-color: $__primary; color: #fff; text-decoration: none;
+  background-color: $__primary !important; color: #fff !important;
+  text-decoration: none !important; text-transform: uppercase; letter-spacing: .04em;
   font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
-  text-transform: uppercase; letter-spacing: .04em; border-radius: 0;
+  border: 0; border-radius: 0;
   box-shadow: 0 6px 18px rgba(0,0,0,.08);
   transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
 
-  &:hover, &:focus { background-color: color.scale($__primary, $lightness: -6%); transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.12); text-decoration: none; }
+  &:hover, &:focus { background-color: color.scale($__primary, $lightness: -6%) !important; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.12); }
+  &:focus-visible { outline: 2px solid color.scale($__primary, $lightness: +18%); outline-offset: 3px; }
 }
-@media (min-width: $__bp-desktop) { .c-menu__cta { display: none !important; } }
+/* CTA & Home nur mobil sichtbar */
+@media (min-width: $__bp-desktop) {
+  .c-menu__home { display: none !important; }
+  .c-menu__cta  { display: none !important; }
+}
 
-/* Motion-Preferences */
+/* Motion */
 @media (prefers-reduced-motion: reduce) {
-  .c-menu__wrapper { transition: none !important; transform: none !important; }
-  .c-menu__panel { transition: none !important; transform: none !important; }
+  .c-menu__wrapper, .c-menu__panel { transition: none !important; transform: none !important; }
   .c-menu__drill { transition: none !important; }
 }
 
-/* *** WICHTIGER FIX: Hamburger mobil erzwingen *** */
+/* Hamburger mobil immer sichtbar */
 @media (max-width: $__bp-mobile-max) {
-  .c-menu > .c-menu__toggle {
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
+  .c-menu > .c-menu__toggle { display: inline-flex !important; visibility: visible !important; opacity: 1 !important; }
 }

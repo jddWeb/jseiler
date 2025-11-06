@@ -1,5 +1,7 @@
 // ======================================================
-// layout/_l-header.scss – (unverändert außer Mobil-Toggle-Platzierung)
+// layout/_l-header.scss
+// Header inkl. Topbar, Container + CTA (Breakpoint 1230px)
+// Burger oben rechts im Container; CTA mobil darunter; Desktop rechts vom Menü
 // ======================================================
 
 @use "sass:color";
@@ -13,54 +15,313 @@ $__max-content: if(meta.global-variable-exists(max-content-width), $max-content-
 $__max-header: if(meta.global-variable-exists(max-header-width), $max-header-width, $__max-content);
 $__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 4px 14px rgba(0, 0, 0, .08));
 
+$__muted-on-dark: color.scale($__on-dark, $alpha: -35%);
+$__divider-on-dark: color.scale($__on-dark, $alpha: -80%);
+$__primary-hover: color.scale($__primary, $lightness: -6%);
+
 $__bp-desktop: 1230px;
 $__bp-mobile-max: 1229px;
 
 /* HEADER */
-.c-header { position: sticky; top: 0; z-index: 1000; background-color: #fff; transition: box-shadow .3s ease, background-color .3s ease; box-shadow: none;
-  &.is-sticky { box-shadow: $__shadow-soft; }
-}
+.c-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #fff;
+  transition: box-shadow .3s ease, background-color .3s ease;
+  box-shadow: none;
 
-/* ... Topbar (deine bestehende Fassung) ... */
-
-/* CONTAINER */
-.c-header__container {
-  position: relative;
-  display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center;
-  max-width: $__max-header; margin: 0 auto; padding: 1.75rem 1rem; gap: 1rem;
-
-  @media (min-width: $__bp-desktop) {
-    .c-logo { order: 1; }
-    > nav.c-menu { order: 2; }
-    .c-header__cta { order: 3; margin-left: 2.25rem; }
+  &.is-sticky {
+    box-shadow: $__shadow-soft;
   }
 
-  @media (max-width: $__bp-mobile-max) {
-    flex-direction: column; align-items: stretch; gap: .75rem;
-    > nav.c-menu { position: static !important; }
+  &__bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem 1rem;
+  }
 
-    /* Fix: Toggle sichtbar & mittig auf Logo-Höhe */
+  &__logo img {
+    display: block;
+    height: auto;
+    max-width: 100%;
+  }
+}
+
+/* TOPBAR (dunkel) */
+.c-topbar {
+  background-color: $__dark-bg;
+  color: $__on-dark;
+  font-family: if(meta.global-variable-exists(font-body), $font-body, inherit);
+  font-size: if(meta.global-variable-exists(font-size-small), $font-size-small, .9rem);
+  border-bottom: 1px solid $__divider-on-dark;
+  padding: .35rem 1rem;
+
+  &__inner {
+    max-width: $__max-header;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .5rem 1rem;
+  }
+
+  &__item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+
+    @media (min-width: 768px) {
+      &:not(:last-child) {
+        padding-right: .75rem;
+      }
+      &:not(:last-child)::after {
+        content: "";
+        width: 1px;
+        height: .9em;
+        margin-left: .75rem;
+        background-color: $__divider-on-dark;
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+
+    &--video svg, &--instagram svg, &--phone svg, &--mail svg {
+      width: 1rem;
+      height: 1rem;
+      display: block;
+      color: currentColor;
+
+      path, circle {
+        fill: currentColor;
+      }
+    }
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    color: $__muted-on-dark;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-weight: if(meta.global-variable-exists(font-weight-medium), $font-weight-medium, 600);
+    white-space: nowrap;
+    transition: color .18s ease;
+
+    &:hover, &:focus {
+      color: $__on-dark;
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid color.scale($__primary, $lightness: +20%);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+  }
+
+  @media (max-width: 479px) {
+    padding: .4rem .75rem;
+    &__inner {
+      justify-content: center;
+      gap: .35rem .75rem;
+    }
+    &__item:not(:last-child)::after {
+      display: none;
+    }
+  }
+}
+
+/* CONTAINER: Logo + CTA + Menü */
+.c-header__container {
+  position: relative; /* Bezugspunkt für Toggle */
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  max-width: $__max-header;
+  margin: 0 auto;
+  padding: 1.75rem 1rem;
+  gap: 1rem;
+
+  /* DESKTOP: Reihenfolge Logo (1), Menü (2), CTA (3) */
+  @media (min-width: $__bp-desktop) {
+    .c-logo {
+      order: 1;
+    }
+    > nav.c-menu {
+      order: 2;
+    }
+    .c-header__cta {
+      order: 3;
+      margin-left: 2.25rem;
+    }
+  }
+
+  /* MOBILE: stapeln; CTA vor Menü; Burger oben rechts */
+  @media (max-width: $__bp-mobile-max) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: .75rem;
+
+    > nav.c-menu {
+      position: static !important;
+    }
+
     > nav.c-menu > .c-menu__toggle {
       position: absolute !important;
-      top: calc(1.75rem + 20px) !important; /* 1.75rem Padding + 20px (Logo-Hälfte bei 40px) */
+      top: .75rem !important;
       right: 1rem !important;
-      transform: translateY(-50%) !important;
-      width: 32px !important; height: 24px !important;
+      width: 32px !important;
+      height: 24px !important;
       display: inline-flex !important;
-      padding: 0 !important; border: 0 !important; background: none !important;
-      z-index: 1005 !important;
-      visibility: visible !important; opacity: 1 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: none !important;
+      z-index: 1003 !important;
     }
 
-    @media (min-width: 992px) and (max-width: $__bp-mobile-max) {
-      > nav.c-menu > .c-menu__toggle { top: calc(1.75rem + 25px) !important; }
-    }
-
+    /* Luft, damit Toggle nicht über Logo liegt */
     padding-top: 2.25rem;
-    .c-header__cta { order: 1; }
-    > nav.c-menu { order: 2; }
-    .c-menu { width: 100%; }
+
+    /* Reihenfolge: CTA vor Menü (Logo bleibt oben) */
+    .c-header__cta {
+      order: 1;
+    }
+    > nav.c-menu {
+      order: 2;
+    }
+
+    .c-menu {
+      width: 100%;
+    }
   }
 }
 
-/* Logo/CTA – (wie vorher, unverändert) */
+/* LOGO */
+.c-logo {
+  &__link {
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  &__img {
+    display: block;
+    height: 40px;
+    color: $__primary;
+    transition: transform .3s ease;
+
+    .is-sticky & {
+      transform: #{'scale(0.98)'};
+      color: color.scale($__primary, $lightness: -5%);
+    }
+
+    @media (min-width: 992px) {
+      height: 50px;
+    }
+  }
+}
+
+/* CTA – ROBUST: immer grüner Hintergrund + weiße Schrift (Mobil + Desktop) */
+.c-header {
+  .c-header__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: .9rem 1.4rem;
+    min-width: 14ch;
+    border: 0;
+    border-radius: 0;
+
+    background-color: $__primary;   /* Fix: kein weißer Hintergrund auf Desktop */
+    color: #fff;                     /* Fix: nicht grün gefärbter Linktext */
+    text-decoration: none;
+    text-transform: none;
+    letter-spacing: .02em;
+    line-height: 1;
+    font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
+
+    transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
+
+    /* gegen generische a:link/a:visited-Regeln absichern */
+    &:link,
+    &:visited { color: #fff; text-decoration: none; }
+
+    &:hover,
+    &:focus {
+      background-color: $__primary-hover;
+      text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+    }
+
+    &:focus-visible {
+      outline: 2px solid color.scale($__primary, $lightness: +20%);
+      outline-offset: 3px;
+    }
+
+    @media (min-width: 992px) {
+      padding: 1rem 1.6rem;
+      min-width: 16ch;
+    }
+
+    /* <415px: kompakter */
+    @media (max-width: 414px) {
+      font-size: .86rem;
+      letter-spacing: .02em;
+      padding: .78rem 1.05rem;
+    }
+  }
+
+  .c-header__cta-label {
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-size: .92rem;
+
+    @media (max-width: 414px) {
+      font-size: .86rem;
+      letter-spacing: .02em;
+    }
+  }
+
+  .c-header__cta-icon {
+    margin-left: .65rem;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    transform: translateX(0);
+    transition: transform .18s ease;
+    color: currentColor;
+
+    path {
+      fill: currentColor;
+    }
+
+    @media (max-width: 414px) {
+      margin-left: .5rem;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .c-header__cta:hover .c-header__cta-icon,
+  .c-header__cta:focus .c-header__cta-icon {
+    transform: translateX(3px);
+  }
+}
+
+/* Screenreader Utility */
+.u-sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}

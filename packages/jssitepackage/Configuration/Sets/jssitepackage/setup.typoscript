@@ -83,3 +83,14 @@ jssitepackage.settings {
     pageUid.ifEmpty = 25
   }
 }
+
+########################################################
+# Keine Asset-Einbindung hier!
+# CSS/JS wird ausschließlich in PageLayout.html via <f:asset.*> geladen.
+########################################################
+
+# Optionale Optimierungen (sofern nicht an anderer Stelle gesetzt)
+config.concatenateJs = 1
+config.concatenateCss = 1
+config.compressJs = 1
+config.compressCss = 1

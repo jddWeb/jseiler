@@ -1,12 +1,12 @@
 /** =========================================================================
  * main.js – Self-healing Menu + Overlay + Mega-Panel (Desktop)
- * Fix: Mobil steuert immer das Submenü, Panel bleibt mobil inaktiv
+ * Mobil: Drill-Button toggelt; Parent-Links navigieren
  * ========================================================================= */
 (function () {
     "use strict";
 
     window.JD = window.JD || {};
-    window.JD._version = "main.js:selfheal-mega:2025-11-06d";
+    window.JD._version = "main.js:selfheal-mega:2025-11-06j";
 
     function ready(fn){
         if (document.readyState !== "loading") fn();
@@ -34,7 +34,7 @@
         };
     }
 
-    // ========= Initialisierung =========
+    // Struktur absichern
     function ensureMenuStructure(){
         var menu = $(".c-menu") || $("nav[aria-label='Hauptnavigation']") || $(".js-menu");
         if (!menu) return null;
@@ -83,33 +83,24 @@
             if (wrapper && !toggle.getAttribute("aria-controls")) toggle.setAttribute("aria-controls", wrapper.id);
         }
 
-        // WICHTIG: Wenn Panel UND Submenü existieren, mobil immer Submenü bevorzugen
+        // Items verdrahten (mobil: Submenü bevorzugen)
         $$(menu, ".c-menu__item").forEach(function (item, idx){
             var linkEl = $(item, ".c-menu__link");
-            var panel  = $(item, ".c-menu__panel");
-            var subMob = $(item, ".c-menu__submenu");
+            // Wichtig: :scope verwenden (kein führender Kombinator '>')
+            var subMob = item.querySelector(":scope > .c-menu__submenu");
+            var panel  = item.querySelector(":scope > .c-menu__panel");
 
-            if ((panel || subMob) && linkEl) {
+            if ((subMob || panel) && linkEl) {
                 item.classList.add("has-submenu");
                 linkEl.classList.add("js-menu-parent");
-                linkEl.setAttribute("data-menu-parent", "");
+                linkEl.setAttribute("data-menu-parent", "true");
                 linkEl.setAttribute("aria-haspopup", "true");
 
-                // Prefer Submenu ID for aria-controls (für Mobil-Akkordeon)
-                var id = null;
-                if (subMob) {
-                    if (!subMob.id) subMob.id = "submenu-auto-" + idx;
-                    id = subMob.id;
-                } else if (panel) {
-                    if (!panel.id) panel.id = "submenu-auto-" + idx;
-                    id = panel.id;
-                }
-                if (id) {
-                    linkEl.setAttribute("aria-controls", id);
-                    linkEl.setAttribute("aria-expanded", "false");
-                }
+                if (subMob) { if (!subMob.id) subMob.id = "submenu-auto-" + idx; linkEl.setAttribute("aria-controls", subMob.id); }
+                else if (panel) { if (!panel.id) panel.id = "panel-auto-" + idx; linkEl.setAttribute("aria-controls", panel.id); }
 
-                // Drill-Button: nur relevant für Mobil → ebenfalls aufs Submenü zeigen
+                linkEl.setAttribute("aria-expanded", "false");
+
                 if (subMob && !$(item, ".c-menu__drill")) {
                     var btn = document.createElement("button");
                     btn.type = "button";
@@ -121,7 +112,7 @@
             }
         });
 
-        // CTA im Overlay – nur falls nicht vorhanden
+        // CTA ins Overlay klonen (falls fehlt)
         if (!$(wrapper, ".c-menu__cta")) {
             var headerCTA = $(".c-header__cta");
             if (headerCTA) {
@@ -129,7 +120,7 @@
                 cta.className = "c-menu__cta";
                 cta.href = headerCTA.getAttribute("href") || "#";
                 var lbl = $(headerCTA, ".c-header__cta-label");
-                cta.textContent = (lbl && lbl.textContent) ? lbl.textContent : headerCTA.textContent.trim() || "Öffentliche Seminare";
+                cta.textContent = (lbl && lbl.textContent) ? lbl.textContent : headerCTA.textContent.trim() || "Öffentliche Seminartermine";
                 wrapper.appendChild(cta);
             }
         }
@@ -137,6 +128,7 @@
         return { menu: menu, wrapper: wrapper };
     }
 
+    // Sticky Header
     function initStickyHeader(){
         var header = $(".c-header");
         if (!header) return;
@@ -147,11 +139,11 @@
         window.addEventListener("scroll", onScroll, { passive: true });
     }
 
-    // ========= Overlay-Menü (mobil) =========
+    // Mobil: Overlay + Akkordeon (nur Drill toggelt)
     function initMenuDelegated(){
         var mqDesktop = window.matchMedia("(min-width: 1230px)");
 
-        // Öffnen/Schließen
+        // Overlay öffnen/schließen
         document.addEventListener("click", function(e){
             var toggle = e.target.closest("[data-menu-toggle], .c-menu__toggle");
             if (!toggle) return;
@@ -175,28 +167,11 @@
             });
         }, { capture: true, passive: false });
 
-        // Submenu mobil – Parent
+        // Drill toggelt (Parent-Link navigiert)
         document.addEventListener("click", function(e){
-            var parent = e.target.closest(".js-menu-parent,[data-menu-parent]");
-            if (!parent) return;
             if (mqDesktop.matches) return;
-
-            var controls = parent.getAttribute("aria-controls");
-            var submenu = controls && document.getElementById(controls);
-            var item = parent.closest(".c-menu__item");
-            if (!submenu || !item) return;
-
-            e.preventDefault();
-            var isOpen = item.classList.toggle("is-open");
-            parent.setAttribute("aria-expanded", String(isOpen));
-            submenu.style.display = isOpen ? "flex" : "none";
-        });
-
-        // Submenu mobil – Drill
-        document.addEventListener("click", function(e){
             var drill = e.target.closest(".c-menu__drill");
             if (!drill) return;
-            if (mqDesktop.matches) return;
 
             var subId = drill.getAttribute("data-menu-drill");
             var submenu = subId && document.getElementById(subId);
@@ -210,7 +185,7 @@
             submenu.style.display = isOpen ? "flex" : "none";
         });
 
-        // Cleanup beim Wechsel zu Desktop
+        // Cleanup bei Wechsel zu Desktop
         function cleanup(){
             if (!mqDesktop.matches) return;
             $$(document, "[data-menu-root], .js-menu").forEach(function(menuRoot){
@@ -231,7 +206,7 @@
         window.addEventListener("resize", throttle(cleanup, 100));
     }
 
-    // ========= Mega-Panel (Desktop) =========
+    // Desktop: Mega-Panel
     function initMegaPanelDesktop(){
         var mqDesktop = window.matchMedia("(min-width: 1230px)");
         var header = $(".c-header");
@@ -277,14 +252,14 @@
         });
     }
 
-    // ========= Active-Path =========
+    // Active-Path
     function markActivePath(){
         try {
             var loc = window.location;
             var here = loc.origin + loc.pathname.replace(/\/+$/, "/");
             var best = null, bestLen = 0;
 
-            $$(".c-menu .c-menu__link, .c-menu .c-menu__panel-link").forEach(function(a){
+            $$(".c-menu .c-menu__link, .c-menu .c-menu__panel-link, .c-menu .c-menu__submenu-link").forEach(function(a){
                 var href = a.getAttribute("href");
                 if (!href || href.indexOf("#") === 0 || href.indexOf("mailto:") === 0 || href.indexOf("tel:") === 0) return;
 
@@ -313,7 +288,5 @@
         markActivePath();
         console.log("JD ready:", window.JD._version);
     }
-
-    // <<< FIX: keine Extraklammer mehr >>>
     ready(boot);
 })();

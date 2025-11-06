@@ -1,146 +1,141 @@
 {namespace f=TYPO3\CMS\Fluid\ViewHelpers}
 
-<nav class="c-menu js-menu" aria-label="Hauptnavigation" data-menu-root>
-    <!-- Öffnen-Toggle (Burger) -->
-    <button class="c-menu__toggle"
-            type="button"
-            aria-controls="primary-menu-wrapper"
-            aria-expanded="false"
-            data-menu-toggle>
-        <span aria-hidden="true"></span>
-        <span class="u-visually-hidden">Menü</span>
-    </button>
+<f:spaceless>
+    <nav class="c-menu js-menu" aria-label="Hauptnavigation" data-menu-root>
+        <!-- Öffnen-Toggle (Burger) -->
+        <button class="c-menu__toggle" type="button" aria-controls="primary-menu-wrapper" aria-expanded="false" data-menu-toggle>
+            <span aria-hidden="true"></span>
+            <span class="u-visually-hidden">Menü</span>
+        </button>
 
-    <!-- Overlay-Wrapper (mobil) -->
-    <div id="primary-menu-wrapper" class="c-menu__wrapper" data-menu-wrapper>
+        <!-- Overlay-Wrapper (mobil) -->
+        <div id="primary-menu-wrapper" class="c-menu__wrapper" data-menu-wrapper>
 
-        <!-- Overlay-Header mit Titel + Schließen -->
-        <div class="c-menu__head">
-            <h2 class="c-menu__title">Menü</h2>
-            <button class="c-menu__close"
-                    type="button"
-                    aria-controls="primary-menu-wrapper"
-                    aria-expanded="true"
-                    aria-label="Menü schließen"
-                    data-menu-toggle>
-                <span aria-hidden="true"></span>
-                <span class="u-visually-hidden">Schließen</span>
-            </button>
-        </div>
+            <!-- Overlay-Header mit Titel + Schließen -->
+            <div class="c-menu__head">
+                <h2 class="c-menu__title">Menü</h2>
+                <button class="c-menu__close" type="button" aria-controls="primary-menu-wrapper" aria-expanded="true" aria-label="Menü schließen" data-menu-toggle>
+                    <span aria-hidden="true"></span>
+                    <span class="u-visually-hidden">Schließen</span>
+                </button>
+            </div>
 
-        <!-- Optionaler Home-Link als erstes Element -->
-        <f:variable name="homeUid" value="{homePageUid}" />
-        <f:if condition="{homeUid}"><f:then /><f:else><f:variable name="homeUid" value="{site.rootPageId}" /></f:else></f:if>
+            <!-- Home-Link (nur mobil sichtbar via CSS) -->
+            <f:variable name="homeUid" value="{homePageUid}" />
+            <f:if condition="{homeUid}"><f:then /><f:else><f:variable name="homeUid" value="{site.rootPageId}" /></f:else></f:if>
 
-        <ul class="c-menu__list" role="list">
-            <li class="c-menu__item">
-                <a href="{f:uri.page(pageUid: homeUid)}" class="c-menu__link">Startseite</a>
-            </li>
-
-            <f:for each="{menuMain}" as="item">
-                <li class="c-menu__item
-                           {f:if(condition:item.children, then:'has-submenu')}
-                           {f:if(condition:item.active, then:' is-active')}
-                           {f:if(condition:item.current, then:' is-active')}"
-                    {f:if(condition:item.children, then:'data-has-submenu="true"')}
-                data-mega-item="{item.uid}">
-                <f:if condition="{item.children}">
-                    <f:then>
-                        <!-- Parent-Link -->
-                        <a href="{item.link}"
-                           class="c-menu__link js-menu-parent
-                                      {f:if(condition:item.active, then:' is-active')}{f:if(condition:item.current, then:' is-active')}"
-                           aria-haspopup="true"
-                           aria-expanded="false"
-                           aria-controls="submenu-{item.uid}"
-                           data-menu-parent
-                           data-mega-trigger="{item.uid}">
-                            {item.title}
-                        </a>
-
-                        <!-- Drill-Pfeil rechts (nur mobil sichtbar) -->
-                        <button class="c-menu__drill"
-                                type="button"
-                                aria-label="Ebene öffnen"
-                                data-menu-drill="submenu-{item.uid}">
-                        </button>
-
-                        <!-- DESKTOP: Mega-Panel-Content (content-section) -->
-                        <!--
-                          Struktur:
-                            - c-menu__panel: vollbreites, fixed positioniertes Panel unter dem Header
-                            - links: c-menu__panel-nav (Unterpunkte)
-                            - rechts: c-menu__panel-content (frei für deine Inhalte)
-                          Hinweis: Diese Section ist von dir erwähnt ("liegt schon in main") – du kannst
-                          rechte Spalte beliebig füllen (Teaser, Bilder, Texte).
-                        -->
-                        <section id="submenu-{item.uid}"
-                                 class="c-menu__panel"
-                                 role="region"
-                                 aria-label="{item.title}"
-                                 data-mega-panel="{item.uid}">
-                            <div class="c-menu__panel-inner">
-                                <nav class="c-menu__panel-nav" aria-label="{item.title} – Untermenü">
-                                    <ul class="c-menu__panel-list" role="list">
-                                        <f:for each="{item.children}" as="child">
-                                            <li class="c-menu__panel-item {f:if(condition:child.active, then:' is-active')}">
-                                                <a href="{child.link}" class="c-menu__panel-link {f:if(condition:child.active, then:' is-active')}">
-                                                    {child.title}
-                                                </a>
-                                            </li>
-                                        </f:for>
-                                    </ul>
-                                </nav>
-
-                                <div class="c-menu__panel-content">
-                                    <!-- Deine content-section:
-                                         Hier kannst du pro Item rich content einfügen (Fluid-Teilbereiche, CE-Renders, etc.)
-                                         Beispiel-Placeholder (entfernen/ersetzen):
-                                    -->
-                                    <f:if condition="{item.abstract}">
-                                        <p class="c-menu__panel-text">{item.abstract}</p>
-                                    </f:if>
-                                    <!-- Optional: Bild/Teaser – Beispiel-API anpassen -->
-                                    <f:if condition="{item.media.0.publicUrl}">
-                                        <img src="{item.media.0.publicUrl}" alt="" class="c-menu__panel-image" />
-                                    </f:if>
-                                    <!-- Ende Placeholder -->
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- MOBIL: Akkordeon-Submenü (weiterhin unter dem Parent) -->
-                        <div class="c-menu__submenu" role="group" data-menu-submenu>
-                            <f:for each="{item.children}" as="child">
-                                <a href="{child.link}"
-                                   class="c-menu__submenu-link {f:if(condition:child.active, then:' is-active')}">
-                                    {child.title}
-                                </a>
-                            </f:for>
-                        </div>
-                    </f:then>
-                    <f:else>
-                        <a href="{item.link}"
-                           class="c-menu__link {f:if(condition:item.active, then:' is-active')}{f:if(condition:item.current, then:' is-active')}">
-                            {item.title}
-                        </a>
-                    </f:else>
-                </f:if>
+            <ul class="c-menu__list" role="list">
+                <li class="c-menu__item c-menu__home">
+                    <a href="{f:uri.page(pageUid: homeUid)}" class="c-menu__link">Startseite</a>
                 </li>
-            </f:for>
-        </ul>
 
-        <!-- CTA unterhalb der Hauptnavigation (nur mobil sichtbar via CSS) -->
-        <f:variable name="ctaLabel" value="{ctaPublicLabel}" />
-        <f:if condition="{ctaLabel}"><f:then /><f:else><f:variable name="ctaLabel" value="{settings.ctaPublic.label}" /></f:else></f:if>
-        <f:if condition="{ctaLabel}"><f:then /><f:else><f:variable name="ctaLabel" value="Öffentliche Seminartermine" /></f:else></f:if>
+                <f:for each="{menuMain}" as="item">
+                    <f:variable name="itemId" value="{f:if(condition:item.data.uid, then:item.data.uid, else:item.uid)}" />
 
-        <f:variable name="ctaPid" value="{ctaPublicPageUid}" />
-        <f:if condition="{ctaPid}"><f:then /><f:else><f:variable name="ctaPid" value="{settings.ctaPublic.pageUid}" /></f:else></f:if>
-        <f:if condition="{ctaPid}"><f:then /><f:else><f:variable name="ctaPid" value="25" /></f:else></f:if>
+                    <li class="c-menu__item{f:if(condition:item.children, then:' has-submenu')}{f:if(condition:item.active, then:' is-active')}{f:if(condition:item.current, then:' is-active')}"
+                        {f:if(condition:item.children, then:'data-has-submenu="true"')}
+                    data-mega-item="{itemId}">
 
-        <a href="{f:uri.page(pageUid: ctaPid)}" class="c-menu__cta" title="{ctaLabel}">
-            {ctaLabel}
-        </a>
-    </div>
-</nav>
+                    <f:if condition="{item.children}">
+                        <f:then>
+                            <!-- Ebene 1 (Parent) -->
+                            <a href="{item.link}"
+                               class="c-menu__link js-menu-parent{f:if(condition:item.active, then:' is-active')}{f:if(condition:item.current, then:' is-active')}"
+                               aria-haspopup="true"
+                               aria-expanded="false"
+                               aria-controls="submenu-{itemId}"
+                               data-menu-parent="true"
+                               data-mega-trigger="{itemId}">{item.title}</a>
+
+                            <!-- Drill (mobil) -->
+                            <button class="c-menu__drill" type="button" aria-label="Ebene öffnen" data-menu-drill="submenu-{itemId}"></button>
+
+                            <!-- Desktop: Mega-Panel -->
+                            <section id="panel-{itemId}" class="c-menu__panel" role="region" aria-label="{item.title}" data-mega-panel="{itemId}">
+                                <div class="c-menu__panel-inner">
+                                    <nav class="c-menu__panel-nav" aria-label="{item.title} – Untermenü">
+                                        <ul class="c-menu__panel-list" role="list">
+                                            <f:for each="{item.children}" as="child">
+                                                <f:variable name="childId" value="{f:if(condition:child.data.uid, then:child.data.uid, else:child.uid)}" />
+                                                <li class="c-menu__panel-item{f:if(condition:child.active, then:' is-active')}">
+                                                    <a href="{child.link}" class="c-menu__panel-link{f:if(condition:child.active, then:' is-active')}">{child.title}</a>
+
+                                                    <!-- Ebene 3 im Panel -->
+                                                    <f:if condition="{child.children}">
+                                                        <ul class="c-menu__panel-sublist" role="list">
+                                                            <f:for each="{child.children}" as="grandchild">
+                                                                <f:variable name="grandId" value="{f:if(condition:grandchild.data.uid, then:grandchild.data.uid, else:grandchild.uid)}" />
+                                                                <li class="c-menu__panel-subitem{f:if(condition:grandchild.active, then:' is-active')}">
+                                                                    <a href="{grandchild.link}" class="c-menu__panel-sublink{f:if(condition:grandchild.active, then:' is-active')}">{grandchild.title}</a>
+                                                                </li>
+                                                            </f:for>
+                                                        </ul>
+                                                    </f:if>
+                                                </li>
+                                            </f:for>
+                                        </ul>
+                                    </nav>
+
+                                    <!-- Rechte Spalte (optional) -->
+                                    <div class="c-menu__panel-content">
+                                        <f:if condition="{item.abstract}"><p class="c-menu__panel-text">{item.abstract}</p></f:if>
+                                        <f:if condition="{item.media.0.publicUrl}"><img src="{item.media.0.publicUrl}" alt="" class="c-menu__panel-image" /></f:if>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- Mobil: Akkordeon (Ebene 2 + 3) -->
+                            <div class="c-menu__submenu" role="group" id="submenu-{itemId}" data-menu-submenu>
+                                <ul class="c-menu__submenu-list" role="list">
+                                    <f:for each="{item.children}" as="child">
+                                        <f:variable name="childId" value="{f:if(condition:child.data.uid, then:child.data.uid, else:child.uid)}" />
+                                        <li class="c-menu__item{f:if(condition:child.children, then:' has-submenu')}"
+                                            {f:if(condition:child.children, then:'data-has-submenu="true"')}>
+                                        <f:if condition="{child.children}">
+                                            <f:then>
+                                                <a href="{child.link}"
+                                                   class="c-menu__link js-menu-parent"
+                                                   aria-haspopup="true"
+                                                   aria-expanded="false"
+                                                   aria-controls="subsubmenu-{childId}"
+                                                   data-menu-parent="true">{child.title}</a>
+                                                <button class="c-menu__drill" type="button" aria-label="Ebene öffnen" data-menu-drill="subsubmenu-{childId}"></button>
+
+                                                <div id="subsubmenu-{childId}" class="c-menu__submenu" role="group" data-menu-submenu>
+                                                    <f:for each="{child.children}" as="grandchild">
+                                                        <a href="{grandchild.link}" class="c-menu__submenu-link">{grandchild.title}</a>
+                                                    </f:for>
+                                                </div>
+                                            </f:then>
+                                            <f:else>
+                                                <a href="{child.link}" class="c-menu__submenu-link">{child.title}</a>
+                                            </f:else>
+                                        </f:if>
+                                        </li>
+                                    </f:for>
+                                </ul>
+                            </div>
+                        </f:then>
+
+                        <!-- Ebene 1 ohne Kinder -->
+                        <f:else>
+                            <a href="{item.link}" class="c-menu__link{f:if(condition:item.active, then:' is-active')}{f:if(condition:item.current, then:' is-active')}">{item.title}</a>
+                        </f:else>
+                    </f:if>
+                    </li>
+                </f:for>
+            </ul>
+
+            <!-- CTA (nur mobil sichtbar via CSS) -->
+            <f:variable name="ctaLabel" value="{ctaPublicLabel}" />
+            <f:if condition="{ctaLabel}"><f:then /><f:else><f:variable name="ctaLabel" value="{settings.ctaPublic.label}" /></f:else></f:if>
+            <f:if condition="{ctaLabel}"><f:then /><f:else><f:variable name="ctaLabel" value="Öffentliche Seminartermine" /></f:else></f:if>
+
+            <f:variable name="ctaPid" value="{ctaPublicPageUid}" />
+            <f:if condition="{ctaPid}"><f:then /><f:else><f:variable name="ctaPid" value="{settings.ctaPublic.pageUid}" /></f:else></f:if>
+            <f:if condition="{ctaPid}"><f:then /><f:else><f:variable name="ctaPid" value="25" /></f:else></f:if>
+
+            <a href="{f:uri.page(pageUid: ctaPid)}" class="c-menu__cta" title="{ctaLabel}">{ctaLabel}</a>
+        </div>
+    </nav>
+</f:spaceless>
