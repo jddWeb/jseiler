@@ -1,14 +1,12 @@
 /** =========================================================================
- * main.js – Self-healing Menu + Overlay + Mega-Panel (Desktop)
+ * main.js – Menu + Overlay + Mega-Panel (Desktop) + A11y refinements
  * Mobil: Drill-Button toggelt; Label (Parent-Link) navigiert immer
- * Keyboard A11y: Pfeiltasten, ESC, aria-expanded
- * Deduping: doppelte Drill-Buttons werden entfernt
  * ========================================================================= */
 (function () {
     "use strict";
 
     window.JD = window.JD || {};
-    window.JD._version = "main.js:selfheal-mega:bunker:2025-11-07f";
+    window.JD._version = "main.js:selfheal-mega:a11y-scrolltrap:2025-11-07a";
 
     function ready(fn){
         if (document.readyState !== "loading") fn();
@@ -35,7 +33,15 @@
             else { clearTimeout(t); t = setTimeout(function(){ last = Date.now(); fn.apply(this, arguments); }, wait - (now - last)); }
         };
     }
-    function isDesktop(){ return window.matchMedia("(min-width: 1230px)").matches; }
+    function setNoScroll(on){
+        document.documentElement.classList.toggle("u-noscroll", on);
+        document.body.classList.toggle("u-noscroll", on);
+        if (on) {
+            document.documentElement.style.scrollBehavior = "auto"; // avoid jump animations when locking
+        } else {
+            document.documentElement.style.scrollBehavior = "";
+        }
+    }
 
     // Struktur absichern
     function ensureMenuStructure(){
@@ -53,6 +59,7 @@
                 wrapper.className = "c-menu__wrapper";
                 wrapper.setAttribute("data-menu-wrapper", "");
                 wrapper.id = "primary-menu-wrapper";
+                wrapper.setAttribute("aria-hidden", "true");
                 list.parentNode.insertBefore(wrapper, list);
                 wrapper.appendChild(list);
             }
@@ -60,6 +67,7 @@
             wrapper.classList.add("c-menu__wrapper");
             wrapper.setAttribute("data-menu-wrapper", "");
             if (!wrapper.id) wrapper.id = "primary-menu-wrapper";
+            if (!wrapper.hasAttribute("aria-hidden")) wrapper.setAttribute("aria-hidden", "true");
         }
 
         var toggle = $(menu, "[data-menu-toggle], .c-menu__toggle");
@@ -97,19 +105,13 @@
                 linkEl.classList.add("js-menu-parent");
                 linkEl.setAttribute("data-menu-parent", "true");
                 linkEl.setAttribute("aria-haspopup", "true");
+
+                if (subMob) { if (!subMob.id) subMob.id = "submenu-auto-" + idx; linkEl.setAttribute("aria-controls", subMob.id); }
+                else if (panel) { if (!panel.id) panel.id = "panel-auto-" + idx; linkEl.setAttribute("aria-controls", panel.id); }
+
                 linkEl.setAttribute("aria-expanded", "false");
 
-                if (subMob) {
-                    if (!subMob.id) subMob.id = "submenu-auto-" + idx;
-                    linkEl.setAttribute("aria-controls", subMob.id);
-                } else if (panel) {
-                    if (!panel.id) panel.id = "panel-auto-" + idx;
-                    linkEl.setAttribute("aria-controls", panel.id);
-                }
-
-                // Drill nur erzeugen, wenn GAR KEIN Drill im LI existiert (egal wo)
-                var anyDrill = item.querySelector(".c-menu__drill");
-                if (!anyDrill && subMob) {
+                if (subMob && !$(item, ".c-menu__drill")) {
                     var btn = document.createElement("button");
                     btn.type = "button";
                     btn.className = "c-menu__drill";
@@ -118,19 +120,9 @@
                     item.appendChild(btn);
                 }
             }
-
-            // HARTE DEDUPLIZIERUNG: nur den ersten Drill behalten – alle weiteren löschen
-            var allDrills = item.querySelectorAll(".c-menu__drill");
-            if (allDrills.length > 1) {
-                for (var i = 1; i < allDrills.length; i++) {
-                    if (allDrills[i] && allDrills[i].parentNode) {
-                        allDrills[i].parentNode.removeChild(allDrills[i]);
-                    }
-                }
-            }
         });
 
-        // CTA ins Overlay klonen (nur mobil relevant)
+        // CTA ins Overlay klonen (falls fehlt)
         if (!$(wrapper, ".c-menu__cta")) {
             var headerCTA = $(".c-header__cta");
             if (headerCTA) {
@@ -143,7 +135,7 @@
             }
         }
 
-        return { menu: menu, wrapper: wrapper };
+        return { menu: menu, wrapper: wrapper, toggle: toggle };
     }
 
     // Sticky Header
@@ -157,11 +149,14 @@
         window.addEventListener("scroll", onScroll, { passive: true });
     }
 
-    // Mobil: Overlay + Akkordeon (nur Drill toggelt) + Label klickt durch
+    // Mobil: Overlay + Akkordeon (nur Drill toggelt) + Label klickt durch + Scroll-Lock + Focus-Trap
     function initMenuDelegated(){
         var mqDesktop = window.matchMedia("(min-width: 1230px)");
 
-        // Overlay öffnen/schließen
+        // Track last focused element for returning focus on close
+        var lastFocus = null;
+
+        // Overlay öffnen/schließen (Burger + Close)
         document.addEventListener("click", function(e){
             var toggle = e.target.closest("[data-menu-toggle], .c-menu__toggle");
             if (!toggle) return;
@@ -183,6 +178,20 @@
                     tg.setAttribute("aria-expanded", String(willOpen));
                 }
             });
+
+            // A11y + Scroll lock
+            wrapper.setAttribute("aria-hidden", willOpen ? "false" : "true");
+            setNoScroll(willOpen);
+
+            // Fokusmanagement
+            if (willOpen) {
+                lastFocus = document.activeElement;
+                var closeBtn = $(".c-menu__close");
+                if (closeBtn) { try { closeBtn.focus(); } catch(_){} }
+            } else if (lastFocus && lastFocus.focus) {
+                try { lastFocus.focus(); } catch(_){}
+                lastFocus = null;
+            }
         }, { capture: true, passive: false });
 
         // Drill toggelt (Parent-Link navigiert)
@@ -203,20 +212,75 @@
             submenu.style.display = isOpen ? "flex" : "none";
         });
 
-        // Label-Klick mobil → immer Navigation (niemals toggeln)
+        // WICHTIG: Label-Klick mobil → immer Navigation (niemals toggeln/aufräumen)
         document.addEventListener("click", function(e){
-            if (mqDesktop.matches) return;
+            if (mqDesktop.matches) return; // nur mobil
             var link = e.target.closest(".c-menu__link.js-menu-parent");
             if (!link) return;
 
             var href = link.getAttribute("href");
             if (!href || href === "#") return;
 
+            // absolut navigieren und jegliches internes Handling verhindern
             e.preventDefault();
             e.stopPropagation();
             try { window.location.assign(href); }
             catch(_) { window.location.href = href; }
         }, { capture: true });
+
+        // Mobil: echte Navigationslinks schließen das Menü (Autoclose)
+        document.addEventListener("click", function(e){
+            if (mqDesktop.matches) return;
+            var link = e.target.closest(".c-menu__submenu-link, .c-menu__panel-sublink, .c-menu__link:not(.js-menu-parent)");
+            if (!link) return;
+            var wrap = $(".c-menu__wrapper.is-open");
+            if (!wrap) return;
+            // Schließen
+            wrap.classList.remove("is-open");
+            var root = wrap.closest(".c-menu");
+            if (root) root.classList.remove("is-open");
+            document.querySelectorAll("[data-menu-toggle], .c-menu__toggle").forEach(function(tg){
+                tg.classList.remove("is-active");
+                tg.setAttribute("aria-expanded", "false");
+            });
+            wrap.setAttribute("aria-hidden", "true");
+            setNoScroll(false);
+        }, { capture: true });
+
+        // ESC schließt (mobil & Desktop-Overlay falls offen)
+        document.addEventListener("keydown", function(e){
+            if (e.key !== "Escape") return;
+            var wrap = $(".c-menu__wrapper.is-open");
+            if (!wrap) return;
+            e.preventDefault();
+            wrap.classList.remove("is-open");
+            var root = wrap.closest(".c-menu");
+            if (root) root.classList.remove("is-open");
+            document.querySelectorAll("[data-menu-toggle], .c-menu__toggle").forEach(function(tg){
+                tg.classList.remove("is-active");
+                tg.setAttribute("aria-expanded", "false");
+            });
+            wrap.setAttribute("aria-hidden", "true");
+            setNoScroll(false);
+            var toggle = $("[data-menu-toggle], .c-menu__toggle");
+            if (toggle) { try { toggle.focus(); } catch(_){} }
+        });
+
+        // Fokus-Falle fürs Overlay
+        document.addEventListener("keydown", function(e){
+            if (e.key !== "Tab") return;
+            var wrap = $(".c-menu__wrapper.is-open");
+            if (!wrap) return;
+            var focusables = wrap.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (!focusables.length) return;
+            var first = focusables[0];
+            var last  = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault(); last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault(); first.focus();
+            }
+        });
 
         // Cleanup bei Wechsel zu Desktop
         function cleanup(){
@@ -225,6 +289,7 @@
                 var wrapper = $(menuRoot, "[data-menu-wrapper], .c-menu__wrapper");
                 if (!wrapper) return;
                 wrapper.classList.remove("is-open");
+                wrapper.setAttribute("aria-hidden", "true");
                 $$(menuRoot, "[data-menu-toggle], .c-menu__toggle").forEach(function(tg){
                     tg.classList.remove("is-active");
                     tg.setAttribute("aria-expanded", "false");
@@ -232,6 +297,7 @@
                 $$(menuRoot, ".c-menu__item.is-open").forEach(function (it){ it.classList.remove("is-open"); });
                 $$(menuRoot, ".c-menu__submenu").forEach(function (sm){ sm.style.display = ""; });
             });
+            setNoScroll(false);
         }
         cleanup();
         if (mqDesktop.addEventListener) mqDesktop.addEventListener("change", cleanup);
@@ -239,8 +305,9 @@
         window.addEventListener("resize", throttle(cleanup, 100));
     }
 
-    // Desktop: Mega-Panel + Keyboard-A11y
+    // Desktop: Mega-Panel
     function initMegaPanelDesktop(){
+        var mqDesktop = window.matchMedia("(min-width: 1230px)");
         var header = $(".c-header");
         var menu = $(".c-menu");
         if (!menu || !header) return;
@@ -254,116 +321,33 @@
         window.addEventListener("scroll", throttle(setHeaderBottomVar, 100), { passive: true });
 
         function openMega(item){
-            if (!isDesktop()) return;
+            if (!mqDesktop.matches) return;
             closeMega();
             item.classList.add("is-mega-open");
-            var trigger = $(item, ".c-menu__link.js-menu-parent");
-            if (trigger) trigger.setAttribute("aria-expanded", "true");
         }
         function closeMega(){
-            if (!isDesktop()) return;
-            $$(menu, ".c-menu__item.is-mega-open").forEach(function(i){
-                i.classList.remove("is-mega-open");
-                var t = $(i, ".c-menu__link.js-menu-parent");
-                if (t) t.setAttribute("aria-expanded", "false");
-            });
+            if (!mqDesktop.matches) return;
+            $$(menu, ".c-menu__item.is-mega-open").forEach(function(i){ i.classList.remove("is-mega-open"); });
         }
 
         // Öffnen per Hover/Fokus
         menu.addEventListener("mouseenter", function(e){
             var item = e.target.closest(".c-menu__item.has-submenu");
-            if (item && menu.contains(item) && isDesktop()) openMega(item);
+            if (item && menu.contains(item) && mqDesktop.matches) openMega(item);
         }, true);
         menu.addEventListener("focusin", function(e){
-            var item = e.target.closest(".c-menu__item.has-submenu, .c-menu__item");
-            if (item && menu.contains(item) && isDesktop()) {
-                if (item.classList.contains("has-submenu")) openMega(item);
-                else closeMega();
-            }
+            var item = e.target.closest(".c-menu__item.has-submenu");
+            if (item && menu.contains(item) && mqDesktop.matches) openMega(item);
         });
 
         // Schließen
-        $(".c-header").addEventListener("mouseleave", function(){ if (isDesktop()) closeMega(); });
-        document.addEventListener("keydown", function(e){
-            if (e.key === "Escape") {
-                closeMega();
-                var activeTop = $(".c-menu__link.js-menu-parent[aria-expanded='true']") || $(".c-menu__link");
-                activeTop && activeTop.focus && activeTop.focus();
-            }
-        });
-
-        // Tastaturnavigation
-        menu.addEventListener("keydown", function(e){
-            if (!isDesktop()) return;
-
-            var topLinks = $$(menu, ".c-menu__list > .c-menu__item > .c-menu__link");
-            if (!topLinks.length) return;
-
-            var current = e.target;
-            var currentTopIndex = topLinks.indexOf(current);
-
-            // Auf Ebene 1: Links/Rechts navigieren
-            if (currentTopIndex > -1) {
-                if (e.key === "ArrowRight" || e.key === "Right") {
-                    e.preventDefault();
-                    var next = topLinks[(currentTopIndex + 1) % topLinks.length];
-                    next.focus();
-                    if (next.closest(".c-menu__item").classList.contains("has-submenu")) openMega(next.closest(".c-menu__item"));
-                    else closeMega();
-                }
-                if (e.key === "ArrowLeft" || e.key === "Left") {
-                    e.preventDefault();
-                    var prev = topLinks[(currentTopIndex - 1 + topLinks.length) % topLinks.length];
-                    prev.focus();
-                    if (prev.closest(".c-menu__item").classList.contains("has-submenu")) openMega(prev.closest(".c-menu__item"));
-                    else closeMega();
-                }
-                if (e.key === "ArrowDown" || e.key === "Down") {
-                    var item = current.closest(".c-menu__item");
-                    if (item && item.classList.contains("has-submenu")) {
-                        var firstPanelLink = $(item, ".c-menu__panel .c-menu__panel-link, .c-menu__panel .c-menu__panel-sublink");
-                        if (firstPanelLink) {
-                            e.preventDefault();
-                            openMega(item);
-                            firstPanelLink.focus();
-                        }
-                    }
-                }
-                return;
-            }
-
-            // Im Panel
-            var inPanel = current.closest && current.closest(".c-menu__panel");
-            if (inPanel) {
-                var itemRoot = current.closest(".c-menu__item");
-                var panelFocusables = $$(itemRoot, ".c-menu__panel .c-menu__panel-link, .c-menu__panel .c-menu__panel-sublink, .c-menu__panel a, .c-menu__panel button")
-                    .filter(function(el){ return el.offsetParent !== null; });
-                var idx = panelFocusables.indexOf(current);
-
-                if (e.key === "ArrowDown" || e.key === "Down") {
-                    if (panelFocusables.length) {
-                        e.preventDefault();
-                        panelFocusables[(idx + 1) % panelFocusables.length].focus();
-                    }
-                }
-                if (e.key === "ArrowUp" || e.key === "Up") {
-                    if (panelFocusables.length) {
-                        e.preventDefault();
-                        panelFocusables[(idx - 1 + panelFocusables.length) % panelFocusables.length].focus();
-                    }
-                }
-                if (e.key === "ArrowLeft" || e.key === "Left") {
-                    e.preventDefault();
-                    var topTrigger = $(itemRoot, ".c-menu__link");
-                    topTrigger && topTrigger.focus();
-                }
-                if (e.key === "Escape") {
-                    e.preventDefault();
-                    closeMega();
-                    var topTrigger2 = $(itemRoot, ".c-menu__link");
-                    topTrigger2 && topTrigger2.focus();
-                }
-            }
+        $(".c-header").addEventListener("mouseleave", function(){ if (mqDesktop.matches) closeMega(); });
+        document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeMega(); });
+        document.addEventListener("click", function(e){
+            if (!mqDesktop.matches) return;
+            var panel = e.target.closest(".c-menu__panel");
+            var trigger = e.target.closest(".c-menu__item.has-submenu");
+            if (!panel && !trigger) closeMega();
         });
     }
 
@@ -395,28 +379,12 @@
         } catch(e){ /* noop */ }
     }
 
-    // Desktop-CTA-Härtung: Overlay-CTA auf Desktop entfernen
-    function hardenDesktopCta(){
-        var mqDesktop = window.matchMedia("(min-width: 1230px)");
-        function toggleMenuCta(){
-            var menuCta = document.querySelector("nav.c-menu .c-menu__cta");
-            if (!menuCta) return;
-            if (mqDesktop.matches) {
-                menuCta.parentNode && menuCta.parentNode.removeChild(menuCta);
-            }
-        }
-        toggleMenuCta();
-        if (mqDesktop.addEventListener) mqDesktop.addEventListener("change", toggleMenuCta);
-        else mqDesktop.addListener(toggleMenuCta);
-    }
-
     function boot(){
         ensureMenuStructure();
         initStickyHeader();
-        initMenuDelegated();     // Mobil
-        initMegaPanelDesktop();  // Desktop + Keyboard
+        initMenuDelegated();     // Mobil + A11y
+        initMegaPanelDesktop();  // Desktop
         markActivePath();
-        hardenDesktopCta();      // CTA doppelt verhindern (Desktop)
         console.log("JD ready:", window.JD._version);
     }
     ready(boot);
