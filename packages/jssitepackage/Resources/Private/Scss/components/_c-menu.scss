@@ -92,7 +92,6 @@ $__bp-mobile-max: 1229px;
     position: sticky; top: 0; z-index: 1;
     display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .5rem;
     padding: .9rem 1rem; background: #fff;
-    /* vorher: border-bottom – entfernt, damit keine grauen Streifen */
   }
   &__title { margin: 0; font-size: 1.125rem; font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600); letter-spacing: .01em; }
 
@@ -101,16 +100,11 @@ $__bp-mobile-max: 1229px;
     margin: 0 0 1rem;
     padding: 0 1rem;
     display: flex; flex-direction: column; width: 100%;
-    /* vorher: border-top – entfernt, damit keine grauen Streifen */
     background: #fff;
-    gap: 0; /* wir steuern Abstand über Padding der Links */
+    gap: 0;
   }
 
-  &__item {
-    position: relative;
-    /* vorher: border-bottom – entfernt, damit keine grauen Streifen */
-    &.has-submenu > .c-menu__link { padding-right: 2.25rem; }
-  }
+  &__item { position: relative; }
 
   &__link {
     display: block;
@@ -119,7 +113,7 @@ $__bp-mobile-max: 1229px;
     font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
     text-transform: uppercase;
     letter-spacing: .03em;
-    padding: 1rem 0; /* sorgt für vertikalen Abstand ohne Streifen */
+    padding: 1rem 0;
     line-height: 1.2;
     transition: color .2s ease;
 
@@ -172,6 +166,9 @@ $__bp-mobile-max: 1229px;
     &__link { padding: 0; }
     &__drill, &__head, &__close { display: none; }
 
+    /* Desktop: KEINE Drill-Reserve → gleichmäßige Abstände */
+    .c-menu__item.has-submenu > .c-menu__link { padding-right: 0; }
+
     &__panel {
       display: block;
       position: fixed; left: 0; right: 0;
@@ -179,7 +176,6 @@ $__bp-mobile-max: 1229px;
       background: #fff; box-shadow: $__shadow-soft; z-index: 1002;
       opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-6px);
       transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
-      /* keine Rahmenlinien, clean wie gewünscht */
     }
     &__item.is-mega-open > &__panel {
       opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
@@ -193,9 +189,7 @@ $__bp-mobile-max: 1229px;
     }
 
     /* Ebene 2 im Panel */
-    &__panel-list {
-      list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem;
-    }
+    &__panel-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
     &__panel-link {
       display: block; text-decoration: none; color: $__text; padding: .35rem 0;
       font-weight: if(meta.global-variable-exists(font-weight-medium), $font-weight-medium, 600);
@@ -230,7 +224,7 @@ $__bp-mobile-max: 1229px;
   }
 }
 
-/* CTA im Overlay nur mobil */
+/* CTA im Overlay: sichtbar nur mobil */
 .c-menu__cta {
   display: inline-flex; align-items: center; justify-content: center;
   width: calc(100% - 2rem); margin: .25rem 1rem 1rem; padding: 1rem 1.25rem;
@@ -242,7 +236,11 @@ $__bp-mobile-max: 1229px;
 
   &:hover, &:focus { background-color: color.scale($__primary, $lightness: -6%); transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.12); text-decoration: none; }
 }
-@media (min-width: $__bp-desktop) { .c-menu__cta { display: none !important; } }
+
+/* Desktop: CTA im Menü sicher ausblenden (höhere Spezifität) */
+@media (min-width: $__bp-desktop) {
+  nav.c-menu .c-menu__cta { display: none !important; }
+}
 
 /* Motion-Preferences */
 @media (prefers-reduced-motion: reduce) {
@@ -251,14 +249,16 @@ $__bp-mobile-max: 1229px;
   .c-menu__drill { transition: none !important; }
 }
 
-/* Hamburger mobil erzwingen */
+/* Hamburger mobil erzwingen + Drill-Reserve nur mobil */
 @media (max-width: $__bp-mobile-max) {
   .c-menu > .c-menu__toggle {
     display: inline-flex !important;
     visibility: visible !important;
     opacity: 1 !important;
   }
+  .c-menu__item.has-submenu > .c-menu__link { padding-right: 2.25rem; }
 }
+
 /* Startseite-Link nur mobil anzeigen */
 @media (min-width: 1230px) {
   .c-menu__home { display: none !important; }

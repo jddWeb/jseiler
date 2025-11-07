@@ -6,7 +6,7 @@
     "use strict";
 
     window.JD = window.JD || {};
-    window.JD._version = "main.js:selfheal-mega:2025-11-06l";
+    window.JD._version = "main.js:selfheal-mega:2025-11-07a";
 
     function ready(fn){
         if (document.readyState !== "loading") fn();
@@ -111,7 +111,7 @@
             }
         });
 
-        // CTA ins Overlay klonen (falls fehlt)
+        // CTA ins Overlay klonen (falls fehlt, nur mobil relevant)
         if (!$(wrapper, ".c-menu__cta")) {
             var headerCTA = $(".c-header__cta");
             if (headerCTA) {
@@ -160,6 +160,7 @@
             $$(menuRoot, "[data-menu-toggle], .c-menu__toggle").forEach(function(tg){
                 var controls = tg.getAttribute("aria-controls");
                 if (!controls || controls === id) {
+                    tg.classList.toggle("is-active, willOpen");
                     tg.classList.toggle("is-active", willOpen);
                     tg.setAttribute("aria-expanded", String(willOpen));
                 }
@@ -184,16 +185,15 @@
             submenu.style.display = isOpen ? "flex" : "none";
         });
 
-        // WICHTIG: Label-Klick mobil → immer Navigation (niemals toggeln/aufräumen)
+        // Label-Klick mobil → immer Navigation (niemals toggeln/aufräumen)
         document.addEventListener("click", function(e){
-            if (mqDesktop.matches) return; // nur mobil
+            if (mqDesktop.matches) return;
             var link = e.target.closest(".c-menu__link.js-menu-parent");
             if (!link) return;
 
             var href = link.getAttribute("href");
             if (!href || href === "#") return;
 
-            // absolut navigieren und jegliches internes Handling verhindern
             e.preventDefault();
             e.stopPropagation();
             try { window.location.assign(href); }
@@ -295,12 +295,29 @@
         } catch(e){ /* noop */ }
     }
 
+    // Desktop-CTA-Härtung: Overlay-CTA auf Desktop entfernen
+    function hardenDesktopCta(){
+        var mqDesktop = window.matchMedia("(min-width: 1230px)");
+        function toggleMenuCta(){
+            var menuCta = document.querySelector("nav.c-menu .c-menu__cta");
+            if (!menuCta) return;
+            if (mqDesktop.matches) {
+                // Auf Desktop vollständig entfernen (wir haben den Header-CTA)
+                menuCta.parentNode && menuCta.parentNode.removeChild(menuCta);
+            }
+        }
+        toggleMenuCta();
+        if (mqDesktop.addEventListener) mqDesktop.addEventListener("change", toggleMenuCta);
+        else mqDesktop.addListener(toggleMenuCta);
+    }
+
     function boot(){
         ensureMenuStructure();
         initStickyHeader();
         initMenuDelegated();     // Mobil
         initMegaPanelDesktop();  // Desktop
         markActivePath();
+        hardenDesktopCta();      // CTA doppelt verhindern (Desktop)
         console.log("JD ready:", window.JD._version);
     }
     ready(boot);
