@@ -2,12 +2,13 @@
  * main.js – Self-healing Menu + Overlay + Mega-Panel (Desktop)
  * Mobil: Drill-Button toggelt; Label (Parent-Link) navigiert immer
  * Keyboard A11y: Pfeiltasten, ESC, aria-expanded
+ * Deduping: doppelte Drill-Buttons werden entfernt
  * ========================================================================= */
 (function () {
     "use strict";
 
     window.JD = window.JD || {};
-    window.JD._version = "main.js:selfheal-mega:a11y:2025-11-07b";
+    window.JD._version = "main.js:selfheal-mega:bunker:2025-11-07f";
 
     function ready(fn){
         if (document.readyState !== "loading") fn();
@@ -34,7 +35,6 @@
             else { clearTimeout(t); t = setTimeout(function(){ last = Date.now(); fn.apply(this, arguments); }, wait - (now - last)); }
         };
     }
-
     function isDesktop(){ return window.matchMedia("(min-width: 1230px)").matches; }
 
     // Struktur absichern
@@ -97,13 +97,19 @@
                 linkEl.classList.add("js-menu-parent");
                 linkEl.setAttribute("data-menu-parent", "true");
                 linkEl.setAttribute("aria-haspopup", "true");
-
-                if (subMob) { if (!subMob.id) subMob.id = "submenu-auto-" + idx; linkEl.setAttribute("aria-controls", subMob.id); }
-                else if (panel) { if (!panel.id) panel.id = "panel-auto-" + idx; linkEl.setAttribute("aria-controls", panel.id); }
-
                 linkEl.setAttribute("aria-expanded", "false");
 
-                if (subMob && !$(item, ".c-menu__drill")) {
+                if (subMob) {
+                    if (!subMob.id) subMob.id = "submenu-auto-" + idx;
+                    linkEl.setAttribute("aria-controls", subMob.id);
+                } else if (panel) {
+                    if (!panel.id) panel.id = "panel-auto-" + idx;
+                    linkEl.setAttribute("aria-controls", panel.id);
+                }
+
+                // Drill nur erzeugen, wenn GAR KEIN Drill im LI existiert (egal wo)
+                var anyDrill = item.querySelector(".c-menu__drill");
+                if (!anyDrill && subMob) {
                     var btn = document.createElement("button");
                     btn.type = "button";
                     btn.className = "c-menu__drill";
@@ -112,11 +118,20 @@
                     item.appendChild(btn);
                 }
             }
+
+            // HARTE DEDUPLIZIERUNG: nur den ersten Drill behalten – alle weiteren löschen
+            var allDrills = item.querySelectorAll(".c-menu__drill");
+            if (allDrills.length > 1) {
+                for (var i = 1; i < allDrills.length; i++) {
+                    if (allDrills[i] && allDrills[i].parentNode) {
+                        allDrills[i].parentNode.removeChild(allDrills[i]);
+                    }
+                }
+            }
         });
 
         // CTA ins Overlay klonen (nur mobil relevant)
-        var wrapperHasCta = $(wrapper, ".c-menu__cta");
-        if (!wrapperHasCta) {
+        if (!$(wrapper, ".c-menu__cta")) {
             var headerCTA = $(".c-header__cta");
             if (headerCTA) {
                 var cta = document.createElement("a");
@@ -188,7 +203,7 @@
             submenu.style.display = isOpen ? "flex" : "none";
         });
 
-        // Label-Klick mobil → immer Navigation (niemals toggeln/aufräumen)
+        // Label-Klick mobil → immer Navigation (niemals toggeln)
         document.addEventListener("click", function(e){
             if (mqDesktop.matches) return;
             var link = e.target.closest(".c-menu__link.js-menu-parent");
@@ -262,7 +277,6 @@
         menu.addEventListener("focusin", function(e){
             var item = e.target.closest(".c-menu__item.has-submenu, .c-menu__item");
             if (item && menu.contains(item) && isDesktop()) {
-                // Öffne nur, wenn dieses Item tatsächlich Submenu hat
                 if (item.classList.contains("has-submenu")) openMega(item);
                 else closeMega();
             }
@@ -270,10 +284,13 @@
 
         // Schließen
         $(".c-header").addEventListener("mouseleave", function(){ if (isDesktop()) closeMega(); });
-        document.addEventListener("keydown", function(e){ if (e.key === "Escape") { closeMega(); var open = $(".c-menu__item.is-mega-open"); if (!open) { // Fokus zurück auf aktiven Toplink
-            var activeTop = $(".c-menu__link.js-menu-parent[aria-expanded='true']") || $(".c-menu__link");
-            activeTop && activeTop.focus && activeTop.focus();
-        } } });
+        document.addEventListener("keydown", function(e){
+            if (e.key === "Escape") {
+                closeMega();
+                var activeTop = $(".c-menu__link.js-menu-parent[aria-expanded='true']") || $(".c-menu__link");
+                activeTop && activeTop.focus && activeTop.focus();
+            }
+        });
 
         // Tastaturnavigation
         menu.addEventListener("keydown", function(e){
@@ -312,18 +329,15 @@
                         }
                     }
                 }
-                if (e.key === "ArrowUp" || e.key === "Up") {
-                    // Ignorieren auf Top-Level
-                }
                 return;
             }
 
-            // Im Panel: Pfeile navigieren; Left/Up zurück zum Top-Link
+            // Im Panel
             var inPanel = current.closest && current.closest(".c-menu__panel");
             if (inPanel) {
                 var itemRoot = current.closest(".c-menu__item");
-                var panelFocusables = $$(itemRoot, ".c-menu__panel .c-menu__panel-link, .c-menu__panel .c-menu__panel-sublink, .c-menu__panel a, .c-menu__panel button");
-                panelFocusables = panelFocusables.filter(function(el){ return el.offsetParent !== null; });
+                var panelFocusables = $$(itemRoot, ".c-menu__panel .c-menu__panel-link, .c-menu__panel .c-menu__panel-sublink, .c-menu__panel a, .c-menu__panel button")
+                    .filter(function(el){ return el.offsetParent !== null; });
                 var idx = panelFocusables.indexOf(current);
 
                 if (e.key === "ArrowDown" || e.key === "Down") {
@@ -339,7 +353,6 @@
                     }
                 }
                 if (e.key === "ArrowLeft" || e.key === "Left") {
-                    // Zurück zum Top-Link
                     e.preventDefault();
                     var topTrigger = $(itemRoot, ".c-menu__link");
                     topTrigger && topTrigger.focus();
