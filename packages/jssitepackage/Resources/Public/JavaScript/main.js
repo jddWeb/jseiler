@@ -1,12 +1,13 @@
 /** =========================================================================
  * main.js – Self-healing Menu + Overlay + Mega-Panel (Desktop)
  * Mobil: Drill-Button toggelt; Label (Parent-Link) navigiert immer
+ * Keyboard A11y: Pfeiltasten, ESC, aria-expanded
  * ========================================================================= */
 (function () {
     "use strict";
 
     window.JD = window.JD || {};
-    window.JD._version = "main.js:selfheal-mega:2025-11-07a";
+    window.JD._version = "main.js:selfheal-mega:a11y:2025-11-07b";
 
     function ready(fn){
         if (document.readyState !== "loading") fn();
@@ -33,6 +34,8 @@
             else { clearTimeout(t); t = setTimeout(function(){ last = Date.now(); fn.apply(this, arguments); }, wait - (now - last)); }
         };
     }
+
+    function isDesktop(){ return window.matchMedia("(min-width: 1230px)").matches; }
 
     // Struktur absichern
     function ensureMenuStructure(){
@@ -111,8 +114,9 @@
             }
         });
 
-        // CTA ins Overlay klonen (falls fehlt, nur mobil relevant)
-        if (!$(wrapper, ".c-menu__cta")) {
+        // CTA ins Overlay klonen (nur mobil relevant)
+        var wrapperHasCta = $(wrapper, ".c-menu__cta");
+        if (!wrapperHasCta) {
             var headerCTA = $(".c-header__cta");
             if (headerCTA) {
                 var cta = document.createElement("a");
@@ -160,7 +164,6 @@
             $$(menuRoot, "[data-menu-toggle], .c-menu__toggle").forEach(function(tg){
                 var controls = tg.getAttribute("aria-controls");
                 if (!controls || controls === id) {
-                    tg.classList.toggle("is-active, willOpen");
                     tg.classList.toggle("is-active", willOpen);
                     tg.setAttribute("aria-expanded", String(willOpen));
                 }
@@ -221,9 +224,8 @@
         window.addEventListener("resize", throttle(cleanup, 100));
     }
 
-    // Desktop: Mega-Panel
+    // Desktop: Mega-Panel + Keyboard-A11y
     function initMegaPanelDesktop(){
-        var mqDesktop = window.matchMedia("(min-width: 1230px)");
         var header = $(".c-header");
         var menu = $(".c-menu");
         if (!menu || !header) return;
@@ -237,33 +239,118 @@
         window.addEventListener("scroll", throttle(setHeaderBottomVar, 100), { passive: true });
 
         function openMega(item){
-            if (!mqDesktop.matches) return;
+            if (!isDesktop()) return;
             closeMega();
             item.classList.add("is-mega-open");
+            var trigger = $(item, ".c-menu__link.js-menu-parent");
+            if (trigger) trigger.setAttribute("aria-expanded", "true");
         }
         function closeMega(){
-            if (!mqDesktop.matches) return;
-            $$(menu, ".c-menu__item.is-mega-open").forEach(function(i){ i.classList.remove("is-mega-open"); });
+            if (!isDesktop()) return;
+            $$(menu, ".c-menu__item.is-mega-open").forEach(function(i){
+                i.classList.remove("is-mega-open");
+                var t = $(i, ".c-menu__link.js-menu-parent");
+                if (t) t.setAttribute("aria-expanded", "false");
+            });
         }
 
         // Öffnen per Hover/Fokus
         menu.addEventListener("mouseenter", function(e){
             var item = e.target.closest(".c-menu__item.has-submenu");
-            if (item && menu.contains(item) && mqDesktop.matches) openMega(item);
+            if (item && menu.contains(item) && isDesktop()) openMega(item);
         }, true);
         menu.addEventListener("focusin", function(e){
-            var item = e.target.closest(".c-menu__item.has-submenu");
-            if (item && menu.contains(item) && mqDesktop.matches) openMega(item);
+            var item = e.target.closest(".c-menu__item.has-submenu, .c-menu__item");
+            if (item && menu.contains(item) && isDesktop()) {
+                // Öffne nur, wenn dieses Item tatsächlich Submenu hat
+                if (item.classList.contains("has-submenu")) openMega(item);
+                else closeMega();
+            }
         });
 
         // Schließen
-        $(".c-header").addEventListener("mouseleave", function(){ if (mqDesktop.matches) closeMega(); });
-        document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeMega(); });
-        document.addEventListener("click", function(e){
-            if (!mqDesktop.matches) return;
-            var panel = e.target.closest(".c-menu__panel");
-            var trigger = e.target.closest(".c-menu__item.has-submenu");
-            if (!panel && !trigger) closeMega();
+        $(".c-header").addEventListener("mouseleave", function(){ if (isDesktop()) closeMega(); });
+        document.addEventListener("keydown", function(e){ if (e.key === "Escape") { closeMega(); var open = $(".c-menu__item.is-mega-open"); if (!open) { // Fokus zurück auf aktiven Toplink
+            var activeTop = $(".c-menu__link.js-menu-parent[aria-expanded='true']") || $(".c-menu__link");
+            activeTop && activeTop.focus && activeTop.focus();
+        } } });
+
+        // Tastaturnavigation
+        menu.addEventListener("keydown", function(e){
+            if (!isDesktop()) return;
+
+            var topLinks = $$(menu, ".c-menu__list > .c-menu__item > .c-menu__link");
+            if (!topLinks.length) return;
+
+            var current = e.target;
+            var currentTopIndex = topLinks.indexOf(current);
+
+            // Auf Ebene 1: Links/Rechts navigieren
+            if (currentTopIndex > -1) {
+                if (e.key === "ArrowRight" || e.key === "Right") {
+                    e.preventDefault();
+                    var next = topLinks[(currentTopIndex + 1) % topLinks.length];
+                    next.focus();
+                    if (next.closest(".c-menu__item").classList.contains("has-submenu")) openMega(next.closest(".c-menu__item"));
+                    else closeMega();
+                }
+                if (e.key === "ArrowLeft" || e.key === "Left") {
+                    e.preventDefault();
+                    var prev = topLinks[(currentTopIndex - 1 + topLinks.length) % topLinks.length];
+                    prev.focus();
+                    if (prev.closest(".c-menu__item").classList.contains("has-submenu")) openMega(prev.closest(".c-menu__item"));
+                    else closeMega();
+                }
+                if (e.key === "ArrowDown" || e.key === "Down") {
+                    var item = current.closest(".c-menu__item");
+                    if (item && item.classList.contains("has-submenu")) {
+                        var firstPanelLink = $(item, ".c-menu__panel .c-menu__panel-link, .c-menu__panel .c-menu__panel-sublink");
+                        if (firstPanelLink) {
+                            e.preventDefault();
+                            openMega(item);
+                            firstPanelLink.focus();
+                        }
+                    }
+                }
+                if (e.key === "ArrowUp" || e.key === "Up") {
+                    // Ignorieren auf Top-Level
+                }
+                return;
+            }
+
+            // Im Panel: Pfeile navigieren; Left/Up zurück zum Top-Link
+            var inPanel = current.closest && current.closest(".c-menu__panel");
+            if (inPanel) {
+                var itemRoot = current.closest(".c-menu__item");
+                var panelFocusables = $$(itemRoot, ".c-menu__panel .c-menu__panel-link, .c-menu__panel .c-menu__panel-sublink, .c-menu__panel a, .c-menu__panel button");
+                panelFocusables = panelFocusables.filter(function(el){ return el.offsetParent !== null; });
+                var idx = panelFocusables.indexOf(current);
+
+                if (e.key === "ArrowDown" || e.key === "Down") {
+                    if (panelFocusables.length) {
+                        e.preventDefault();
+                        panelFocusables[(idx + 1) % panelFocusables.length].focus();
+                    }
+                }
+                if (e.key === "ArrowUp" || e.key === "Up") {
+                    if (panelFocusables.length) {
+                        e.preventDefault();
+                        panelFocusables[(idx - 1 + panelFocusables.length) % panelFocusables.length].focus();
+                    }
+                }
+                if (e.key === "ArrowLeft" || e.key === "Left") {
+                    // Zurück zum Top-Link
+                    e.preventDefault();
+                    var topTrigger = $(itemRoot, ".c-menu__link");
+                    topTrigger && topTrigger.focus();
+                }
+                if (e.key === "Escape") {
+                    e.preventDefault();
+                    closeMega();
+                    var topTrigger2 = $(itemRoot, ".c-menu__link");
+                    topTrigger2 && topTrigger2.focus();
+                }
+            }
         });
     }
 
@@ -302,7 +389,6 @@
             var menuCta = document.querySelector("nav.c-menu .c-menu__cta");
             if (!menuCta) return;
             if (mqDesktop.matches) {
-                // Auf Desktop vollständig entfernen (wir haben den Header-CTA)
                 menuCta.parentNode && menuCta.parentNode.removeChild(menuCta);
             }
         }
@@ -315,7 +401,7 @@
         ensureMenuStructure();
         initStickyHeader();
         initMenuDelegated();     // Mobil
-        initMegaPanelDesktop();  // Desktop
+        initMegaPanelDesktop();  // Desktop + Keyboard
         markActivePath();
         hardenDesktopCta();      // CTA doppelt verhindern (Desktop)
         console.log("JD ready:", window.JD._version);
