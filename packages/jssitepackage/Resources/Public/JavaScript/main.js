@@ -1,12 +1,12 @@
 /** =========================================================================
  * main.js – Self-healing Menu + Overlay + Mega-Panel (Desktop)
- * Mobil: Drill-Button toggelt; Parent-Links navigieren
+ * Mobil: Drill-Button toggelt; Label (Parent-Link) navigiert immer
  * ========================================================================= */
 (function () {
     "use strict";
 
     window.JD = window.JD || {};
-    window.JD._version = "main.js:selfheal-mega:2025-11-06j";
+    window.JD._version = "main.js:selfheal-mega:2025-11-06l";
 
     function ready(fn){
         if (document.readyState !== "loading") fn();
@@ -83,10 +83,9 @@
             if (wrapper && !toggle.getAttribute("aria-controls")) toggle.setAttribute("aria-controls", wrapper.id);
         }
 
-        // Items verdrahten (mobil: Submenü bevorzugen)
+        // Items verdrahten (mobil: Drill toggelt, Label navigiert)
         $$(menu, ".c-menu__item").forEach(function (item, idx){
             var linkEl = $(item, ".c-menu__link");
-            // Wichtig: :scope verwenden (kein führender Kombinator '>')
             var subMob = item.querySelector(":scope > .c-menu__submenu");
             var panel  = item.querySelector(":scope > .c-menu__panel");
 
@@ -139,7 +138,7 @@
         window.addEventListener("scroll", onScroll, { passive: true });
     }
 
-    // Mobil: Overlay + Akkordeon (nur Drill toggelt)
+    // Mobil: Overlay + Akkordeon (nur Drill toggelt) + Label klickt durch
     function initMenuDelegated(){
         var mqDesktop = window.matchMedia("(min-width: 1230px)");
 
@@ -184,6 +183,22 @@
             parent.setAttribute("aria-expanded", String(isOpen));
             submenu.style.display = isOpen ? "flex" : "none";
         });
+
+        // WICHTIG: Label-Klick mobil → immer Navigation (niemals toggeln/aufräumen)
+        document.addEventListener("click", function(e){
+            if (mqDesktop.matches) return; // nur mobil
+            var link = e.target.closest(".c-menu__link.js-menu-parent");
+            if (!link) return;
+
+            var href = link.getAttribute("href");
+            if (!href || href === "#") return;
+
+            // absolut navigieren und jegliches internes Handling verhindern
+            e.preventDefault();
+            e.stopPropagation();
+            try { window.location.assign(href); }
+            catch(_) { window.location.href = href; }
+        }, { capture: true });
 
         // Cleanup bei Wechsel zu Desktop
         function cleanup(){

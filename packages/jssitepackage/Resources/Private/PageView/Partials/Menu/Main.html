@@ -60,11 +60,10 @@
                                                 <li class="c-menu__panel-item{f:if(condition:child.active, then:' is-active')}">
                                                     <a href="{child.link}" class="c-menu__panel-link{f:if(condition:child.active, then:' is-active')}">{child.title}</a>
 
-                                                    <!-- Ebene 3 im Panel -->
+                                                    <!-- Ebene 3 im Panel: untergeordnete Links -->
                                                     <f:if condition="{child.children}">
                                                         <ul class="c-menu__panel-sublist" role="list">
                                                             <f:for each="{child.children}" as="grandchild">
-                                                                <f:variable name="grandId" value="{f:if(condition:grandchild.data.uid, then:grandchild.data.uid, else:grandchild.uid)}" />
                                                                 <li class="c-menu__panel-subitem{f:if(condition:grandchild.active, then:' is-active')}">
                                                                     <a href="{grandchild.link}" class="c-menu__panel-sublink{f:if(condition:grandchild.active, then:' is-active')}">{grandchild.title}</a>
                                                                 </li>
@@ -89,8 +88,7 @@
                                 <ul class="c-menu__submenu-list" role="list">
                                     <f:for each="{item.children}" as="child">
                                         <f:variable name="childId" value="{f:if(condition:child.data.uid, then:child.data.uid, else:child.uid)}" />
-                                        <li class="c-menu__item{f:if(condition:child.children, then:' has-submenu')}"
-                                            {f:if(condition:child.children, then:'data-has-submenu="true"')}>
+                                        <li class="c-menu__item{f:if(condition:child.children, then:' has-submenu')}" {f:if(condition:child.children, then:'data-has-submenu="true"')}>
                                         <f:if condition="{child.children}">
                                             <f:then>
                                                 <a href="{child.link}"
