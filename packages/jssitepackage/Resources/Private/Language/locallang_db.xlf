@@ -1,11 +1,13 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<xliff version="1.0">
-    <file source-language="en" datatype="plaintext" original="messages" date="2025-10-30UTC06:17:540">
-        <header>
-            <authorName>Jens Seiler</authorName>
-            <authorEmail>buero@jensseiler.de</authorEmail>
-        </header>
-        <body>
-        </body>
-    </file>
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2">
+  <file source-language="de" datatype="plaintext" original="messages" product-name="jssitepackage">
+    <body>
+      <trans-unit id="pages.tx_jssitepackage_megaimage">
+        <source>Mega-Panel Bild</source>
+      </trans-unit>
+      <trans-unit id="pages.tx_jssitepackage_megaimage.add">
+        <source>Bild hinzufügen</source>
+      </trans-unit>
+    </body>
+  </file>
 </xliff>

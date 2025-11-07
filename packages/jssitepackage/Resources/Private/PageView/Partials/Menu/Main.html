@@ -11,21 +11,28 @@
         <!-- Overlay-Wrapper (mobil) -->
         <div id="primary-menu-wrapper" class="c-menu__wrapper" data-menu-wrapper>
 
-            <!-- Overlay-Header mit Titel + Schließen -->
+            <!-- Overlay-Header: nur Schließen rechts mit sichtbarem Label -->
             <div class="c-menu__head">
-                <h2 class="c-menu__title">Menü</h2>
-                <button class="c-menu__close" type="button" aria-controls="primary-menu-wrapper" aria-expanded="true" aria-label="Menü schließen" data-menu-toggle>
-                    <span aria-hidden="true"></span>
-                    <span class="u-visually-hidden">Schließen</span>
+                <button class="c-menu__close" type="button"
+                        aria-controls="primary-menu-wrapper"
+                        aria-expanded="true"
+                        aria-label="Menü schließen"
+                        data-menu-toggle>
+                    <span>Menü schließen</span>
                 </button>
             </div>
 
             <!-- Home-Link (nur mobil sichtbar via CSS) -->
+            <!-- Robust: erst versuchen, gerenderte homePageUid zu nutzen, sonst 1 -->
             <f:variable name="homeUid" value="{homePageUid}" />
-            <f:if condition="{homeUid}"><f:then /><f:else><f:variable name="homeUid" value="{site.rootPageId}" /></f:else></f:if>
+            <f:if condition="{homeUid}">
+                <f:then />
+                <f:else><f:variable name="homeUid" value="1" /></f:else>
+            </f:if>
 
             <ul class="c-menu__list" role="list">
                 <li class="c-menu__item c-menu__home">
+                    <!-- Harte Fallback-Logik im ViewHelper: wenn homeUid leer ist, nimm 1 -->
                     <a href="{f:uri.page(pageUid: homeUid)}" class="c-menu__link">Startseite</a>
                 </li>
 
@@ -75,10 +82,26 @@
                                         </ul>
                                     </nav>
 
-                                    <!-- Rechte Spalte (optional) -->
+                                    <!-- Rechte Spalte (Bild/Text) -->
                                     <div class="c-menu__panel-content">
-                                        <f:if condition="{item.abstract}"><p class="c-menu__panel-text">{item.abstract}</p></f:if>
-                                        <f:if condition="{item.media.0.publicUrl}"><img src="{item.media.0.publicUrl}" alt="" class="c-menu__panel-image" /></f:if>
+                                        <f:if condition="{item.abstract}">
+                                            <p class="c-menu__panel-text">{item.abstract}</p>
+                                        </f:if>
+
+                                        <!-- 1) TCA-Bild -->
+                                        <f:if condition="{item.megaImage.publicUrl}">
+                                            <f:then>
+                                                <img src="{item.megaImage.publicUrl}"
+                                                     alt="{item.megaImage.alt}"
+                                                     class="c-menu__panel-image" />
+                                            </f:then>
+                                            <f:else>
+                                                <!-- 2) Fallback: erstes Seitenbild -->
+                                                <f:if condition="{item.media.0.publicUrl}">
+                                                    <img src="{item.media.0.publicUrl}" alt="" class="c-menu__panel-image" />
+                                                </f:if>
+                                            </f:else>
+                                        </f:if>
                                     </div>
                                 </div>
                             </section>

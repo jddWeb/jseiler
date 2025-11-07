@@ -48,6 +48,10 @@ page {
       ctaPublicLabel.value = {$jssitepackage.settings.ctaPublic.label}
       ctaPublicLabel.ifEmpty = Öffentliche Seminartermine
 
+      homePageUid = TEXT
+      homePageUid.value = {$jssitepackage.settings.homePid}
+      homePageUid.ifEmpty = 1
+
       topbarTel = TEXT
       topbarTel.value = {$jssitepackage.settings.topbarTel}
       topbarTel.ifEmpty = +49 30 55669391
@@ -72,6 +76,13 @@ page {
         as = menuMain
         titleField = nav_title // title
         entryLevel = 0
+      }
+
+      15 = JensSeiler\Jssitepackage\DataProcessing\MegaImageForMenuProcessor
+      15 {
+        as = menuMain
+        fieldName = tx_jssitepackage_megaimage
+        targetKey = megaImage
       }
 
       20 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
