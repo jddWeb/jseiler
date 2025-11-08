@@ -13,7 +13,7 @@ $__shadow-soft:    if(meta.global-variable-exists(shadow-soft),          $shadow
 $__max-header:     if(meta.global-variable-exists(max-header-width),     $max-header-width, 1200px);
 $__focus-ring:     if(meta.global-variable-exists(color-focus),          $color-focus, color.scale($__primary, $lightness: +20%));
 
-/* Arburg-ähnlicher Overlay-Verlauf: links sehr dunkel → rechts transparent */
+/* Overlay-Verlauf: links sehr dunkel → rechts transparent */
 @function hero-grad($a1, $a2) {
   @return linear-gradient(
                   to right,
