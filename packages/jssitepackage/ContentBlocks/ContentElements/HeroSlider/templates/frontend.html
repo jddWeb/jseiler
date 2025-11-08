@@ -11,12 +11,10 @@
 
             <f:for each="{data.slides}" as="slide" iteration="it">
 
-                <!-- Overlay-Modifier robust (Select kann String ODER Objekt sein) -->
-                <f:variable name="overlayMod" value="{slide.overlayStrength}" />
+                <!-- Overlay nur als sicherer String (kein Raw/Array) -->
+                <f:variable name="overlayMod" value="" />
                 <f:if condition="{slide.overlayStrength.value}">
-                    <f:then>
-                        <f:variable name="overlayMod" value="{slide.overlayStrength.value}" />
-                    </f:then>
+                    <f:variable name="overlayMod" value="{slide.overlayStrength.value}" />
                 </f:if>
 
                 <!-- Hintergrund-URL robust ermitteln -->
@@ -42,7 +40,7 @@
                     </f:else>
                 </f:if>
 
-                <li class="c-hero__slide{f:if(condition: it.isFirst, then: ' is-active')}{f:if(condition: overlayMod, then: ' c-hero__slide--overlay-')}{overlayMod}"
+                <li class="c-hero__slide{f:if(condition: it.isFirst, then: ' is-active')}{f:if(condition: overlayMod, then: ' c-hero__slide--overlay-{overlayMod}')}"
                     role="group"
                     aria-roledescription="slide"
                     aria-label="{it.cycle} / {it.total}">
@@ -67,8 +65,10 @@
                             </f:if>
 
                             <f:if condition="{slide.ctaLabel}">
-                                <!-- Korrekt: typolink als Tag, nicht als href-String -->
-                                <f:link.typolink parameter="{slide.ctaLink}" class="c-hero__cta">
+                                <!-- Typolink: nimmt .url wenn Link-Array, sonst den String -->
+                                <f:link.typolink
+                                    parameter="{f:if(condition: slide.ctaLink.url, then: slide.ctaLink.url, else: slide.ctaLink)}"
+                                    class="c-hero__cta">
                                     <span class="c-hero__cta-label">{slide.ctaLabel}</span>
                                     <svg class="c-hero__cta-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                         <path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/>
