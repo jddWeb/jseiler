@@ -165,7 +165,7 @@ $__bp-mobile-max: 1229px;
   /* Mega-Panel mobil NIE anzeigen */
   &__panel { display: none; }
 
-  /* --- Desktop: Mega-Panel & grünes Overlay --- */
+  /* --- Desktop: Mega-Panel (weiß) & grüne Hover-Zeilen --- */
   @media (min-width: $__bp-desktop) {
     &__toggle { display: none; }
 
@@ -178,19 +178,17 @@ $__bp-mobile-max: 1229px;
 
     &__panel {
       display: block; position: fixed; left: 0; right: 0; top: var(--header-bottom, 0px);
-      background: #fff; box-shadow: $__shadow-soft; z-index: 1002;
+      background: $__surface; box-shadow: $__shadow-soft; z-index: 1002;
       opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-6px);
-      transition: background-color .18s ease, opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+      transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
     }
 
-    /* Panel sichtbar */
+    /* Panel sichtbar – Panel bleibt weiß */
     &__item.is-mega-open > &__panel {
       opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
-      background-color: $__primary; /* <<< Grün wie gewünscht */
-      transition: background-color .18s ease, opacity .18s ease, transform .18s ease, visibility 0s;
+      transition: opacity .18s ease, transform .18s ease, visibility 0s;
     }
 
-    /* Panel-Inhalte auf Weiß drehen */
     &__panel-inner {
       max-width: if(meta.global-variable-exists(max-header-width), $max-header-width, 1200px);
       margin: 0 auto; padding: 1.25rem 1rem 1.5rem;
@@ -199,63 +197,59 @@ $__bp-mobile-max: 1229px;
       display: grid; grid-template-columns: 360px 1fr; gap: 2rem;
     }
 
-    /* Typo-Farbe im grünen Panel */
-    &__item.is-mega-open > &__panel .c-menu__panel-inner { color: #fff; }
-
+    /* Listen und Links: Standard dunkel; Hover = grüner Background mit Radius 0 */
     &__panel-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
 
     &__panel-link {
-      display: block; text-decoration: none; padding: .35rem 0;
+      display: block;
+      text-decoration: none;
+      padding: .35rem .5rem;
+      border-radius: 0; /* ⇦ Wunsch: kein Radius */
       font-weight: if(meta.global-variable-exists(font-weight-medium), $font-weight-medium, 600);
-      transition: color .15s ease;
-      color: $__text; /* Standard (wenn Panel weiß) */
+      color: $__text;
+      transition: background-color .15s ease, color .15s ease, text-decoration-color .15s ease;
     }
-    /* Im grünen Panel: Links weiß + Unterstreichung beim Hover */
-    &__item.is-mega-open > &__panel .c-menu__panel-link {
-      color: #fff;
-    }
-    &__item.is-mega-open > &__panel .c-menu__panel-link:hover,
-    &__item.is-mega-open > &__panel .c-menu__panel-link:focus {
-      color: #fff; text-decoration: underline; text-decoration-thickness: .08em; text-underline-offset: .18em;
+
+    &__panel-link:hover,
+    &__panel-link:focus {
+      background-color: $__primary;
+      color: $__surface;
+      text-decoration: none;
     }
 
     &__panel-sublist { list-style: none; margin: .25rem 0 .75rem; padding: 0 0 0 .75rem; display: grid; gap: .25rem; }
     &__panel-subitem { margin: 0; padding: 0; }
 
     &__panel-sublink {
-      display: inline-block; text-decoration: none; padding: .15rem 0 .15rem .25rem; line-height: 1.35; transition: color .15s ease, transform .15s ease;
-      color: $__text-light; /* Standard (wenn Panel weiß) */
+      display: block;
+      text-decoration: none;
+      padding: .15rem .4rem .15rem .35rem;
+      border-radius: 0; /* ⇦ Wunsch: kein Radius */
+      line-height: 1.35;
+      transition: background-color .15s ease, color .15s ease, transform .15s ease;
+      color: $__text-light;
     }
-    /* Im grünen Panel: Sub-Links heller/weiß */
-    &__item.is-mega-open > &__panel .c-menu__panel-sublink { color: rgba(255,255,255,.85); }
-    &__item.is-mega-open > &__panel .c-menu__panel-sublink:hover,
-    &__item.is-mega-open > &__panel .c-menu__panel-sublink:focus {
-      color: #fff; text-decoration: underline; text-underline-offset: .14em;
+
+    &__panel-sublink:hover,
+    &__panel-sublink:focus {
+      background-color: $__primary;
+      color: $__surface;
+      text-decoration: none;
       transform: translateX(1px);
     }
 
     &__panel-content {
       display: grid; gap: .75rem; align-content: start; color: rgba(0,0,0,.6); font-size: .98rem; line-height: 1.55;
     }
-    /* Im grünen Panel: Content-Typo auf Weiß */
-    &__item.is-mega-open > &__panel .c-menu__panel-content { color: rgba(255,255,255,.9); }
 
-    /* Mega-Panel: Bildgröße zähmen (Variante: einpassen, ohne Beschnitt) */
+    /* Mega-Panel: Bildgröße */
     &__panel-image {
       display: block;
       width: 100%;
       height: auto;
-      max-height: #{'clamp(180px, 28vh, 320px)'}; /* Interpolation verhindert Sass-Berechnung */
-      object-fit: contain;                      /* nie beschneiden */
+      max-height: #{'clamp(180px, 28vh, 320px)'};
+      object-fit: contain;
     }
-
-    /* Alternative (Teaser-Beschnitt):
-    &__panel-image {
-      display: block;
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-    } */
   }
 }
 

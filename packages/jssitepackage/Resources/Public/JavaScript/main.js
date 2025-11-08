@@ -7,7 +7,7 @@
     "use strict";
 
     window.JD = window.JD || {};
-    window.JD._version = "main.js:selfheal-mega:a11y-scrolltrap:hero:2025-11-07b";
+    window.JD._version = "main.js:selfheal-mega:a11y-scrolltrap:hero:2025-11-07b+lazy-close-160ms";
 
     function ready(fn){
         if (document.readyState !== "loading") fn();
@@ -38,7 +38,7 @@
         document.documentElement.classList.toggle("u-noscroll", on);
         document.body.classList.toggle("u-noscroll", on);
         if (on) {
-            document.documentElement.style.scrollBehavior = "auto"; // avoid jump animations when locking
+            document.documentElement.style.scrollBehavior = "auto";
         } else {
             document.documentElement.style.scrollBehavior = "";
         }
@@ -222,7 +222,6 @@
             var href = link.getAttribute("href");
             if (!href || href === "#") return;
 
-            // absolut navigieren und jegliches internes Handling verhindern
             e.preventDefault();
             e.stopPropagation();
             try { window.location.assign(href); }
@@ -236,7 +235,6 @@
             if (!link) return;
             var wrap = $(".c-menu__wrapper.is-open");
             if (!wrap) return;
-            // Schließen
             wrap.classList.remove("is-open");
             var root = wrap.closest(".c-menu");
             if (root) root.classList.remove("is-open");
@@ -321,17 +319,32 @@
         window.addEventListener("resize", throttle(setHeaderBottomVar, 100));
         window.addEventListener("scroll", throttle(setHeaderBottomVar, 100), { passive: true });
 
+        // --- Lazy-Close: kleiner Delay, abbrechbar ---
+        var closeTimer = null;
+        var CLOSE_DELAY = 160; // ms: "lazy, aber zügig"
+
         function openMega(item){
             if (!mqDesktop.matches) return;
-            closeMega();
+            cancelClose();
+            closeMega(); // nur ein Panel gleichzeitig
             item.classList.add("is-mega-open");
+        }
+        function scheduleClose(){
+            if (!mqDesktop.matches) return;
+            clearTimeout(closeTimer);
+            closeTimer = setTimeout(function(){ closeMega(); }, CLOSE_DELAY);
+        }
+        function cancelClose(){
+            clearTimeout(closeTimer);
+            closeTimer = null;
         }
         function closeMega(){
             if (!mqDesktop.matches) return;
+            cancelClose();
             $$(menu, ".c-menu__item.is-mega-open").forEach(function(i){ i.classList.remove("is-mega-open"); });
         }
 
-        // Öffnen per Hover/Fokus
+        // Öffnen per Hover/Fokus (bestehend)
         menu.addEventListener("mouseenter", function(e){
             var item = e.target.closest(".c-menu__item.has-submenu");
             if (item && menu.contains(item) && mqDesktop.matches) openMega(item);
@@ -341,9 +354,16 @@
             if (item && menu.contains(item) && mqDesktop.matches) openMega(item);
         });
 
-        // Schließen
-        $(".c-header").addEventListener("mouseleave", function(){ if (mqDesktop.matches) closeMega(); });
+        // Lazy-Schließen: bei Verlassen des Header-Bereichs verzögert schließen
+        header.addEventListener("pointerleave", function(){ if (mqDesktop.matches) scheduleClose(); });
+        // Rückkehr in den Header/Mega-Bereich bricht Close ab
+        header.addEventListener("pointerenter", function(){ if (mqDesktop.matches) cancelClose(); });
+        menu.addEventListener("pointerenter", function(){ if (mqDesktop.matches) cancelClose(); }, true);
+
+        // ESC schließt sofort
         document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeMega(); });
+
+        // Click outside schließt sofort
         document.addEventListener("click", function(e){
             if (!mqDesktop.matches) return;
             var panel = e.target.closest(".c-menu__panel");
@@ -407,7 +427,7 @@
             var i = Math.max(0, slides.findIndex(function(s){ return s.classList.contains("is-active"); }));
             if (i < 0) i = 0;
 
-            // Autoplay aus ContentBlock + reduced-motion (liest beide Attribut-Varianten)
+            // Autoplay aus ContentBlock + reduced-motion
             var autoplayAttr = root.getAttribute("data-hero-autoplay");
             if (autoplayAttr === null) autoplayAttr = root.getAttribute("data-autoplay");
             var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -435,11 +455,9 @@
             function start(){ if (!autoplay || slides.length < 2) return; stop(); timer = setInterval(next, delay); }
             function stop(){ if (timer) { clearInterval(timer); timer = null; } }
 
-            // Pfeile
             if (prevBtn) prevBtn.addEventListener("click", function(){ prev(); start(); });
             if (nextBtn) nextBtn.addEventListener("click", function(){ next(); start(); });
 
-            // Bullets
             bullets.forEach(function(b){
                 b.addEventListener("click", function(){
                     var idx = parseInt(b.getAttribute("data-hero-bullet"), 10) || 0;
@@ -447,17 +465,14 @@
                 });
             });
 
-            // Hover pausiert auf Desktop
             root.addEventListener("mouseenter", stop);
             root.addEventListener("mouseleave", start);
 
-            // Tastatur
             root.addEventListener("keydown", function(e){
                 if (e.key === "ArrowLeft") { e.preventDefault(); prev(); start(); }
                 if (e.key === "ArrowRight"){ e.preventDefault(); next(); start(); }
             });
 
-            // Swipe mobil
             if (viewport) {
                 var startX = 0, dx = 0, active = false;
                 viewport.addEventListener("touchstart", function(e){ active = true; startX = e.touches[0].clientX; dx = 0; stop(); }, {passive:true});
@@ -465,7 +480,6 @@
                 viewport.addEventListener("touchend",   function(){ if (!active) return; active = false; if (Math.abs(dx) > 40) { if (dx < 0) next(); else prev(); } start(); });
             }
 
-            // Start
             syncBullets(i);
             start();
         }
