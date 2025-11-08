@@ -5,22 +5,31 @@
 @use "sass:color";
 @use "globals" as *;
 
-$__primary: if(meta.global-variable-exists(color-primary), $color-primary, #00ac80);
-$__on-primary: if(meta.global-variable-exists(color-on-primary), $color-on-primary, #ffffff);
-$__text: if(meta.global-variable-exists(color-text), $color-text, #111);
-$__surface: if(meta.global-variable-exists(color-surface), $color-surface, #fff);
-$__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 10px 30px rgba(0,0,0,.18));
-$__max-header: if(meta.global-variable-exists(max-header-width), $max-header-width, 1200px);
+$__primary:        if(meta.global-variable-exists(color-primary),        $color-primary, #00ac80);
+$__on-primary:     if(meta.global-variable-exists(color-on-primary),     $color-on-primary, #ffffff);
+$__text:           if(meta.global-variable-exists(color-text),           $color-text, #111);
+$__surface:        if(meta.global-variable-exists(color-surface),        $color-surface, #fff);
+$__shadow-soft:    if(meta.global-variable-exists(shadow-soft),          $shadow-soft, 0 10px 30px rgba(0,0,0,.18));
+$__max-header:     if(meta.global-variable-exists(max-header-width),     $max-header-width, 1200px);
+$__focus-ring:     if(meta.global-variable-exists(color-focus),          $color-focus, color.scale($__primary, $lightness: +20%));
 
-$__overlay-low:   rgba(0,0,0,.25);
-$__overlay-medium:rgba(0,0,0,.40);
-$__overlay-strong:rgba(0,0,0,.55);
+/* Arburg-ähnlicher Overlay-Verlauf: links sehr dunkel → rechts transparent */
+@function hero-grad($a1, $a2) {
+  @return linear-gradient(
+                  to right,
+                  rgba(0, 0, 0, $a1) 0%,
+                  rgba(0, 0, 0, $a2) 42%,
+                  rgba(0, 0, 0, 0.0001) 68%,
+                  transparent 100%
+  );
+}
 
 .c-hero {
   position: relative;
   width: 100%;
   background: $__surface;
   color: $__on-primary;
+  margin: 0;
 
   /* Viewport: mobile-first, aspektbasiert + Mindesthöhe */
   &__viewport {
@@ -31,29 +40,44 @@ $__overlay-strong:rgba(0,0,0,.55);
     overflow: hidden;
   }
 
+  /* Slides-Liste */
+  &__slides {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
   /* Slide Basis */
   &__slide {
-    position: absolute; inset: 0;
+    position: absolute;
+    inset: 0;
     display: grid;
     grid-template-areas: "stack";
-    opacity: 0; visibility: hidden; pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
     transition: opacity .5s ease, visibility 0s linear .5s;
+
     &.is-active {
-      opacity: 1; visibility: visible; pointer-events: auto;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
       transition: opacity .5s ease, visibility 0s;
     }
   }
 
-  &__media { grid-area: stack; position: absolute; inset: 0; }
-
-  &__img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center center;
+  /* Hintergrundbild als CSS-Background */
+  &__bg {
+    grid-area: stack;
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
     transform: none;
   }
 
-  /* Overlay links versetzt (Arburg-Anmutung) */
+  /* Overlay (Verlauf) + Content-Container */
   &__overlay {
     grid-area: stack;
     position: relative;
@@ -62,112 +86,215 @@ $__overlay-strong:rgba(0,0,0,.55);
     height: 100%;
     padding: 1rem;
 
-    &:before {
+    /* Default jetzt kräftig (für Lesbarkeit) */
+    &::before {
       content: "";
-      position: absolute; inset: 0;
+      position: absolute;
+      inset: 0;
       pointer-events: none;
-      background: transparent;
+      background: hero-grad(.90, .75);
     }
-
-    &--low:before    { background: $__overlay-low; }
-    &--medium:before { background: $__overlay-medium; }
-    &--strong:before { background: $__overlay-strong; }
   }
 
-  &__content {
+  /* Overlay-Stärken pro Slide (falls Redakteur wählt) */
+  &__slide--overlay-low    .c-hero__overlay::before { background: hero-grad(.60, .45); }
+  &__slide--overlay-medium .c-hero__overlay::before { background: hero-grad(.90, .75); } /* default jetzt „stark“ */
+  &__slide--overlay-strong .c-hero__overlay::before { background: hero-grad(.95, .85); }
+
+  /* Innenbereich (Textblock): eigenes Panel für maximalen Kontrast */
+  &__inner {
+    position: relative;
     z-index: 1;
-    width: #{'min(680px, 92vw)'};                 /* CSS min() via Interpolation */
-    margin-left: #{'clamp(1rem, 6vw, 8rem)'};     /* CSS clamp() via Interpolation */
+    width: #{'min(720px, 92vw)'};
+    margin-left: #{'clamp(1rem, 6vw, 8rem)'};
     text-align: left;
-    display: grid; gap: .75rem;
+    display: grid;
+    gap: 1rem;
+
+    /* Solide Fläche hinter dem Text */
+    padding: 1.15rem 1.3rem;
+    background-color: rgba(0,0,0,.72);
+    @supports (backdrop-filter: blur(3px)) {
+      /* über Interpolation, damit nicht mit Sass-Funktion kollidiert */
+      backdrop-filter: #{'blur(3px) saturate(110%)'};
+      /* mit Blur darf die Fläche etwas leichter werden */
+      background-color: rgba(0,0,0,.60);
+    }
+    border-left: 4px solid $__primary;
+    box-shadow: 0 10px 28px rgba(0,0,0,.22);
   }
 
   &__title {
     margin: 0;
     font-weight: if(meta.global-variable-exists(font-weight-bold), $font-weight-bold, 700);
-    font-size: #{'clamp(1.6rem, 3.8vw, 2.8rem)'}; /* Interpolation: mixed units */
+    font-size: #{'clamp(1.8rem, 3.9vw, 3rem)'};
     line-height: 1.1;
-    color: #fff;
+    color: #fff !important;
     text-wrap: balance;
+    text-shadow: 0 2px 4px rgba(0,0,0,.45);
   }
 
   &__text {
-    color: rgba(255,255,255,.92);
-    font-size: #{'clamp(1rem, 2.1vw, 1.125rem)'}; /* Interpolation: mixed units */
-    line-height: 1.55;
+    color: #fff !important; /* notfalls gegen globale Regeln */
+    font-size: #{'clamp(1.02rem, 2.1vw, 1.18rem)'};
+    line-height: 1.62;
+    text-shadow: 0 2px 4px rgba(0,0,0,.40);
+
+    p { margin: 0 0 .65rem; color: #fff !important; }
+    a { color: #fff !important; text-decoration: underline; text-underline-offset: .15em; }
+    strong, b { color: #fff !important; }
+    em, i { color: #fff !important; }
+
+    /* Falls Redakteure Inline-Farben setzen: neutralisieren */
+    [style*="color"] { color: #fff !important; }
   }
 
   &__cta {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: .9rem 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: .95rem 1.45rem;
     min-width: 12ch;
     text-decoration: none;
     background-color: $__primary;
-    color: #fff;
+    color: #fff !important;
     font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
     letter-spacing: .02em;
-    border: 0; border-radius: 0;
+    border: 0;
+    border-radius: 0;
     box-shadow: $__shadow-soft;
     transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
-    &:hover, &:focus { background-color: color.scale($__primary, $lightness: -6%); transform: translateY(-1px); text-decoration: none; }
-    &:focus-visible { outline: 2px solid color.scale($__primary, $lightness: +20%); outline-offset: 3px; }
+
+    &:link,
+    &:visited { color: #fff !important; text-decoration: none; }
+
+    &:hover,
+    &:focus {
+      background-color: color.scale($__primary, $lightness: -6%);
+      text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(0,0,0,.12);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $__focus-ring;
+      outline-offset: 3px;
+    }
   }
 
-  /* Pfeile außerhalb des Overlays, gut sichtbar */
-  &__arrow {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    width: 42px; height: 42px; border-radius: 999px;
-    border: 0; background: rgba(0,0,0,.35); cursor: pointer;
-    display: grid; place-items: center;
+  .c-hero__cta-icon {
+    margin-left: .65rem;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    transform: translateX(0);
+    transition: transform .18s ease;
+    color: currentColor;
+
+    path { fill: currentColor; }
+  }
+
+  .c-hero__cta:hover .c-hero__cta-icon,
+  .c-hero__cta:focus .c-hero__cta-icon {
+    transform: translateX(3px);
+  }
+
+  /* Pfeile außerhalb des Overlays, nach außen zeigend */
+  &__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 0;
+    background: rgba(0,0,0,.38);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
     transition: background-color .2s ease, transform .15s ease;
     z-index: 3;
-    &:hover, &:focus { background: rgba(0,0,0,.5); transform: translateY(-50%) #{'scale(0.98)'}; }
-    &:focus-visible { outline: 2px solid color.scale($__primary, $lightness: +20%); outline-offset: 2px; }
+
+    &:hover, &:focus  { background: rgba(0,0,0,.52); transform: translateY(-50%) #{'scale(0.98)'}; }
+    &:active           { transform: translateY(-50%) #{'scale(0.96)'}; }
+    &:focus-visible    { outline: 2px solid $__focus-ring; outline-offset: 2px; }
 
     &::before {
-      content: ""; display: block; width: 10px; height: 10px;
-      border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-      transform: rotate(-45deg);
+      content: "";
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid #fff;
+      border-bottom: 2px solid #fff;
     }
-    &--prev { left: #{'clamp(.5rem, 2vw, 1rem)'}; }  /* Interpolation: mixed units */
-    &--next { right: #{'clamp(.5rem, 2vw, 1rem)'}; &::before { transform: rotate(135deg); } } /* Interpolation */
+
+    &--prev {
+      left: #{'clamp(.5rem, 2vw, 1rem)'};
+      /* Pfeil zeigt NACH LINKS (außen) */
+      &::before { transform: rotate(135deg); }
+    }
+    &--next {
+      right: #{'clamp(.5rem, 2vw, 1rem)'};
+      /* Pfeil zeigt NACH RECHTS (außen) */
+      &::before { transform: rotate(-45deg); }
+    }
   }
 
-  /* ---- Brand-Overlay (Block-Modifier) ---- */
-  &.c-hero--brand {
-    .c-hero__overlay:before { background: #{'color-mix(in srgb,'} $__primary 85%, transparent #{')'}; }
-    .c-hero__title { color: #fff; }
-    .c-hero__text  { color: rgba(255,255,255,.92); }
-  }
-
-  /* ---- Höhe min 80vh (Block-Modifier) ---- */
-  &.c-hero--min80 { .c-hero__viewport { min-height: 80vh; } }
-
-  /* ---- Bullets ---- */
+  /* Bullets (optional) */
   &__bullets {
-    position: absolute; left: 50%; bottom: #{'clamp(.75rem, 2.5vw, 1.25rem)'}; /* Interpolation */
+    position: absolute;
+    left: 50%;
+    bottom: #{'clamp(.75rem, 2.5vw, 1.25rem)'};
     transform: translateX(-50%);
-    display: flex; gap: .5rem;
+    display: flex;
+    gap: .5rem;
     z-index: 3;
   }
   &__bullet {
-    width: 10px; height: 10px; border-radius: 999px; border: 0;
-    background: rgba(255,255,255,.55); cursor: pointer;
-    padding: 0; display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    border: 0;
+    background: rgba(255,255,255,.55);
+    cursor: pointer;
+    padding: 0;
+    display: inline-block;
     transition: transform .15s ease, background-color .2s ease;
-    &:hover, &:focus { transform: #{'scale(1.05)'}; background: rgba(255,255,255,.8); } /* Interpolation */
-    &:focus-visible { outline: 2px solid color.scale($__primary, $lightness: +20%); outline-offset: 2px; }
-    &.is-active { background: #fff; transform: #{'scale(1.15)'}; } /* Interpolation */
+
+    &:hover, &:focus { transform: #{'scale(1.05)'}; background: rgba(255,255,255,.8); }
+    &:focus-visible  { outline: 2px solid $__focus-ring; outline-offset: 2px; }
+    &.is-active      { background: #fff; transform: #{'scale(1.15)'}; }
   }
 
   /* Desktop-Verfeinerung */
   @media (min-width: 992px) {
     &__viewport { aspect-ratio: 21 / 9; min-height: 68vh; }
-    &__content  { gap: 1rem; }
-    &__title    { font-size: #{'clamp(2.2rem, 3.6vw, 3.2rem)'}; } /* Interpolation: mixed units */
-    &__text     { font-size: #{'clamp(1.05rem, 1.8vw, 1.2rem)'}; } /* Interpolation: mixed units */
+    &__inner    { gap: 1.05rem; }
+    &__title    { font-size: #{'clamp(2.2rem, 3.6vw, 3.2rem)'}; }
+    &__text     { font-size: #{'clamp(1.06rem, 1.8vw, 1.2rem)'}; }
   }
 
-  /* Respektiere reduced motion: kein Autoplay (JS) – Styles bleiben */
   @media (prefers-reduced-motion: reduce) { }
 }
+
+/* ===== Bündig-Fix für ersten Hero unter dem Header ===== */
+.c-header + main > .l-main > .frame:first-child,
+.c-header + main > .l-main > section.c-hero:first-child,
+.c-header + main > .l-main > *:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+.c-header + .l-main > .frame:first-child,
+.c-header + .l-main > section.c-hero:first-child,
+.c-header + .l-main > *:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+.c-header + main > .l-main > .frame:first-child > .frame-inner,
+.c-header + main > .l-main > .frame:first-child > .frame-container,
+.c-header + .l-main > .frame:first-child > .frame-inner,
+.c-header + .l-main > .frame:first-child > .frame-container {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+section.c-hero { padding-top: 0 !important; }

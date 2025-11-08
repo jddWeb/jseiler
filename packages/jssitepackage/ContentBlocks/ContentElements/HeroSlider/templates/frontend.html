@@ -1,114 +1,84 @@
-{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
-<!-- HERO TEMPLATE LOADED (resilient v13) -->
-
-<f:variable name="slides" value="{data.slides}" />
+<f:comment>HERO TEMPLATE LOADED (fixed spacing + correct CTA link)</f:comment>
 
 <section class="c-hero js-hero"
          data-hero
          aria-roledescription="carousel"
-         data-hero-autoplay="{f:if(condition: data.autoplay, then: '1', else: '1')}"
-         data-hero-interval="{f:if(condition: data.interval, then: data.interval, else: '6000')}">
+         data-hero-autoplay="{f:if(condition: data.autoplay, then: '1', else: '0')}"
+         data-hero-interval="{f:if(condition: data.interval, then: data.interval, else: 6000)}">
 
-    <div class="c-hero__viewport" data-hero-viewport style="min-height:60vh;">
+    <div class="c-hero__viewport" data-hero-viewport>
         <ul class="c-hero__slides" role="list">
 
-            <f:if condition="{slides}">
-                <f:then>
-                    <f:for each="{slides}" as="slide" iteration="it">
+            <f:for each="{data.slides}" as="slide" iteration="it">
 
-                        <!-- Overlay-Modifier: erst value, sonst Rohwert, Default 'medium' -->
-                        <f:variable name="overlayValue"
-                                    value="{f:if(condition: slide.overlayStrength.value,
-                                      then: slide.overlayStrength.value,
-                                      else: slide.overlayStrength)}" />
-                        <f:if condition="{overlayValue}">
-                            <f:then><f:variable name="overlayClass" value=" c-hero__slide--overlay-{overlayValue}" /></f:then>
-                            <f:else><f:variable name="overlayClass" value=" c-hero__slide--overlay-medium" /></f:else>
-                        </f:if>
+                <!-- Overlay-Modifier robust (Select kann String ODER Objekt sein) -->
+                <f:variable name="overlayMod" value="{slide.overlayStrength}" />
+                <f:if condition="{slide.overlayStrength.value}">
+                    <f:then>
+                        <f:variable name="overlayMod" value="{slide.overlayStrength.value}" />
+                    </f:then>
+                </f:if>
 
-                        <!-- Bild-URL ermitteln (publicUrl, dann [0].publicUrl, dann über uid) -->
+                <!-- Hintergrund-URL robust ermitteln -->
+                <f:variable name="bgUrl" value="" />
+                <f:if condition="{slide.image.publicUrl}">
+                    <f:then>
                         <f:variable name="bgUrl" value="{slide.image.publicUrl}" />
-                        <f:if condition="{bgUrl}">
-                            <f:then />
-                            <f:else>
+                    </f:then>
+                    <f:else>
+                        <f:if condition="{slide.image.0.publicUrl}">
+                            <f:then>
                                 <f:variable name="bgUrl" value="{slide.image.0.publicUrl}" />
-                            </f:else>
-                        </f:if>
-                        <f:if condition="{bgUrl}">
-                            <f:then />
+                            </f:then>
                             <f:else>
-                                <f:if condition="{slide.image.uid}">
+                                <f:if condition="{slide.image.0.uid}">
                                     <f:then>
-                                        <f:variable name="bgUrl" value="{f:uri.image(src: slide.image.uid, treatIdAsReference: 1, cropVariant: 'hero', maxWidth: 2400)}" />
+                                        <f:variable name="bgUrl"
+                                                    value="{f:uri.image(src: slide.image.0.uid, treatIdAsReference: 1, cropVariant: 'hero')}" />
                                     </f:then>
-                                    <f:else>
-                                        <f:if condition="{slide.image.0.uid}">
-                                            <f:then>
-                                                <f:variable name="bgUrl" value="{f:uri.image(src: slide.image.0.uid, treatIdAsReference: 1, cropVariant: 'hero', maxWidth: 2400)}" />
-                                            </f:then>
-                                        </f:if>
-                                    </f:else>
                                 </f:if>
                             </f:else>
                         </f:if>
+                    </f:else>
+                </f:if>
 
-                        <li class="c-hero__slide{f:if(condition: it.isFirst, then:' is-active')}{overlayClass}"
-                            role="group" aria-roledescription="slide" aria-label="{it.cycle} / {it.total}">
+                <li class="c-hero__slide{f:if(condition: it.isFirst, then: ' is-active')}{f:if(condition: overlayMod, then: ' c-hero__slide--overlay-')}{overlayMod}"
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label="{it.cycle} / {it.total}">
 
-                            <f:if condition="{bgUrl}">
+                    <f:if condition="{bgUrl}">
+                        <div class="c-hero__bg" style="background-image:url('{bgUrl}');"></div>
+                    </f:if>
+
+                    <div class="c-hero__overlay">
+                        <div class="c-hero__inner">
+                            <f:if condition="{it.isFirst}">
                                 <f:then>
-                                    <div class="c-hero__bg" style="background-image:url('{bgUrl}');"></div>
-                                    <!-- bg: {bgUrl} -->
+                                    <h1 class="c-hero__title">{slide.title}</h1>
                                 </f:then>
                                 <f:else>
-                                    <div class="c-hero__bg"
-                                         style="background-image:linear-gradient(135deg,#dfe8ff 0%,#f3f7ff 40%,#ffffff 100%);"></div>
-                                    <!-- bg: fallback gradient -->
+                                    <h2 class="c-hero__title">{slide.title}</h2>
                                 </f:else>
                             </f:if>
 
-                            <div class="c-hero__overlay">
-                                <div class="c-hero__inner">
-                                    <f:if condition="{it.isFirst}">
-                                        <f:then><h1 class="c-hero__title">{slide.title}</h1></f:then>
-                                        <f:else><h2 class="c-hero__title">{slide.title}</h2></f:else>
-                                    </f:if>
+                            <f:if condition="{slide.text}">
+                                <div class="c-hero__text">{slide.text -> f:format.raw()}</div>
+                            </f:if>
 
-                                    <f:if condition="{slide.text}">
-                                        <div class="c-hero__text">{slide.text -> f:format.html()}</div>
-                                    </f:if>
-
-                                    <f:if condition="{slide.ctaLabel}">
-                                        <f:link.typolink parameter="{slide.ctaLink}" class="c-hero__cta">
-                                            <span class="c-hero__cta-label">{slide.ctaLabel}</span>
-                                            <svg class="c-hero__cta-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                                <path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/>
-                                            </svg>
-                                        </f:link.typolink>
-                                    </f:if>
-                                </div>
-                            </div>
-                        </li>
-                    </f:for>
-                </f:then>
-
-                <f:else>
-                    <!-- Fallback: keine Slides gepflegt -->
-                    <li class="c-hero__slide is-active c-hero__slide--overlay-medium" role="group" aria-roledescription="slide" aria-label="1 / 1">
-                        <div class="c-hero__bg" style="background-image:linear-gradient(135deg,#dfe8ff 0%,#f3f7ff 40%,#ffffff 100%);"></div>
-                        <div class="c-hero__overlay">
-                            <div class="c-hero__inner">
-                                <h1 class="c-hero__title">Hero-Slider</h1>
-                                <div class="c-hero__text">
-                                    Es sind noch keine Slides gepflegt. Lege bis zu drei Slides an
-                                    (Titel, Text, CTA, Bild mit Crop-Variante <code>hero</code>).
-                                </div>
-                            </div>
+                            <f:if condition="{slide.ctaLabel}">
+                                <!-- Korrekt: typolink als Tag, nicht als href-String -->
+                                <f:link.typolink parameter="{slide.ctaLink}" class="c-hero__cta">
+                                    <span class="c-hero__cta-label">{slide.ctaLabel}</span>
+                                    <svg class="c-hero__cta-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/>
+                                    </svg>
+                                </f:link.typolink>
+                            </f:if>
                         </div>
-                    </li>
-                </f:else>
-            </f:if>
-
+                    </div>
+                </li>
+            </f:for>
         </ul>
     </div>
 

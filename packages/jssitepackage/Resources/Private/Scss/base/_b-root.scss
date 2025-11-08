@@ -3,17 +3,64 @@
 // ======================================================
 
 @use 'b-variables' as v;
+@use "globals" as *;
 
+body {
+  background: $color-page-bg;     // aus _b-variables.scss
+  font-family: $font-body;        // aus _b-variables.scss
+}
+
+/* UA-Reste killen, ohne Nebenwirkungen */
+main { margin: 0; }
+
+/* Container */
 .container {
   max-width: v.$max-content-width;
   margin: 0 auto;
   padding: 0 v.$gutter;
 }
 
+/* Globale Abschnittsabstände */
 section {
   padding: v.$section-padding;
 }
 
+/* ===================== Layout-Kleber (Bündig unter Header) ===================== */
+/* Struktur kann sein:
+   <header.c-header> + <main> + <main.l-main> + (frame | section.c-hero) …
+   oder <header.c-header> + <main.l-main> + …
+*/
+
+/* 1) Direkt nach Header: äußere mains bündig */
+.c-header + main { margin-top: 0; padding-top: 0; }
+.c-header + .l-main { margin-top: 0; padding-top: 0; }
+
+/* 2) Inneres .l-main bündig */
+.c-header + main > .l-main { margin-top: 0; padding-top: 0; }
+
+/* 3) Erste CE-Hülle (TYPO3 „frame“) ohne oberen Abstand */
+.c-header + main > .l-main > .frame:first-child,
+.c-header + .l-main > .frame:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* 4) Hero als erstes Section ohne oberen Abstand (auch wenn keine .frame-Hülle dazwischen ist) */
+.c-header + main > .l-main > section.c-hero:first-child,
+.c-header + .l-main > section.c-hero:first-child,
+.c-header + main > .l-main > section:first-child.c-hero,
+.c-header + .l-main > section:first-child.c-hero {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* 5) Fallback: erstes beliebiges Element in .l-main hard bündig */
+.c-header + main > .l-main > *:first-child,
+.c-header + .l-main > *:first-child {
+  margin-top: 0 !important;
+}
+
+/* Header / Footer Styling */
 header,
 footer {
   background-color: #fff;
