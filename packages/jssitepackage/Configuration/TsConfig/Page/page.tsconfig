@@ -38,6 +38,25 @@ mod {
 }
 
 # -------------------------------------------------------
-# 5. Beispiel-Inhalte für Prüfung LTS14
+# 5. Content Elements
 # -------------------------------------------------------
-TCEFORM.pages.title.disabled = 0
+mod.wizards.newContentElement {
+  wizardItems {
+    custom {
+      header = Custom Elements
+      position = 10
+      elements {
+        jssitepackage_heroslider {
+          iconIdentifier = content-image
+          title = Hero Slider (3-teilig)
+          description = Full-bleed Hero mit 3 Slides
+          tt_content_defValues {
+            CType = jssitepackage_heroslider
+            colPos = 0
+          }
+        }
+      }
+      show := addToList(jssitepackage_heroslider)
+    }
+  }
+}

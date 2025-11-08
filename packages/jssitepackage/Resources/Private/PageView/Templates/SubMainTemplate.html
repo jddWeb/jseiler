@@ -1,12 +1,11 @@
 <f:layout name="PageLayout" />
-
 <f:section name="Main">
     <main class="grid">
         <div class="main-column">
-            <f:render partial="Content" arguments="{records: contentMain}" />
+            <f:render partial="Content" arguments="{colPos: 0}" />
         </div>
         <div class="aside-column">
-            <f:render partial="Content" arguments="{records: contentAside}" />
+            <f:render partial="Content" arguments="{colPos: 1}" />
         </div>
     </main>
 </f:section>

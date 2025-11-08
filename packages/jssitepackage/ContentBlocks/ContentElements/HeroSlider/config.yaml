@@ -1,0 +1,86 @@
+name: jssitepackage/heroslider          # bleibt unverändert
+typeName: jssitepackage_heroslider      # CType explizit festlegen (passt zu deinem TypoScript)
+type: content
+group: Custom Elements
+title: Hero Slider (3-teilig)
+description: Full-bleed Hero mit 3 Slides (Bild + Overlay, Autoplay, Pfeile)
+icon: content-image
+
+fields:
+  # Globale Optionen
+  - identifier: autoplay
+    type: Checkbox
+    label: Autoplay
+    default: 1
+
+  - identifier: interval
+    type: Number
+    label: Wechselintervall (ms)
+    default: 6000
+    range:
+      lower: 1000
+      upper: 30000
+
+  # Slides (Collection)
+  - identifier: slides
+    type: Collection
+    label: Slides
+    itemLabel: "Slide #{position}"
+    createLabel: "Slide hinzufügen"
+    minItems: 1          # <- camelCase!
+    maxItems: 3          # <- camelCase!
+    initialItems: 3
+    sortable: true
+    appearance:
+      levelLinksPosition: both
+      collapseAll: false
+
+    fields:
+      - identifier: title
+        type: Text
+        label: Überschrift
+        required: true
+        max: 160
+
+      - identifier: text
+        type: Textarea
+        label: Teasertext
+        enableRichtext: true
+        richtextConfiguration: default
+
+      - identifier: ctaLabel
+        type: Text
+        label: CTA-Label
+        max: 60
+
+      - identifier: ctaLink
+        type: Link
+        label: CTA-Link
+
+      - identifier: overlayStrength
+        type: Select
+        label: Overlay-Deckkraft
+        default: medium
+        items:
+          - { value: low,    label: Leicht }
+          - { value: medium, label: Mittel }
+          - { value: strong, label: Stark }
+
+      - identifier: image
+        type: File
+        label: Hintergrundbild
+        relationship: manyToOne
+        allowed: common-image-types
+        minItems: 1        # <- camelCase!
+        maxItems: 1        # <- camelCase!
+        cropVariants:
+          hero:
+            title: Hero
+            allowedAspectRatios:
+              a21_9: { title: '21:9', value: 21/9 }
+              a16_9: { title: '16:9', value: 16/9 }
+              a4_3:  { title: '4:3',  value: 4/3 }
+              a1_1:  { title: '1:1',  value: 1.0 }
+            selectedRatio: 16/9
+            focusArea:
+              allow: true

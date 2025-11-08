@@ -1,0 +1,173 @@
+// ======================================================
+// components/_c-hero.scss – Full-bleed Hero Slider
+// ======================================================
+@use "sass:meta";
+@use "sass:color";
+@use "globals" as *;
+
+$__primary: if(meta.global-variable-exists(color-primary), $color-primary, #00ac80);
+$__on-primary: if(meta.global-variable-exists(color-on-primary), $color-on-primary, #ffffff);
+$__text: if(meta.global-variable-exists(color-text), $color-text, #111);
+$__surface: if(meta.global-variable-exists(color-surface), $color-surface, #fff);
+$__shadow-soft: if(meta.global-variable-exists(shadow-soft), $shadow-soft, 0 10px 30px rgba(0,0,0,.18));
+$__max-header: if(meta.global-variable-exists(max-header-width), $max-header-width, 1200px);
+
+$__overlay-low:   rgba(0,0,0,.25);
+$__overlay-medium:rgba(0,0,0,.40);
+$__overlay-strong:rgba(0,0,0,.55);
+
+.c-hero {
+  position: relative;
+  width: 100%;
+  background: $__surface;
+  color: $__on-primary;
+
+  /* Viewport: mobile-first, aspektbasiert + Mindesthöhe */
+  &__viewport {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 60vh;
+    overflow: hidden;
+  }
+
+  /* Slide Basis */
+  &__slide {
+    position: absolute; inset: 0;
+    display: grid;
+    grid-template-areas: "stack";
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .5s ease, visibility 0s linear .5s;
+    &.is-active {
+      opacity: 1; visibility: visible; pointer-events: auto;
+      transition: opacity .5s ease, visibility 0s;
+    }
+  }
+
+  &__media { grid-area: stack; position: absolute; inset: 0; }
+
+  &__img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center center;
+    transform: none;
+  }
+
+  /* Overlay links versetzt (Arburg-Anmutung) */
+  &__overlay {
+    grid-area: stack;
+    position: relative;
+    display: grid;
+    align-content: center;
+    height: 100%;
+    padding: 1rem;
+
+    &:before {
+      content: "";
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background: transparent;
+    }
+
+    &--low:before    { background: $__overlay-low; }
+    &--medium:before { background: $__overlay-medium; }
+    &--strong:before { background: $__overlay-strong; }
+  }
+
+  &__content {
+    z-index: 1;
+    width: #{'min(680px, 92vw)'};                 /* CSS min() via Interpolation */
+    margin-left: #{'clamp(1rem, 6vw, 8rem)'};     /* CSS clamp() via Interpolation */
+    text-align: left;
+    display: grid; gap: .75rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: if(meta.global-variable-exists(font-weight-bold), $font-weight-bold, 700);
+    font-size: #{'clamp(1.6rem, 3.8vw, 2.8rem)'}; /* Interpolation: mixed units */
+    line-height: 1.1;
+    color: #fff;
+    text-wrap: balance;
+  }
+
+  &__text {
+    color: rgba(255,255,255,.92);
+    font-size: #{'clamp(1rem, 2.1vw, 1.125rem)'}; /* Interpolation: mixed units */
+    line-height: 1.55;
+  }
+
+  &__cta {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: .9rem 1.4rem;
+    min-width: 12ch;
+    text-decoration: none;
+    background-color: $__primary;
+    color: #fff;
+    font-weight: if(meta.global-variable-exists(font-weight-semibold), $font-weight-semibold, 600);
+    letter-spacing: .02em;
+    border: 0; border-radius: 0;
+    box-shadow: $__shadow-soft;
+    transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
+    &:hover, &:focus { background-color: color.scale($__primary, $lightness: -6%); transform: translateY(-1px); text-decoration: none; }
+    &:focus-visible { outline: 2px solid color.scale($__primary, $lightness: +20%); outline-offset: 3px; }
+  }
+
+  /* Pfeile außerhalb des Overlays, gut sichtbar */
+  &__arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px; border-radius: 999px;
+    border: 0; background: rgba(0,0,0,.35); cursor: pointer;
+    display: grid; place-items: center;
+    transition: background-color .2s ease, transform .15s ease;
+    z-index: 3;
+    &:hover, &:focus { background: rgba(0,0,0,.5); transform: translateY(-50%) #{'scale(0.98)'}; }
+    &:focus-visible { outline: 2px solid color.scale($__primary, $lightness: +20%); outline-offset: 2px; }
+
+    &::before {
+      content: ""; display: block; width: 10px; height: 10px;
+      border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+      transform: rotate(-45deg);
+    }
+    &--prev { left: #{'clamp(.5rem, 2vw, 1rem)'}; }  /* Interpolation: mixed units */
+    &--next { right: #{'clamp(.5rem, 2vw, 1rem)'}; &::before { transform: rotate(135deg); } } /* Interpolation */
+  }
+
+  /* ---- Brand-Overlay (Block-Modifier) ---- */
+  &.c-hero--brand {
+    .c-hero__overlay:before { background: #{'color-mix(in srgb,'} $__primary 85%, transparent #{')'}; }
+    .c-hero__title { color: #fff; }
+    .c-hero__text  { color: rgba(255,255,255,.92); }
+  }
+
+  /* ---- Höhe min 80vh (Block-Modifier) ---- */
+  &.c-hero--min80 { .c-hero__viewport { min-height: 80vh; } }
+
+  /* ---- Bullets ---- */
+  &__bullets {
+    position: absolute; left: 50%; bottom: #{'clamp(.75rem, 2.5vw, 1.25rem)'}; /* Interpolation */
+    transform: translateX(-50%);
+    display: flex; gap: .5rem;
+    z-index: 3;
+  }
+  &__bullet {
+    width: 10px; height: 10px; border-radius: 999px; border: 0;
+    background: rgba(255,255,255,.55); cursor: pointer;
+    padding: 0; display: inline-block;
+    transition: transform .15s ease, background-color .2s ease;
+    &:hover, &:focus { transform: #{'scale(1.05)'}; background: rgba(255,255,255,.8); } /* Interpolation */
+    &:focus-visible { outline: 2px solid color.scale($__primary, $lightness: +20%); outline-offset: 2px; }
+    &.is-active { background: #fff; transform: #{'scale(1.15)'}; } /* Interpolation */
+  }
+
+  /* Desktop-Verfeinerung */
+  @media (min-width: 992px) {
+    &__viewport { aspect-ratio: 21 / 9; min-height: 68vh; }
+    &__content  { gap: 1rem; }
+    &__title    { font-size: #{'clamp(2.2rem, 3.6vw, 3.2rem)'}; } /* Interpolation: mixed units */
+    &__text     { font-size: #{'clamp(1.05rem, 1.8vw, 1.2rem)'}; } /* Interpolation: mixed units */
+  }
+
+  /* Respektiere reduced motion: kein Autoplay (JS) – Styles bleiben */
+  @media (prefers-reduced-motion: reduce) { }
+}

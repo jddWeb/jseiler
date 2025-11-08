@@ -1,12 +1,13 @@
 /** =========================================================================
  * main.js – Menu + Overlay + Mega-Panel (Desktop) + A11y refinements
  * Mobil: Drill-Button toggelt; Label (Parent-Link) navigiert immer
+ * + Hero-Slider (Autoplay, Pfeile, Bullets, Tastatur, Swipe)
  * ========================================================================= */
 (function () {
     "use strict";
 
     window.JD = window.JD || {};
-    window.JD._version = "main.js:selfheal-mega:a11y-scrolltrap:2025-11-07a";
+    window.JD._version = "main.js:selfheal-mega:a11y-scrolltrap:hero:2025-11-07b";
 
     function ready(fn){
         if (document.readyState !== "loading") fn();
@@ -387,5 +388,82 @@
         markActivePath();
         console.log("JD ready:", window.JD._version);
     }
+
+    // Boot auf DOM ready
     ready(boot);
+
+    // ===== Hero Slider (Autoplay + Pfeile + Bullets + Tastatur + Swipe) =====
+    (function(){
+        function initHero(){
+            var root = document.querySelector(".js-hero[data-hero]");
+            if (!root) return;
+
+            var viewport = root.querySelector("[data-hero-viewport]");
+            var slides   = Array.prototype.slice.call(root.querySelectorAll(".c-hero__slide"));
+            var prevBtn  = root.querySelector("[data-hero-prev]");
+            var nextBtn  = root.querySelector("[data-hero-next]");
+            var bullets  = Array.prototype.slice.call(root.querySelectorAll("[data-hero-bullet]"));
+
+            var i = Math.max(0, slides.findIndex(function(s){ return s.classList.contains("is-active"); }));
+            if (i < 0) i = 0;
+
+            // Autoplay aus ContentBlock + reduced-motion
+            var autoplayAttr = root.getAttribute("data-hero-autoplay");
+            var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            var autoplay = (autoplayAttr === "1") && !reduced;
+            var delay = 6000; // 6s
+            var timer = null;
+
+            function syncBullets(n){
+                bullets.forEach(function(b, idx){
+                    var active = (idx === n);
+                    b.classList.toggle("is-active", active);
+                    b.setAttribute("aria-selected", active ? "true" : "false");
+                });
+            }
+            function show(n){
+                slides.forEach(function(s, idx){ s.classList.toggle("is-active", idx === n); });
+                i = n;
+                syncBullets(i);
+            }
+            function next(){ show((i + 1) % slides.length); }
+            function prev(){ show((i - 1 + slides.length) % slides.length); }
+
+            function start(){ if (!autoplay) return; stop(); timer = setInterval(next, delay); }
+            function stop(){ if (timer) { clearInterval(timer); timer = null; } }
+
+            // Pfeile
+            if (prevBtn) prevBtn.addEventListener("click", function(){ prev(); start(); });
+            if (nextBtn) nextBtn.addEventListener("click", function(){ next(); start(); });
+
+            // Bullets
+            bullets.forEach(function(b){
+                b.addEventListener("click", function(){
+                    var idx = parseInt(b.getAttribute("data-hero-bullet"), 10) || 0;
+                    show(idx); start();
+                });
+            });
+
+            // Hover pausiert auf Desktop
+            root.addEventListener("mouseenter", stop);
+            root.addEventListener("mouseleave", start);
+
+            // Tastatur
+            root.addEventListener("keydown", function(e){
+                if (e.key === "ArrowLeft") { e.preventDefault(); prev(); start(); }
+                if (e.key === "ArrowRight"){ e.preventDefault(); next(); start(); }
+            });
+
+            // Swipe mobil
+            var startX = 0, dx = 0, active = false;
+            viewport.addEventListener("touchstart", function(e){ active = true; startX = e.touches[0].clientX; dx = 0; stop(); }, {passive:true});
+            viewport.addEventListener("touchmove",  function(e){ if (!active) return; dx = e.touches[0].clientX - startX; }, {passive:true});
+            viewport.addEventListener("touchend",   function(){ if (!active) return; active = false; if (Math.abs(dx) > 40) { if (dx < 0) next(); else prev(); } start(); });
+
+            // Start
+            syncBullets(i);
+            start();
+        }
+        ready(initHero);
+    })();
 })();

@@ -1,0 +1,23 @@
+<style>
+    .cb-hero-prev{display:grid;grid-template-columns:56px 1fr;gap:.5rem;align-items:center;font:13px/1.35 system-ui}
+    .cb-hero-prev__thumb{width:56px;height:36px;border-radius:4px;object-fit:cover;background:#eee}
+    .cb-hero-prev__meta{display:grid;gap:2px}
+    .cb-hero-prev__title{font-weight:600}
+    .cb-hero-prev__hint{opacity:.7}
+</style>
+<div class="cb-hero-prev">
+    <f:if condition="{data.slides.0.image.0}">
+        <f:then>
+            <f:image image="{data.slides.0.image.0}" treatIdAsReference="1" maxWidth="112" maxHeight="72" class="cb-hero-prev__thumb" />
+        </f:then>
+        <f:else><div class="cb-hero-prev__thumb"></div></f:else>
+    </f:if>
+    <div class="cb-hero-prev__meta">
+        <div class="cb-hero-prev__title">Hero Slider (3-teilig)</div>
+        <div class="cb-hero-prev__hint">
+            {f:if(condition: data.overlayColorMode, then: data.overlayColorMode, else: 'dark')},
+            {f:if(condition: data.heightMode, then: data.heightMode, else: 'aspect')},
+            {f:if(condition: data.autoplay, then: 'autoplay', else: 'kein autoplay')}
+        </div>
+    </div>
+</div>

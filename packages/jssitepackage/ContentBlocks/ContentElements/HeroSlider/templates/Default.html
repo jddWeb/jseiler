@@ -1,0 +1,20 @@
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+<f:layout name="Default" />
+
+<f:section name="Main">
+    <article class="ce ce--default">
+        <f:if condition="{data.header}">
+            <h2 class="ce__headline">{data.header}</h2>
+        </f:if>
+
+        <f:if condition="{data.bodytext}">
+            <div class="ce__bodytext">
+                {data.bodytext -> f:format.html()}
+            </div>
+        </f:if>
+
+        <f:if condition="{f:count(subject: data.pi_flexform_array)}">
+            <pre class="ce__debug"><code>{data.pi_flexform}</code></pre>
+        </f:if>
+    </article>
+</f:section>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file datatype="plaintext" original="labels.xlf" source-language="de" product-name="jssitepackage">
+    <body>
+      <!-- Element-Label & Beschreibung (wichtig gegen "Missing Label") -->
+      <trans-unit id="title"><source>Hero Slider (3-teilig)</source></trans-unit>
+      <trans-unit id="description"><source>Full-bleed Hero mit 3 Slides (Bild + Overlay, Autoplay, Pfeile)</source></trans-unit>
+
+      <!-- Globale Felder -->
+      <trans-unit id="autoplay.label"><source>Autoplay</source></trans-unit>
+      <trans-unit id="interval.label"><source>Wechselintervall (ms)</source></trans-unit>
+
+      <!-- Collection -->
+      <trans-unit id="slides.label"><source>Slides</source></trans-unit>
+
+      <!-- Slide-Felder -->
+      <trans-unit id="slides.title.label"><source>Überschrift</source></trans-unit>
+      <trans-unit id="slides.text.label"><source>Teasertext</source></trans-unit>
+      <trans-unit id="slides.ctaLabel.label"><source>CTA-Label</source></trans-unit>
+      <trans-unit id="slides.ctaLink.label"><source>CTA-Link</source></trans-unit>
+      <trans-unit id="slides.overlayStrength.label"><source>Overlay-Deckkraft</source></trans-unit>
+      <trans-unit id="slides.image.label"><source>Hintergrundbild</source></trans-unit>
+
+      <!-- Select-Optionen -->
+      <trans-unit id="slides.overlayStrength.items.low"><source>Leicht</source></trans-unit>
+      <trans-unit id="slides.overlayStrength.items.medium"><source>Mittel</source></trans-unit>
+      <trans-unit id="slides.overlayStrength.items.strong"><source>Stark</source></trans-unit>
+    </body>
+  </file>
+</xliff>

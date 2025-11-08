@@ -1,95 +1,106 @@
 ########################################################
 # JS Sitepackage – Setup für TYPO3 13.4 LTS
-# Klassische Struktur ohne YAML
 ########################################################
 
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/config.typoscript'
 @import 'EXT:jssitepackage/Configuration/Sets/jssitepackage/TypoScript/page.typoscript'
 
 ########################################################
-# fluid_styled_content Fallback: eigene lib.contentElement
+# FSC NICHT überschreiben – nur eigene Pfade anhängen
 ########################################################
-lib.contentElement = FLUIDTEMPLATE
 lib.contentElement {
-  templateName = TEXT
-  templateName.field = CType
-  templateName.ifEmpty = Default
-
   templateRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
+    200 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
   }
   partialRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
+    200 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
   }
   layoutRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
+    200 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
   }
 }
 
 ########################################################
-# Vereinfachtes tt_content Mapping
+# Content Blocks – DataProcessor
+########################################################
+lib.contentBlock = FLUIDTEMPLATE
+lib.contentBlock {
+  dataProcessing {
+    10 = content-blocks
+  }
+}
+
+########################################################
+# Feste CONTENT-Objekte je Spalte (robust, keine dyn. WHERE)
+########################################################
+lib.content.main = CONTENT
+lib.content.main {
+  table = tt_content
+  select {
+    pidInList.data = page:uid
+    orderBy = sorting
+    where = colPos=0
+  }
+  renderObj =< tt_content
+}
+
+lib.content.aside = CONTENT
+lib.content.aside {
+  table = tt_content
+  select {
+    pidInList.data = page:uid
+    orderBy = sorting
+    where = colPos=1
+  }
+  renderObj =< tt_content
+}
+
+########################################################
+# Dispatcher tt_content
 ########################################################
 tt_content = CASE
 tt_content {
   key.field = CType
+
+  # Hero-Slider (explizit + Content-Blocks-Processor)
+  jssitepackage_heroslider = FLUIDTEMPLATE
+  jssitepackage_heroslider {
+    file = EXT:jssitepackage/ContentBlocks/ContentElements/HeroSlider/templates/frontend.html
+    dataProcessing {
+      10 = content-blocks
+    }
+  }
+
+  # Plugins/Extbase: sicher abfangen
+  list = CASE
+  list {
+    key.field = list_type
+
+    # korrekt konfiguriertes Plugin -> Core-Renderer
+    default =< tt_content.list
+
+    # leeres/fehlendes list_type -> Stub statt Crash
+    '' = FLUIDTEMPLATE
+    '' {
+      template = TEXT
+      template.value = <!-- Plugin ohne Konfiguration (list_type leer). UID {field:uid}, Header: {field:header} -->
+      template.insertData = 1
+    }
+  }
+
+  # Fallback: klassische CEs über FSC
   default =< lib.contentElement
 }
 
 ########################################################
-# Beispiel: Override für Text-Element
+# Marker im <head>, um geladenes Setup zu verifizieren
 ########################################################
-tt_content.text =< lib.contentElement
-tt_content.text {
-  templateName = Text
-  templateRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Templates/
-  }
-  partialRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Partials/
-  }
-  layoutRootPaths {
-    10 = EXT:jssitepackage/Resources/Private/ContentElements/Layouts/
-  }
-}
+page.headerData.9876 = TEXT
+page.headerData.9876.value = <!-- jssitepackage setup loaded: 2025-11-08 (static CONTENT cols + Hero OK) -->
 
 ########################################################
-# Globale Settings – lesen Constants, haben Fallbacks
+# Build-Optimierungen
 ########################################################
-jssitepackage.settings {
-
-  topbarTel = TEXT
-  topbarTel.value = {$jssitepackage.settings.topbarTel}
-  topbarTel.ifEmpty = +49 30 55669391
-
-  topbarMail = TEXT
-  topbarMail.value = {$jssitepackage.settings.topbarMail}
-  topbarMail.ifEmpty = buero@jens-der-denker.de
-
-  copyright = TEXT
-  copyright.value = {$jssitepackage.settings.copyright}
-  copyright.ifEmpty = © 2025 Jens Seiler - Büro Jens der Denker
-
-  homePid = TEXT
-  homePid.value = {$jssitepackage.settings.homePid}
-  homePid.ifEmpty = 1
-
-  ctaPublic {
-    label = TEXT
-    label.value = {$jssitepackage.settings.ctaPublic.label}
-    label.ifEmpty = Öffentliche Seminartermine
-
-    pageUid = TEXT
-    pageUid.value = {$jssitepackage.settings.ctaPublic.pageUid}
-    pageUid.ifEmpty = 25
-  }
-}
-
-########################################################
-# Keine Asset-Einbindung hier!
-# CSS/JS wird ausschließlich in PageLayout.html via <f:asset.*> geladen.
-########################################################
-
-# Optionale Optimierungen (sofern nicht an anderer Stelle gesetzt)
 config.concatenateJs = 1
 config.concatenateCss = 1
 config.compressJs = 1
