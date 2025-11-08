@@ -407,11 +407,14 @@
             var i = Math.max(0, slides.findIndex(function(s){ return s.classList.contains("is-active"); }));
             if (i < 0) i = 0;
 
-            // Autoplay aus ContentBlock + reduced-motion
+            // Autoplay aus ContentBlock + reduced-motion (liest beide Attribut-Varianten)
             var autoplayAttr = root.getAttribute("data-hero-autoplay");
-            var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-            var autoplay = (autoplayAttr === "1") && !reduced;
-            var delay = 6000; // 6s
+            if (autoplayAttr === null) autoplayAttr = root.getAttribute("data-autoplay");
+            var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            var autoplay = (autoplayAttr === "1" || autoplayAttr === "true") && !reduced;
+
+            var delayAttr = root.getAttribute("data-hero-interval") || root.getAttribute("data-interval") || "6000";
+            var delay = parseInt(delayAttr, 10) || 6000;
             var timer = null;
 
             function syncBullets(n){
@@ -429,7 +432,7 @@
             function next(){ show((i + 1) % slides.length); }
             function prev(){ show((i - 1 + slides.length) % slides.length); }
 
-            function start(){ if (!autoplay) return; stop(); timer = setInterval(next, delay); }
+            function start(){ if (!autoplay || slides.length < 2) return; stop(); timer = setInterval(next, delay); }
             function stop(){ if (timer) { clearInterval(timer); timer = null; } }
 
             // Pfeile
@@ -455,10 +458,12 @@
             });
 
             // Swipe mobil
-            var startX = 0, dx = 0, active = false;
-            viewport.addEventListener("touchstart", function(e){ active = true; startX = e.touches[0].clientX; dx = 0; stop(); }, {passive:true});
-            viewport.addEventListener("touchmove",  function(e){ if (!active) return; dx = e.touches[0].clientX - startX; }, {passive:true});
-            viewport.addEventListener("touchend",   function(){ if (!active) return; active = false; if (Math.abs(dx) > 40) { if (dx < 0) next(); else prev(); } start(); });
+            if (viewport) {
+                var startX = 0, dx = 0, active = false;
+                viewport.addEventListener("touchstart", function(e){ active = true; startX = e.touches[0].clientX; dx = 0; stop(); }, {passive:true});
+                viewport.addEventListener("touchmove",  function(e){ if (!active) return; dx = e.touches[0].clientX - startX; }, {passive:true});
+                viewport.addEventListener("touchend",   function(){ if (!active) return; active = false; if (Math.abs(dx) > 40) { if (dx < 0) next(); else prev(); } start(); });
+            }
 
             // Start
             syncBullets(i);
