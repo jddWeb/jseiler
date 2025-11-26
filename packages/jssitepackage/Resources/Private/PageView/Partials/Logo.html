@@ -13,13 +13,6 @@
        href="{homeUrl}"
        title="Zur Startseite"
        rel="home">
-        <img
-            src="{f:uri.resource(path: 'Icons/logo.svg', extensionName: 'Jssitepackage')}"
-            alt="{f:if(condition: site, then: site.title, else: 'Startseite')}"
-            class="c-logo__img"
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-        />
+        <f:render partial="InlineLogoSvg" />
     </a>
 </div>
