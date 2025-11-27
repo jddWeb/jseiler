@@ -1,0 +1,46 @@
+# Service-Teaser (3 Kacheln)
+# WICHTIG: vendor/name => alles lowercase, mit Bindestrichen
+name: jensseiler/service-teaser
+
+# Optional: CType explizit festlegen (sonst wird es aus "name" generiert)
+typeName: jssitepackage_service_teaser
+
+# Tab im "Neues Inhaltselement"-Wizard
+group: default
+
+# Optionaler Backend-Text (empfohlen)
+description: "Teaser für Öffentliche Seminare, Inhouse-Schulungen und Firmen-Events"
+
+fields:
+  - identifier: headline
+    type: Text
+    label: "Überschrift (H2)"
+    required: true
+
+  - identifier: items
+    type: Collection
+    label: "Kacheln"
+    minItems: 3
+    maxItems: 3
+    fields:
+      - identifier: title
+        type: Text
+        label: "Titel"
+        required: true
+
+      - identifier: text
+        type: Textarea
+        label: "Teaser-Text"
+        enableRichtext: true
+        richtextConfiguration: default  # nutzt deine CKEditor-Config
+
+      - identifier: link
+        type: Link
+        label: "CTA-Link"
+        required: true
+
+      - identifier: image
+        type: File
+        label: "Icon/Bild (optional)"
+        allowed: images
+        maxItems: 1

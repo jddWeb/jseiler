@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file datatype="plaintext" original="labels.xlf" source-language="de" product-name="service-teaser">
+    <body>
+      <trans-unit id="title"><source>Service-Teaser (3 Kacheln)</source></trans-unit>
+      <trans-unit id="description"><source>Teaser für Öffentliche Seminare, Inhouse-Schulungen und Firmen-Events</source></trans-unit>
+
+      <trans-unit id="headline.label"><source>Überschrift (H2)</source></trans-unit>
+      <trans-unit id="items.label"><source>Kacheln</source></trans-unit>
+      <trans-unit id="items.title.label"><source>Titel</source></trans-unit>
+      <trans-unit id="items.text.label"><source>Teaser-Text</source></trans-unit>
+      <trans-unit id="items.link.label"><source>CTA-Link</source></trans-unit>
+      <trans-unit id="items.image.label"><source>Icon/Bild</source></trans-unit>
+    </body>
+  </file>
+</xliff>
