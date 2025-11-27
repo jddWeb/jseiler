@@ -1,10 +1,4 @@
 {namespace f=TYPO3Fluid\Fluid\ViewHelpers}
-{#
-  CTYPE: textmedia – Variante per frame_class = feature
-  BEM-Block: ce-feature
-  Fallback: vereinfachtes Standardlayout, damit andere Text&Media-Instanzen nicht kaputtgehen
-#}
-
 <f:if condition="{data.frame_class} == 'feature'">
   <f:then>
     <section class="ce-feature" id="arbeitsgedaechtnis">
@@ -19,14 +13,12 @@
             <f:then>
               <f:media file="{files.0}" alt="{files.0.alternative}" title="{files.0.title}" />
             </f:then>
-            <f:else>{# optional: Platzhalter oder leer #}</f:else>
           </f:if>
         </div>
       </div>
     </section>
   </f:then>
   <f:else>
-    {# Minimaler Fallback nahe am Core-Layout #}
     <div class="ce-textmedia-default">
       <f:if condition="{data.header}"><h2>{data.header}</h2></f:if>
       <f:if condition="{files.0}">
