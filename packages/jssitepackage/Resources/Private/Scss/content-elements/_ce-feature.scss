@@ -1,0 +1,98 @@
+// =============================================
+// Content-Element: ce-feature
+// - Mobile first, BEM
+// - nutzt ausschließlich Variablen aus base/_b-variables.scss
+// =============================================
+
+@use "sass:meta";
+@use "sass:color";
+// wichtig: relativ zu diesem File – holt _globals.scss, das eure base/… weiterleitet
+@use "../globals" as *;
+
+// CSS-Ausgabe erzwingen, damit Sass clamp()/min()/max() NICHT auswertet
+@function css-clamp($min, $pref, $max) {
+  @return unquote("clamp(#{$min}, #{$pref}, #{$max})");
+}
+
+.ce-feature {
+  padding: $section-padding;
+  background: $color-bg-light;
+  color: $color-text;
+  font-family: $font-primary;
+
+  &__inner {
+    max-width: $max-content-width;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: 1fr; // Mobil: gestapelt
+    gap: $gutter;
+    align-items: center;
+  }
+
+  &__media {
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-soft;
+
+    img, video {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__content { display: grid; gap: $gutter; }
+
+  &__headline {
+    margin: 0;
+    font-family: $font-primary;
+    font-weight: 700;
+    line-height: 1.15;
+    font-size: css-clamp(1.5rem, calc(1rem + 2vw), 2.25rem);
+  }
+
+  &__subline {
+    margin: 0;
+    font-family: $font-secondary;
+    color: $color-text-light;
+    font-size: 1rem;
+  }
+
+  &__text {
+    font-size: 1rem;
+    line-height: 1.6;
+
+    // Ersten Link als CTA interpretieren (RTE)
+    a:first-of-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: $radius-md;
+      text-decoration: none;
+      font-weight: 600;
+      background: $color-primary;
+      color: $color-on-primary;
+      box-shadow: $shadow-medium;
+
+      &::after { content: "→"; font-weight: 700; }
+      &:focus { outline: 2px solid $color-secondary; outline-offset: 2px; }
+      &:hover { filter: brightness(0.95); }
+      &:active { transform: translateY(1px); }
+    }
+  }
+
+  // >= Tablet: 2-Spalter, Media rechts
+  @media (min-width: $bp-md) {
+    &__inner { grid-template-columns: 1fr 1fr; }
+    &__media { order: 2; }
+    &__content { order: 1; }
+  }
+
+  // >= Desktop: größere Headline
+  @media (min-width: $bp-lg) {
+    &__headline { font-size: css-clamp(2rem, calc(1rem + 2.6vw), 3rem); }
+  }
+}

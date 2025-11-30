@@ -85,10 +85,58 @@ $section-padding:     5rem 0; // entspricht 80px
 $gutter:              1.5rem; // entspricht 24px
 
 // ======================================================
-// 5. SCHATTEN / TIEFE
+// 5. ABSTÄNDE
+// ======================================================
+// ======================================================
+// 2. SPACING (Abstände, 1rem = 16px)
+// ======================================================
+$space-3xs: 0.25rem; //  4px
+$space-2xs: 0.5rem;  //  8px
+$space-xs:  0.75rem; // 12px
+$space-s:   1rem;    // 16px
+$space-m:   1.5rem;  // 24px
+$space-l:   2rem;    // 32px
+$space-xl:  3rem;    // 48px
+$space-2xl: 4rem;    // 64px
+$space-3xl: 5rem;    // 80px
+
+// ======================================================
+// 6. SCHATTEN / TIEFE
 // ======================================================
 $shadow-soft:         0 2px 8px rgba(0, 0, 0, 0.08);
 $shadow-medium:       0 4px 12px rgba(0, 0, 0, 0.12);
+
+// ======================================================
+// 6a. SEMANTISCHE UI-TOKENS (neu, für Komponenten)
+// ======================================================
+$color-surface:          $color-bg-light !default;
+$color-surface-elevated: $color-bg-light !default; // ggf. später absetzen (z. B. Schatten)
+$color-border:           #e5e7eb !default;         // feine Rahmenfarbe
+$color-text-strong:      $color-text !default;
+$color-primary-strong:   mix($color-primary, #000, 12%) !default; // Hover/Active
+$color-on-primary:       #fff !default;            // Text auf Primärfarbe
+
+// ======================================================
+// 6b. TYPO- & LAYOUT-ALIASSE (neu)
+// ======================================================
+$font-size-xl:       $font-size-h2 !default; // große Sektionstitel
+$font-size-l:        $font-size-h4 !default; // Karten-/Blocktitel
+$line-height-tight:  $line-height-heading !default;
+
+// ======================================================
+// 6c. RADII / SIZES / BREAKPOINTS (neu)
+// ======================================================
+$radius-l:     0.75rem !default;
+$radius-pill:  9999px  !default;
+
+$size-icon-xl: 3rem    !default;
+
+$bp-m: 48rem !default; // 768px
+
+// (Optional) Bestehende Layout-Variablen auf Spacing-Skala mappen
+$section-padding: $space-3xl 0 !default;
+$gutter:          $space-m    !default;
+
 
 // ======================================================
 // Ende der Variablen

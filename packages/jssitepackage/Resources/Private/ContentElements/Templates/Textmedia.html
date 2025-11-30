@@ -1,0 +1,32 @@
+{namespace f=TYPO3Fluid\Fluid\ViewHelpers}
+<f:if condition="{data.frame_class} == 'feature'">
+  <f:then>
+    <section class="ce-feature" id="arbeitsgedaechtnis">
+      <div class="ce-feature__inner">
+        <div class="ce-feature__content">
+          <f:if condition="{data.header}"><h2 class="ce-feature__headline">{data.header}</h2></f:if>
+          <f:if condition="{data.subheader}"><p class="ce-feature__subline">{data.subheader}</p></f:if>
+          <div class="ce-feature__text"><f:format.html>{data.bodytext}</f:format.html></div>
+        </div>
+        <div class="ce-feature__media">
+          <f:if condition="{files.0}">
+            <f:then>
+              <f:media file="{files.0}" alt="{files.0.alternative}" title="{files.0.title}" />
+            </f:then>
+          </f:if>
+        </div>
+      </div>
+    </section>
+  </f:then>
+  <f:else>
+    <div class="ce-textmedia-default">
+      <f:if condition="{data.header}"><h2>{data.header}</h2></f:if>
+      <f:if condition="{files.0}">
+        <div class="ce-textmedia-default__media">
+          <f:media file="{files.0}" alt="{files.0.alternative}" title="{files.0.title}" />
+        </div>
+      </f:if>
+      <div class="ce-textmedia-default__text"><f:format.html>{data.bodytext}</f:format.html></div>
+    </div>
+  </f:else>
+</f:if>

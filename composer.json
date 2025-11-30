@@ -9,14 +9,14 @@
       "typo3/cms-composer-installers": true
     },
     "platform": {
-      "php": "8.2.0"
+      "php": "8.3"
     },
     "sort-packages": true
   },
   "require": {
     "friendsoftypo3/content-blocks": "^1.3",
     "helhum/typo3-console": "^8.2",
-    "jensseiler/jssitepackage": "*",
+    "jensseiler/jssitepackage": "dev-master",
     "typo3/cms-backend": "^13.4",
     "typo3/cms-belog": "^13.4",
     "typo3/cms-beuser": "^13.4",
@@ -48,7 +48,7 @@
       "type": "path",
       "url": "packages/jssitepackage",
       "options": {
-        "symlink": true
+        "symlink": false
       }
     }
   ],

@@ -71,6 +71,18 @@ tt_content {
     }
   }
 
+  # >>> Service-Teaser (Content Block) – FE-Rendering aktivieren <<<
+  jssitepackage_service_teaser = FLUIDTEMPLATE
+  jssitepackage_service_teaser {
+    file = EXT:jssitepackage/ContentBlocks/ContentElements/ServiceTeaser/templates/frontend.html
+    dataProcessing {
+      10 = content-blocks
+    }
+  }
+  # Alias, falls das CType automatisch aus "name: jensseiler/service-teaser"
+  # generiert wurde (und somit jensseiler_service_teaser heißt):
+  jensseiler_service_teaser < tt_content.jssitepackage_service_teaser
+
   # Plugins/Extbase: sicher abfangen
   list = CASE
   list {
@@ -105,3 +117,17 @@ config.concatenateJs = 1
 config.concatenateCss = 1
 config.compressJs = 1
 config.compressCss = 1
+
+########################################################
+# SEO / JSON-LD – Services-ItemList (nur Startseite)
+########################################################
+# Template-Teil für das JSON-LD (separate Datei)
+lib.jsonLdServices = FLUIDTEMPLATE
+lib.jsonLdServices {
+  file = EXT:jssitepackage/Resources/Private/Seo/jsonld-services.html
+}
+
+# Ausgabe NUR auf der Startseite (Site Root)
+[page["is_siteroot"] == 1]
+page.headerData.621 < lib.jsonLdServices
+[END]

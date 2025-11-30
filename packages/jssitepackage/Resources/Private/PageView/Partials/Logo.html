@@ -8,17 +8,11 @@
     </f:if>
 </f:variable>
 
-<!-- debug: homePid={homePid} homeUrl={homeUrl} -->
 <div class="c-logo">
     <a class="c-logo__link"
        href="{homeUrl}"
        title="Zur Startseite"
        rel="home">
-        <f:image
-            src="EXT:jssitepackage/Resources/Public/Icons/logo.svg"
-            alt="{f:if(condition: site, then: site.title, else: 'Startseite')}"
-            class="c-logo__img"
-            loading="eager"
-            additionalAttributes="{decoding:'async', fetchpriority:'high'}" />
+        <f:render partial="InlineLogoSvg" />
     </a>
 </div>
